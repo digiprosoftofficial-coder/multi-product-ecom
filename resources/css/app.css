@@ -1,0 +1,10 @@
+/* Bootstrap 5 */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* FontAwesome */
+@import '@fortawesome/fontawesome-free/css/all.min.css';
+
+/* Custom Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
