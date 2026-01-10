@@ -13,6 +13,7 @@
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
+                        <input type="hidden" name="redirect" value="{{ request('redirect', session('url.intended')) }}">
 
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>

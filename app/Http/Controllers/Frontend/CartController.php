@@ -57,10 +57,22 @@ class CartController extends Controller
 
         // Check stock
         if ($cart[$product->id]['quantity'] > $product->stock) {
-            return back()->with('error', 'Insufficient stock available.');
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Insufficient stock available.'], 422)
+                : back()->with('error', 'Insufficient stock available.');
         }
 
         session(['cart' => $cart]);
+
+        $cartCount = count($cart);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Product added to cart successfully.',
+                'cartCount' => $cartCount,
+                'productId' => $product->id,
+            ]);
+        }
 
         return back()->with('success', 'Product added to cart successfully.');
     }

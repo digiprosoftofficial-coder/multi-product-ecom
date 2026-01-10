@@ -7,10 +7,13 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Models\User;
+use App\Notifications\NewOrderNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 class CheckoutController extends Controller
 {
@@ -137,6 +140,12 @@ class CheckoutController extends Controller
 
             // Clear cart
             session(['cart' => []]);
+
+            // Notify admins about new order
+            $admins = User::role('admin')->get();
+            if ($admins->count() > 0) {
+                Notification::send($admins, new NewOrderNotification($order));
+            }
 
             // Send confirmation email (optional)
             // Mail::to($order->customer_email)->send(new OrderConfirmation($order));

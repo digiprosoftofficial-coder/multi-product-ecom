@@ -14,15 +14,21 @@
                 </li>
             </ul>
             <ul class="navbar-nav">
+                <li class="nav-item position-relative">
+                    <a class="nav-link d-flex align-items-center gap-1" href="{{ route('cart.index') }}">
+                        <span id="cartIcon" class="position-relative">
+                            <i class="fas fa-shopping-cart"></i>
+                            @php $cartCount = session('cart') ? count(session('cart')) : 0; @endphp
+                            <span id="cart-count"
+                                  class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                                  style="display: {{ $cartCount > 0 ? 'inline-block' : 'none' }};">
+                                {{ $cartCount }}
+                            </span>
+                        </span>
+                        <span>Cart</span>
+                    </a>
+                </li>
                 @auth
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('cart.index') }}">
-                            <i class="fas fa-shopping-cart"></i> Cart
-                            @if(session('cart'))
-                                <span class="badge bg-danger">{{ count(session('cart')) }}</span>
-                            @endif
-                        </a>
-                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
                             {{ Auth::user()->name }}

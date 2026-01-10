@@ -16,24 +16,18 @@
     @stack('styles')
     
     <!-- Fallback CDN if Vite assets not built (Development only) -->
-    @unless(app()->environment('production'))
-        @php
-            static $assetsChecked = false;
-            static $useCDN = false;
-            if (!$assetsChecked) {
-                $manifestExists = file_exists(public_path('build/manifest.json'));
-                $assetsDirExists = is_dir(public_path('build/assets'));
-                $useCDN = !$manifestExists || !$assetsDirExists;
-                $assetsChecked = true;
-            }
-        @endphp
-        @if($useCDN)
-        <!-- Bootstrap 5 CDN Fallback -->
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-        @endif
-    @endunless
+    @php
+        $manifestExists = file_exists(public_path('build/manifest.json'));
+        $assetsDirExists = is_dir(public_path('build/assets'));
+        $bootstrapJsExists = $assetsDirExists && file_exists(public_path('build/assets/bootstrap.js'));
+        $useCDN = !$manifestExists || !$assetsDirExists || !$bootstrapJsExists;
+    @endphp
+    @if($useCDN)
+    <!-- Bootstrap 5 CDN Fallback -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    @endif
 </head>
 <body>
     <div class="wrapper d-flex">
@@ -72,6 +66,59 @@
             </main>
         </div>
     </div>
+
+    <div id="sidebarOverlay" class="sidebar-overlay d-md-none"></div>
+
+    <style>
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: none;
+            z-index: 900;
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebar = document.getElementById('adminSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const toggle = document.getElementById('sidebarToggle');
+
+            if (!sidebar || !overlay) return;
+
+            function openSidebar() {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
+
+            if (toggle) {
+                toggle.addEventListener('click', function () {
+                    if (sidebar.classList.contains('active')) {
+                        closeSidebar();
+                    } else {
+                        openSidebar();
+                    }
+                });
+            }
+
+            overlay.addEventListener('click', closeSidebar);
+
+            window.addEventListener('resize', function () {
+                if (window.innerWidth > 768) {
+                    closeSidebar();
+                }
+            });
+        });
+    </script>
 
     @stack('scripts')
 </body>

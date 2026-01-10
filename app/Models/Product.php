@@ -51,8 +51,8 @@ class Product extends Model
         });
 
         static::updating(function ($product) {
-            if ($product->isDirty('name') && empty($product->slug)) {
-                $product->slug = Str::slug($product->name);
+            if ($product->isDirty('name')) {
+                $product->slug = Str::slug($product->name) . '-' . $product->id;
             }
         });
     }
@@ -113,12 +113,6 @@ class Product extends Model
         return asset('uploads/products/thumbnails/' . $this->thumbnail);
     }
 
-    public function getDiscountPercentageAttribute(): ?int
-    {
-        if ($this->compare_price && $this->price < $this->compare_price) {
-            return round((($this->compare_price - $this->price) / $this->compare_price) * 100);
-        }
-        return null;
-    }
+  
 }
 
