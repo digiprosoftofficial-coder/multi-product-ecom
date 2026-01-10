@@ -16,6 +16,7 @@ class ChildCategoryController extends Controller
     public function index()
     {
         $childCategories = ChildCategory::with('subCategory.category')
+            ->withCount('products')
             ->orderBy('name')
             ->paginate(15);
         
@@ -96,7 +97,7 @@ class ChildCategoryController extends Controller
         $childcategory->load([
             'subCategory.category',
             'products' => function ($q) {
-                $q->latest();
+                $q->latest()->with('images');
             },
         ]);
 

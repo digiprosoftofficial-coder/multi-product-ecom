@@ -55,7 +55,7 @@
                     <span class="text-danger fw-bold fs-3">${{ number_format($product->discount_price, 2) }}</span>
                     <span class="text-muted text-decoration-line-through ms-2 fs-5">${{ number_format($product->price, 2) }}</span>
                     @if($product->compare_price)
-                        <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->compare_price, 2) }}</span>
+                        <!-- <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->compare_price, 2) }}</span> -->
                     @endif
                 @else
                     <span class="fw-bold fs-3">${{ number_format($product->price, 2) }}</span>

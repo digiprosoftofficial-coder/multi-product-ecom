@@ -15,7 +15,10 @@ class SubCategoryController extends Controller
 {
     public function index()
     {
-        $subCategories = SubCategory::with('category')
+        $subCategories = SubCategory::with(['category', 'childCategories' => function ($query) {
+                $query->orderBy('name');
+            }])
+            ->withCount('products')
             ->orderBy('name')
             ->paginate(15);
         
@@ -88,6 +91,21 @@ class SubCategoryController extends Controller
 
         return redirect()->route('admin.subcategories.index')
             ->with('success', 'Subcategory created successfully.');
+    }
+
+    public function show(SubCategory $subcategory)
+    {
+        $subcategory->load([
+            'category',
+            'childCategories' => function ($q) {
+                $q->withCount('products');
+            },
+            'products' => function ($q) {
+                $q->latest();
+            },
+        ]);
+
+        return view('admin.subcategories.show', compact('subcategory'));
     }
 
     public function edit(SubCategory $subcategory)

@@ -29,7 +29,10 @@
                     View Details
                 </a>
                 @if($product->isInStock())
-                    <form action="{{ route('cart.add', $product) }}" method="POST" class="d-inline">
+                    <form action="{{ route('cart.add', $product) }}" method="POST" class="d-inline js-add-to-cart"
+                          data-product-id="{{ $product->id }}"
+                          data-product-name="{{ $product->name }}"
+                          data-product-image="{{ $product->thumbnail ? asset('uploads/products/thumbnails/' . $product->thumbnail) : '' }}">
                         @csrf
                         <input type="hidden" name="quantity" value="1">
                         <button type="submit" class="btn btn-success btn-sm">

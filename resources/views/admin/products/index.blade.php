@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h5>All Products</h5>
+    <h5 class="mb-0">All Products <span class="badge bg-primary">Total: {{ $totalProducts ?? $products->total() }}</span></h5>
     <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
         <i class="fas fa-plus"></i> Add Product
     </a>
@@ -62,7 +62,7 @@
                 <tbody>
                     @forelse($products as $product)
                         <tr>
-                            <td>{{ $product->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if($product->thumbnail)
                                     <img src="{{ asset('uploads/products/thumbnails/' . $product->thumbnail) }}" 
@@ -83,6 +83,9 @@
                                 </span>
                             </td>
                             <td>
+                                <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info text-white">
+                                    <i class="fas fa-eye"></i>
+                                </a>
                                 <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>

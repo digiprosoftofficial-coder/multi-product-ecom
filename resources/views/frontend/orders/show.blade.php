@@ -6,6 +6,13 @@
 <div class="container my-5">
     <h2 class="mb-4">Order Details</h2>
 
+    <div class="alert alert-success">
+        <div class="fw-bold">Thank you for shopping with us.</div>
+        <div>আপনার অর্ডারটি নিশ্চিত করা হয়েছে এবং বর্তমানে প্রসেসিং অবস্থায় আছে।</div>
+        <div>অর্ডার শিপ হওয়ার সাথে সাথে ট্র্যাকিং তথ্য আপনাকে জানানো হবে।</div>
+        <div>আমাদের সাথে থাকার জন্য ধন্যবাদ।</div>
+    </div>
+
     <div class="card mb-3">
         <div class="card-header">
             <h5>Order Information</h5>

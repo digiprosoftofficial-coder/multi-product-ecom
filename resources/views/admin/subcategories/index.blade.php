@@ -20,6 +20,8 @@
                         <th>ID</th>
                         <th>Subcategory Name</th>
                         <th>Parent Category</th>
+                        <th>Child Categories</th>
+                        <th>Products</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -27,7 +29,7 @@
                 <tbody>
                     @forelse($subCategories as $subCategory)
                         <tr>
-                            <td>{{ $subCategory->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if($subCategory->image)
                                     <img src="{{ asset('uploads/categories/thumbnails/' . $subCategory->image) }}" 
@@ -43,12 +45,41 @@
                                 </span>
                             </td>
                             <td>
+                                @php
+                                    $totalChildCategories = $subCategory->childCategories->count();
+                                @endphp
+                                @if($totalChildCategories > 0)
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{ $totalChildCategories }} Child Categories
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach($subCategory->childCategories as $childCategory)
+                                                <li>
+                                                    <a class="dropdown-item" href="{{ route('admin.childcategories.show', ['childcategory' => $childCategory->id]) }}">
+                                                        {{ $childCategory->name }}
+                                                    </a>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @else
+                                    <span class="text-muted">No child categories</span>
+                                @endif
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ $subCategory->products_count ?? 0 }} Products</span>
+                            </td>
+                            <td>
                                 <span class="badge bg-{{ $subCategory->status ? 'success' : 'danger' }}">
                                     {{ $subCategory->status ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('admin.subcategories.edit', $subCategory) }}" class="btn btn-sm btn-primary">
+                                <a href="{{ route('admin.subcategories.show', ['subcategory' => $subCategory->id]) }}" class="btn btn-sm btn-info text-white">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ route('admin.subcategories.edit', ['subcategory' => $subCategory->id]) }}" class="btn btn-sm btn-primary">
                                     <i class="fas fa-edit"></i>
                                 </a>
                                 <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $subCategory->id }}">
@@ -81,7 +112,7 @@
                         </div>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center">No subcategories found.</td>
+                            <td colspan="7" class="text-center">No subcategories found.</td>
                         </tr>
                     @endforelse
                 </tbody>

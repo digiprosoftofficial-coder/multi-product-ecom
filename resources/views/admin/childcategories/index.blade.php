@@ -21,6 +21,7 @@
                         <th>Child Category Name</th>
                         <th>Subcategory</th>
                         <th>Category</th>
+                        <th>Products</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -28,7 +29,7 @@
                 <tbody>
                     @forelse($childCategories as $childCategory)
                         <tr>
-                            <td>{{ $childCategory->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if($childCategory->image)
                                     <img src="{{ asset('uploads/categories/thumbnails/' . $childCategory->image) }}" 
@@ -47,6 +48,9 @@
                                 <span class="badge bg-secondary">
                                     <i class="fas fa-folder"></i> {{ $childCategory->subCategory->category->name ?? 'N/A' }}
                                 </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ $childCategory->products_count ?? 0 }} Products</span>
                             </td>
                             <td>
                                 <span class="badge bg-{{ $childCategory->status ? 'success' : 'danger' }}">
@@ -90,7 +94,7 @@
                         </div>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">No child categories found.</td>
+                            <td colspan="7" class="text-center">No child categories found.</td>
                         </tr>
                     @endforelse
                 </tbody>

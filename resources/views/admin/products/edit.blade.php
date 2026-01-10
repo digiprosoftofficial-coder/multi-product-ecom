@@ -4,9 +4,20 @@
 @section('page-title', 'Edit Product')
 
 @section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="mb-1">Edit Product: {{ $product->name }}</h5>
+    </div>
+    <div>
+        <a href="{{ route('admin.products.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('admin.products.update', $product) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.products.update', ['product' => $product->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -39,7 +50,7 @@
                                     <option value="">Select Category</option>
                                     @foreach($categories as $category)
                                         <option value="{{ $category->id }}" 
-                                                {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
+                                            {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                             {{ $category->name }}
                                         </option>
                                     @endforeach
@@ -57,7 +68,7 @@
                                     <option value="">Select Sub Category</option>
                                     @foreach($subCategories as $subCategory)
                                         <option value="{{ $subCategory->id }}" 
-                                                {{ old('sub_category_id', $product->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
+                                            {{ old('sub_category_id', $product->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
                                             {{ $subCategory->name }}
                                         </option>
                                     @endforeach
@@ -73,6 +84,9 @@
                                 <select class="form-select @error('child_category_id') is-invalid @enderror" 
                                         id="child_category_id" name="child_category_id">
                                     <option value="">Select Child Category</option>
+                                    @if($product->childCategory)
+                                        <option value="{{ $product->childCategory->id }}" selected>{{ $product->childCategory->name }}</option>
+                                    @endif
                                 </select>
                                 @error('child_category_id')
                                     <div class="invalid-feedback">{{ $message }}</div>
@@ -96,24 +110,40 @@
                         <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" 
                                id="price" name="price" value="{{ old('price', $product->price) }}" required>
-                        @error('price')
+                               <small class="form-text text-muted">Original price before discount</small>
+                               @error('price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="compare_price" class="form-label">Compare Price</label>
+                        <label for="compare_price" class="form-label">Compare Price (MRP)</label>
                         <input type="number" step="0.01" class="form-control @error('compare_price') is-invalid @enderror" 
                                id="compare_price" name="compare_price" value="{{ old('compare_price', $product->compare_price) }}">
+                        <small class="form-text text-muted">Input this price always higher than the price</small>
+                        
                         @error('compare_price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="discount_price" class="form-label">Discount Price</label>
+                        <label for="discount_percentage" class="form-label">Discount Percentage (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" class="form-control @error('discount_percentage') is-invalid @enderror" 
+                               id="discount_percentage" name="discount_percentage" value="{{ old('discount_percentage') }}" 
+                               placeholder="Enter discount %">
+                        <small class="form-text text-muted">Discount will be calculated from Price</small>
+                        @error('discount_percentage')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="discount_price" class="form-label">Discount Price (Calculated)</label>
                         <input type="number" step="0.01" class="form-control @error('discount_price') is-invalid @enderror" 
-                               id="discount_price" name="discount_price" value="{{ old('discount_price', $product->discount_price) }}">
+                               id="discount_price_display" value="{{ old('discount_price', $product->discount_price) }}" readonly>
+                        <input type="hidden" id="discount_price" name="discount_price" value="{{ old('discount_price', $product->discount_price) }}">
+                        <small class="form-text text-muted">Auto-calculated from discount percentage</small>
                         @error('discount_price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -172,14 +202,12 @@
                                      alt="Product Image" 
                                      class="img-thumbnail" 
                                      style="width: 100%; height: 150px; object-fit: cover;">
-                                <form action="{{ route('admin.products.images.destroy', $image) }}" 
-                                      method="POST" 
-                                      class="mt-2"
-                                      onsubmit="return confirm('Are you sure?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger w-100">Delete</button>
-                                </form>
+                                <button type="submit"
+                                        form="delete-image-form-{{ $image->id }}"
+                                        class="btn btn-sm btn-danger w-100 mt-2"
+                                        onclick="return confirm('Are you sure?')">
+                                    Delete
+                                </button>
                             </div>
                         @endforeach
                     </div>
@@ -222,14 +250,28 @@
     </div>
 </div>
 
+@if($product->images->count() > 0)
+    @foreach($product->images as $image)
+        <form id="delete-image-form-{{ $image->id }}"
+              action="{{ route('admin.products.images.destroy', $image) }}"
+              method="POST"
+              class="d-none">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endforeach
+@endif
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const categorySelect = document.getElementById('category_id');
     const subCategorySelect = document.getElementById('sub_category_id');
     const childCategorySelect = document.getElementById('child_category_id');
+    const currentSubCategoryId = {{ $product->sub_category_id ?? 'null' }};
     const currentChildCategoryId = {{ $product->child_category_id ?? 'null' }};
     
+    // Load subcategories when category changes
     if (categorySelect) {
         categorySelect.addEventListener('change', function() {
             const categoryId = this.value;
@@ -244,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     .then(response => response.json())
                     .then(data => {
                         subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-                        const currentSubCategoryId = {{ $product->sub_category_id ?? 'null' }};
                         if (data.length > 0) {
                             data.forEach(subCategory => {
                                 const option = document.createElement('option');
@@ -252,38 +293,27 @@ document.addEventListener('DOMContentLoaded', function() {
                                 option.textContent = subCategory.name;
                                 if (subCategory.id == currentSubCategoryId) {
                                     option.selected = true;
-                                    // Load child categories for selected subcategory
-                                    setTimeout(() => {
-                                        if (subCategorySelect.value) {
-                                            subCategorySelect.dispatchEvent(new Event('change'));
-                                        }
-                                    }, 100);
                                 }
                                 subCategorySelect.appendChild(option);
                             });
-                        } else {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No subcategories available';
-                            option.disabled = true;
-                            subCategorySelect.appendChild(option);
+                            if (subCategorySelect.value) {
+                                subCategorySelect.dispatchEvent(new Event('change'));
+                            }
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
+                    .catch(() => {
                         subCategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
                     });
-            } else {
-                subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
             }
         });
         
-        // Trigger change on page load to load existing subcategories
+        // Load subcategories on page load
         if (categorySelect.value) {
             categorySelect.dispatchEvent(new Event('change'));
         }
     }
     
+    // Load child categories when subcategory changes
     if (subCategorySelect) {
         subCategorySelect.addEventListener('change', function() {
             const subCategoryId = this.value;
@@ -306,30 +336,65 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }
                                 childCategorySelect.appendChild(option);
                             });
-                        } else {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No child categories available';
-                            option.disabled = true;
-                            childCategorySelect.appendChild(option);
                         }
                     })
-                    .catch(error => {
-                        console.error('Error:', error);
+                    .catch(() => {
                         childCategorySelect.innerHTML = '<option value="">Error loading child categories</option>';
                     });
-            } else {
-                childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
             }
         });
-        
-        // Load child categories if subcategory is pre-selected
-        if (subCategorySelect.value) {
-            subCategorySelect.dispatchEvent(new Event('change'));
+    }
+    
+    // Discount percentage calculation
+    const priceInput = document.getElementById('price');
+    const comparePriceInput = document.getElementById('compare_price');
+    const discountPercentageInput = document.getElementById('discount_percentage');
+    const discountPriceDisplay = document.getElementById('discount_price_display');
+    const discountPriceHidden = document.getElementById('discount_price');
+    
+    // Calculate initial discount percentage from existing discount_price (base on price)
+    @if($product->price && $product->discount_price)
+        const basePriceInit = {{ $product->price }};
+        const discountPriceInit = {{ $product->discount_price }};
+        if (basePriceInit > 0 && discountPriceInit > 0 && basePriceInit > discountPriceInit) {
+            const calculatedPercentage = ((basePriceInit - discountPriceInit) / basePriceInit) * 100;
+            if (discountPercentageInput) {
+                discountPercentageInput.value = calculatedPercentage.toFixed(2);
+            }
         }
+    @endif
+    
+    function calculateDiscountPrice() {
+        if (!comparePriceInput || !priceInput || !discountPercentageInput || !discountPriceDisplay || !discountPriceHidden) {
+            return;
+        }
+        
+        const priceVal = parseFloat(priceInput.value) || 0; // base on price only
+        const discountPercentageVal = parseFloat(discountPercentageInput.value) || 0;
+        
+        if (priceVal > 0 && discountPercentageVal > 0 && discountPercentageVal <= 100) {
+            const discountAmount = (priceVal * discountPercentageVal) / 100;
+            const finalPriceValue = (priceVal - discountAmount).toFixed(2);
+            discountPriceDisplay.value = finalPriceValue;
+            discountPriceHidden.value = finalPriceValue;
+        } else {
+            discountPriceDisplay.value = '';
+            discountPriceHidden.value = '';
+        }
+    }
+    
+    if (comparePriceInput) {
+        comparePriceInput.addEventListener('input', calculateDiscountPrice);
+    }
+    
+    if (priceInput) {
+        priceInput.addEventListener('input', calculateDiscountPrice);
+    }
+    
+    if (discountPercentageInput) {
+        discountPercentageInput.addEventListener('input', calculateDiscountPrice);
     }
 });
 </script>
 @endpush
 @endsection
-

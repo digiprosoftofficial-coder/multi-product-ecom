@@ -20,6 +20,7 @@
                         <th>ID</th>
                         <th>Category Name</th>
                         <th>Subcategories</th>
+                        <th>Child Categories</th>
                         <th>Products <span class="badge bg-primary">{{ $totalProducts }}</span></th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -28,7 +29,7 @@
                 <tbody>
                     @forelse($categories as $category)
                         <tr>
-                            <td>{{ $category->id }}</td>
+                            <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if($category->image)
                                     <img src="{{ asset('uploads/categories/thumbnails/' . $category->image) }}" 
@@ -55,6 +56,33 @@
                                         @endforelse
                                     </ul>
                                 </div>
+                            </td>
+                            <td>
+                                @php
+                                    $allChildCategories = $category->subCategories->flatMap->childCategories;
+                                    $totalChildCategories = $allChildCategories->count();
+                                @endphp
+                                @if($totalChildCategories > 0)
+                                    <div class="dropdown d-inline-block">
+                                        <button class="btn btn-sm btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                            {{ $totalChildCategories }} Child Categories
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            @foreach($category->subCategories as $sub)
+                                                @foreach($sub->childCategories as $childCategory)
+                                                    <li>
+                                                        <a class="dropdown-item" href="{{ route('admin.childcategories.show', ['childcategory' => $childCategory->id]) }}">
+                                                            <span class="badge bg-info me-2">{{ $sub->name }}</span>
+                                                            {{ $childCategory->name }}
+                                                        </a>
+                                                    </li>
+                                                @endforeach
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @else
+                                    <span class="text-muted">No child categories</span>
+                                @endif
                             </td>
                             <td>
                                 <span class="badge bg-info">{{ $category->products_count }} Products</span>
@@ -104,7 +132,7 @@
                         </div>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">No categories found.</td>
+                            <td colspan="7" class="text-center">No categories found.</td>
                         </tr>
                     @endforelse
                 </tbody>

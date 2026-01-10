@@ -4,6 +4,17 @@
 @section('page-title', 'Edit Subcategory')
 
 @section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h5 class="mb-1">Edit Subcategory: {{ $subcategory->name }}</h5>
+    </div>
+    <div>
+        <a href="{{ route('admin.subcategories.index') }}" class="btn btn-secondary btn-sm">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-body">
         <form action="{{ route('admin.subcategories.update', ['subcategory' => $subcategory->id]) }}" method="POST" enctype="multipart/form-data">

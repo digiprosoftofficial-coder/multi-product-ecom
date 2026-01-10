@@ -89,24 +89,39 @@
                         <label for="price" class="form-label">Price <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" 
                                id="price" name="price" value="{{ old('price') }}" required>
+                               <small class="form-text text-muted">Original price before discount</small>
                         @error('price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="compare_price" class="form-label">Compare Price</label>
+                        <label for="compare_price" class="form-label">Compare Price (MRP)</label>
                         <input type="number" step="0.01" class="form-control @error('compare_price') is-invalid @enderror" 
                                id="compare_price" name="compare_price" value="{{ old('compare_price') }}">
+                        <small class="form-text text-muted">Input this price always higher than the price</small>
                         @error('compare_price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="mb-3">
-                        <label for="discount_price" class="form-label">Discount Price</label>
+                        <label for="discount_percentage" class="form-label">Discount Percentage (%)</label>
+                        <input type="number" step="0.01" min="0" max="100" class="form-control @error('discount_percentage') is-invalid @enderror" 
+                               id="discount_percentage" name="discount_percentage" value="{{ old('discount_percentage') }}" 
+                               placeholder="Enter discount %">
+                        <small class="form-text text-muted">Discount will be calculated from Price</small>
+                        @error('discount_percentage')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="discount_price" class="form-label">Discount Price (Calculated)</label>
                         <input type="number" step="0.01" class="form-control @error('discount_price') is-invalid @enderror" 
-                               id="discount_price" name="discount_price" value="{{ old('discount_price') }}">
+                               id="discount_price_display" value="{{ old('discount_price') }}" readonly>
+                        <input type="hidden" id="discount_price" name="discount_price" value="{{ old('discount_price') }}">
+                        <small class="form-text text-muted">Auto-calculated from discount percentage</small>
                         @error('discount_price')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -266,6 +281,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
             }
         });
+    }
+    
+    // Discount percentage calculation
+    const priceInput = document.getElementById('price');
+    const comparePriceInput = document.getElementById('compare_price');
+    const discountPercentageInput = document.getElementById('discount_percentage');
+    const discountPriceInput = document.getElementById('discount_price');
+    
+    function calculateDiscountPrice() {
+        const priceVal = parseFloat(priceInput.value) || 0; // base on price only
+        const discountPercentage = parseFloat(discountPercentageInput.value) || 0;
+        const discountPriceDisplay = document.getElementById('discount_price_display');
+        const discountPriceHidden = document.getElementById('discount_price');
+        
+        if (priceVal > 0 && discountPercentage > 0 && discountPercentage <= 100) {
+            const discountAmount = (priceVal * discountPercentage) / 100;
+            const finalPriceValue = (priceVal - discountAmount).toFixed(2);
+            if (discountPriceDisplay) discountPriceDisplay.value = finalPriceValue;
+            if (discountPriceHidden) discountPriceHidden.value = finalPriceValue;
+        } else {
+            if (discountPriceDisplay) discountPriceDisplay.value = '';
+            if (discountPriceHidden) discountPriceHidden.value = '';
+        }
+    }
+    
+    if (comparePriceInput) {
+        comparePriceInput.addEventListener('input', calculateDiscountPrice);
+    }
+    
+    if (priceInput) {
+        priceInput.addEventListener('input', calculateDiscountPrice);
+    }
+    
+    if (discountPercentageInput) {
+        discountPercentageInput.addEventListener('input', calculateDiscountPrice);
     }
 });
 </script>

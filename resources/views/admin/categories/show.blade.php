@@ -40,6 +40,10 @@
                 @endif
                 
                 <p class="mb-1"><strong>Subcategories:</strong> {{ $category->subCategories->count() }}</p>
+                @php
+                    $totalChildCategories = $category->subCategories->flatMap->childCategories->count();
+                @endphp
+                <p class="mb-1"><strong>Child Categories:</strong> {{ $totalChildCategories }}</p>
                 <p class="mb-1"><strong>Products:</strong> {{ $category->products->count() }}</p>
                 <p class="mb-1"><strong>Status:</strong>
                     <span class="badge bg-{{ $category->status ? 'success' : 'danger' }}">
@@ -83,6 +87,55 @@
 
     <div class="col-md-4">
         <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    @php
+                        $allChildCategories = $category->subCategories->flatMap->childCategories;
+                        $totalChildCategories = $allChildCategories->count();
+                    @endphp
+                    <h6 class="fw-bold mb-0">Child Categories ({{ $totalChildCategories }})</h6>
+                    <a href="{{ route('admin.childcategories.create') }}" class="btn btn-sm btn-outline-primary">Add Child Category</a>
+                </div>
+                @if($totalChildCategories > 0)
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        @foreach($category->subCategories as $subCategory)
+                            @if($subCategory->childCategories->count() > 0)
+                                <div class="mb-3">
+                                    <h6 class="fw-semibold mb-2 small">
+                                        <span class="badge bg-info">{{ $subCategory->name }}</span>
+                                    </h6>
+                                    @foreach($subCategory->childCategories as $childCategory)
+                                        <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
+                                            <div>
+                                                <div class="fw-semibold small">{{ $childCategory->name }}</div>
+                                                <small class="text-muted">
+                                                    Products: {{ $childCategory->products_count ?? 0 }} | 
+                                                    Status: 
+                                                    <span class="badge bg-{{ $childCategory->status ? 'success' : 'danger' }} badge-sm">
+                                                        {{ $childCategory->status ? 'Active' : 'Inactive' }}
+                                                    </span>
+                                                </small>
+                                            </div>
+                                            <a href="{{ route('admin.childcategories.show', ['childcategory' => $childCategory->id]) }}" class="btn btn-sm btn-info text-white">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-muted mb-0">No child categories found.</p>
+                @endif
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-2">
+    <div class="col-12">
+        <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold mb-0">Products ({{ $category->products->count() }})</h6>

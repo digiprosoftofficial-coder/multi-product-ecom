@@ -34,8 +34,9 @@ class ProductController extends Controller
 
         $products = $query->latest()->paginate(15);
         $categories = Category::where('status', 1)->orderBy('name')->get();
+        $totalProducts = Product::count();
 
-        return view('admin.products.index', compact('products', 'categories'));
+        return view('admin.products.index', compact('products', 'categories', 'totalProducts'));
     }
 
     public function create()
@@ -57,14 +58,33 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discount_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:0,1',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
+
+        // Calculate discount_price from discount_percentage if provided (base on price)
+        $discountPercentage = $request->input('discount_percentage');
+        if (!empty($discountPercentage) && $discountPercentage > 0) {
+            $basePrice = $request->price; // user requested: base on price only
+            if ($basePrice > 0) {
+                $discountAmount = ($basePrice * $discountPercentage) / 100;
+                $validated['discount_price'] = round($basePrice - $discountAmount, 2);
+            }
+        } else {
+            // If discount_percentage is empty or 0, use the submitted discount_price or null
+            if (empty($request->discount_price)) {
+                $validated['discount_price'] = null;
+            }
+        }
+
+        // Remove discount_percentage from validated as it's not a database field
+        unset($validated['discount_percentage']);
 
         $validated['slug'] = Str::slug($validated['name']);
 
@@ -109,17 +129,29 @@ class ProductController extends Controller
             ->with('success', 'Product created successfully.');
     }
 
+    public function show(Product $product)
+    {
+        $product->load([
+            'category',
+            'subCategory',
+            'childCategory',
+            'images' => function ($q) {
+                $q->orderBy('sort_order');
+            },
+        ]);
+
+        return view('admin.products.show', compact('product'));
+    }
+
     public function edit(Product $product)
     {
         $product->load('images');
-        $categories = Category::where('status', 1)
-            ->orderBy('name')
-            ->get();
+        $categories = Category::where('status', 1)->orderBy('name')->get();
         $subCategories = SubCategory::where('category_id', $product->category_id)
             ->where('status', 1)
             ->orderBy('name')
             ->get();
-        
+
         return view('admin.products.edit', compact('product', 'categories', 'subCategories'));
     }
 
@@ -134,16 +166,37 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
+            'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discount_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:0,1',
-            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
         ]);
 
+        // Calculate discount_price from discount_percentage if provided (base on price)
+        $discountPercentage = $request->input('discount_percentage');
+        if (!empty($discountPercentage) && $discountPercentage > 0) {
+            $basePrice = $request->price; // base on price only
+            if ($basePrice > 0) {
+                $discountAmount = ($basePrice * $discountPercentage) / 100;
+                $validated['discount_price'] = round($basePrice - $discountAmount, 2);
+            }
+        } else {
+            if (empty($request->discount_price)) {
+                $validated['discount_price'] = null;
+            }
+        }
+
+        // Remove discount_percentage from validated as it's not a database field
+        unset($validated['discount_percentage']);
+
         $validated['slug'] = Str::slug($validated['name']);
+
+        // Ensure upload directories exist (mirrors store logic)
+        $this->ensureDirectoriesExist('products');
 
         // Handle thumbnail
         if ($request->hasFile('thumbnail')) {
@@ -153,12 +206,12 @@ class ProductController extends Controller
 
             $thumbnail = $request->file('thumbnail');
             $filename = time() . '_thumb_' . Str::random(10) . '.' . $thumbnail->getClientOriginalExtension();
-            
+
             $manager = new ImageManager(new Driver());
             $img = $manager->read($thumbnail->getRealPath());
             $img->scale(width: 300, height: 300);
             Storage::disk('public')->put("uploads/products/thumbnails/{$filename}", $img->encode());
-            
+
             $validated['thumbnail'] = $filename;
         }
 
@@ -167,12 +220,12 @@ class ProductController extends Controller
         // Handle new images
         if ($request->hasFile('images')) {
             $maxSortOrder = $product->images()->max('sort_order') ?? -1;
-            
+
             foreach ($request->file('images') as $index => $image) {
                 $filename = time() . '_' . ($maxSortOrder + $index + 1) . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                
+
                 $this->processProductImage($image, $filename);
-                
+
                 ProductImage::create([
                     'product_id' => $product->id,
                     'filename' => $filename,
@@ -185,6 +238,9 @@ class ProductController extends Controller
         return redirect()->route('admin.products.index')
             ->with('success', 'Product updated successfully.');
     }
+
+    
+    
 
     public function destroy(Request $request, Product $product)
     {

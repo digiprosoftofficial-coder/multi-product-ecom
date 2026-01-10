@@ -15,7 +15,9 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::with('subCategories')
+        $categories = Category::with(['subCategories.childCategories' => function ($query) {
+                $query->orderBy('name');
+            }])
             ->withCount('products')
             ->orderBy('name')
             ->get();
@@ -94,8 +96,8 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category->load([
-            'subCategories' => function ($q) {
-                $q->orderBy('name');
+            'subCategories.childCategories' => function ($q) {
+                $q->withCount('products')->orderBy('name');
             },
             'products' => function ($q) {
                 $q->latest();
