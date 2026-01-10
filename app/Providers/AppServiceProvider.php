@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Order;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('admin.partials.header', function ($view) {
+            if (auth()->check()) {
+                $adminRecentOrders = Order::latest()->take(5)->get();
+                $view->with('adminRecentOrders', $adminRecentOrders);
+            } else {
+                $view->with('adminRecentOrders', collect());
+            }
+        });
     }
 }

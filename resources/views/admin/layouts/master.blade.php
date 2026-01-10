@@ -19,8 +19,8 @@
     @php
         $manifestExists = file_exists(public_path('build/manifest.json'));
         $assetsDirExists = is_dir(public_path('build/assets'));
-        $bootstrapJsExists = $assetsDirExists && file_exists(public_path('build/assets/bootstrap.js'));
-        $useCDN = !$manifestExists || !$assetsDirExists || !$bootstrapJsExists;
+        // Fallback only when Vite build assets missing
+        $useCDN = !$manifestExists || !$assetsDirExists;
     @endphp
     @if($useCDN)
     <!-- Bootstrap 5 CDN Fallback -->
@@ -84,6 +84,13 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Initialize dropdowns (e.g., notification bell)
+            if (window.bootstrap && typeof bootstrap.Dropdown === 'function') {
+                document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach((el) => {
+                    new bootstrap.Dropdown(el);
+                });
+            }
+
             const sidebar = document.getElementById('adminSidebar');
             const overlay = document.getElementById('sidebarOverlay');
             const toggle = document.getElementById('sidebarToggle');

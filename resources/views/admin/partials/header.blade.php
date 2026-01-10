@@ -7,17 +7,56 @@
             <h4 class="mb-0">@yield('page-title', 'Dashboard')</h4>
         </div>
         <div class="d-flex align-items-center gap-3">
-            <a href="#" class="position-relative text-muted" title="Notifications">
-                <i class="fas fa-bell"></i>
-                @php $unread = Auth::user()?->unreadNotifications()->count() ?? 0; @endphp
-                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle" id="admin-notif-count" style="display: {{ $unread ? 'inline-block' : 'none' }};">
-                    {{ $unread }}
-                </span>
-            </a>
+            @php
+                $adminRecentOrders = $adminRecentOrders ?? collect();
+                $pendingCount = $adminRecentOrders->where('order_status', 'pending')->count();
+            @endphp
+            <div class="dropdown">
+                <button class="btn btn-link text-muted position-relative dropdown-toggle p-0"
+                        type="button"
+                        id="notifDropdown"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                          id="admin-notif-count"
+                          style="display: {{ $pendingCount > 0 ? 'inline-block' : 'none' }};">
+                        {{ $pendingCount }}
+                    </span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notifDropdown" style="min-width: 280px;">
+                    <li class="dropdown-header d-flex justify-content-between">
+                        <span>Recent Orders</span>
+                        <span class="badge bg-secondary">{{ $pendingCount }} pending</span>
+                    </li>
+                    @forelse($adminRecentOrders as $order)
+                        <li>
+                            <a class="dropdown-item d-flex justify-content-between align-items-start"
+                               href="{{ route('admin.orders.show', $order) }}">
+                                <div>
+                                    <div class="fw-semibold">Order: {{ $order->order_number }}</div>
+                                    <small class="text-muted">
+                                        {{ $order->customer_name }} · ${{ number_format($order->total, 2) }}
+                                    </small>
+                                </div>
+                                <small class="text-muted ms-2">{{ $order->created_at->diffForHumans() }}</small>
+                            </a>
+                        </li>
+                    @empty
+                        <li><span class="dropdown-item text-muted">No recent orders</span></li>
+                    @endforelse
+                </ul>
+            </div>
             <span class="text-muted">{{ Auth::user()->name }}</span>
             <a href="{{ route('home') }}" class="btn btn-sm btn-outline-primary" target="_blank">
                 <i class="fas fa-external-link-alt"></i> View Site
             </a>
+            <form method="POST" action="{{ route('logout') }}" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
         </div>
     </div>
 </header>

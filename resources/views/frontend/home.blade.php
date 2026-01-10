@@ -13,7 +13,7 @@
                 <a href="{{ route('products.index') }}" class="btn btn-light btn-lg">Shop Now</a>
             </div>
             <div class="col-md-6">
-                <img src="https://via.placeholder.com/600x400" alt="Hero" class="img-fluid rounded">
+                <!-- <img src="https://via.placeholder.com/600x400" alt="Hero" class="img-fluid rounded"> -->
             </div>
         </div>
     </div>

@@ -5,36 +5,6 @@
 
 @section('content')
 <div class="row">
-    <div class="col-12 mb-4">
-        @if(isset($notifications) && $notifications->count() > 0)
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Notifications</h5>
-                    <small class="text-muted">{{ $notifications->count() }} new</small>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group list-group-flush">
-                        @foreach($notifications as $notification)
-                            <li class="list-group-item d-flex justify-content-between align-items-start">
-                                <div class="ms-0">
-                                    <div class="fw-semibold">New Order: {{ $notification->data['order_number'] ?? '' }}</div>
-                                    <div class="text-muted small">
-                                        {{ $notification->data['customer_name'] ?? 'Customer' }} · ${{ number_format($notification->data['total'] ?? 0, 2) }}
-                                    </div>
-                                </div>
-                                <div class="text-muted small">
-                                    {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
-                                </div>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        @else
-            <div class="alert alert-info mb-0">No new notifications.</div>
-        @endif
-    </div>
-
     <div class="col-md-3">
         <div class="card bg-primary text-white">
             <div class="card-body">

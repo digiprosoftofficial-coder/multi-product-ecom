@@ -24,8 +24,7 @@ class LoginController extends Controller
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            $redirectTo = $request->input('redirect');
-            return redirect()->intended($redirectTo ?: route('home'));
+            return redirect()->intended(route('home'));
         }
 
         throw ValidationException::withMessages([

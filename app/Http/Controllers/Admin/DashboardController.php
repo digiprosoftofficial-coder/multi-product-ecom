@@ -7,7 +7,6 @@ use App\Models\Category;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -22,11 +21,7 @@ class DashboardController extends Controller
             'recent_orders' => Order::latest()->take(5)->get(),
         ];
 
-        $notifications = Auth::user()
-            ? Auth::user()->notifications()->latest()->take(10)->get()
-            : collect();
-
-        return view('admin.dashboard', compact('stats', 'notifications'));
+        return view('admin.dashboard', compact('stats'));
     }
 }
 
