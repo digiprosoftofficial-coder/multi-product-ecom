@@ -47,7 +47,7 @@
                                     <ul class="dropdown-menu">
                                         @forelse($category->subCategories as $sub)
                                             <li>
-                                                <a class="dropdown-item" href="{{ route('admin.subcategories.edit', $sub->id) }}">
+                                                <a class="dropdown-item" href="{{ route('admin.subcategories.show', $sub->id) }}">
                                                     {{ $sub->name }}
                                                 </a>
                                             </li>

@@ -23,17 +23,14 @@ class SubCategoryController extends Controller
             ->paginate(15);
         
         $totalSubCategories = SubCategory::count();
+        $categories = Category::orderBy('name')->get();
 
-        return view('admin.subcategories.index', compact('subCategories', 'totalSubCategories'));
+        return view('admin.subcategories.index', compact('subCategories', 'totalSubCategories', 'categories'));
     }
 
     public function create()
     {
-        $categories = Category::where('status', 1)
-            ->orderBy('name')
-            ->get();
-        
-        return view('admin.subcategories.create', compact('categories'));
+        return redirect()->route('admin.subcategories.index');
     }
 
     public function store(Request $request)
@@ -43,7 +40,7 @@ class SubCategoryController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Generate unique slug
@@ -89,7 +86,7 @@ class SubCategoryController extends Controller
 
         SubCategory::create($validated);
 
-        return redirect()->route('admin.subcategories.index')
+        return redirect()->back()
             ->with('success', 'Subcategory created successfully.');
     }
 
@@ -105,16 +102,15 @@ class SubCategoryController extends Controller
             },
         ]);
 
-        return view('admin.subcategories.show', compact('subcategory'));
+        $categories = Category::orderBy('name')->get();
+        $subCategories = SubCategory::with('category')->orderBy('name')->get();
+
+        return view('admin.subcategories.show', compact('subcategory', 'categories', 'subCategories'));
     }
 
     public function edit(SubCategory $subcategory)
     {
-        $categories = Category::where('status', 1)
-            ->orderBy('name')
-            ->get();
-        
-        return view('admin.subcategories.edit', compact('subcategory', 'categories'));
+        return redirect()->route('admin.subcategories.show', $subcategory);
     }
 
     public function update(Request $request, SubCategory $subcategory)
@@ -124,7 +120,7 @@ class SubCategoryController extends Controller
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Generate unique slug (excluding current subcategory)
@@ -165,7 +161,7 @@ class SubCategoryController extends Controller
 
         $subcategory->update($validated);
 
-        return redirect()->route('admin.subcategories.index')
+        return redirect()->back()
             ->with('success', 'Subcategory updated successfully.');
     }
 

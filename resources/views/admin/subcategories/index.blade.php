@@ -6,9 +6,9 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h5>All Subcategories <span class="badge bg-primary">Total: {{ $totalSubCategories }}</span></h5>
-    <a href="{{ route('admin.subcategories.create') }}" class="btn btn-primary">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createSubcategoryModal">
         <i class="fas fa-plus"></i> Add Subcategory
-    </a>
+    </button>
 </div>
 
 <div class="card">
@@ -32,9 +32,9 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if($subCategory->image)
-                                    <img src="{{ asset('uploads/categories/thumbnails/' . $subCategory->image) }}" 
-                                         alt="{{ $subCategory->name }}" 
-                                         class="me-2" 
+                                    <img src="{{ asset('uploads/categories/thumbnails/' . $subCategory->image) }}"
+                                         alt="{{ $subCategory->name }}"
+                                         class="me-2"
                                          style="width: 40px; height: 40px; object-fit: cover;">
                                 @endif
                                 <strong>{{ $subCategory->name }}</strong>
@@ -79,37 +79,14 @@
                                 <a href="{{ route('admin.subcategories.show', ['subcategory' => $subCategory->id]) }}" class="btn btn-sm btn-info text-white">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.subcategories.edit', ['subcategory' => $subCategory->id]) }}" class="btn btn-sm btn-primary">
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editSubcategoryModal{{ $subCategory->id }}">
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </button>
                                 <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $subCategory->id }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-
-                        <!-- Delete Modal -->
-                        <div class="modal fade" id="deleteModal{{ $subCategory->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Delete Subcategory</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to delete "{{ $subCategory->name }}"?
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <form action="{{ route('admin.subcategories.destroy', ['subcategory' => $subCategory->id]) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="7" class="text-center">No subcategories found.</td>
@@ -124,5 +101,36 @@
         </div>
     </div>
 </div>
+
+@include('admin.subcategories.partials.create-modal', ['categories' => $categories])
+
+@foreach($subCategories as $subCategory)
+    @include('admin.subcategories.partials.edit-modal', ['subcategory' => $subCategory, 'categories' => $categories])
+
+    <div class="modal fade" id="deleteModal{{ $subCategory->id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Subcategory</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete "{{ $subCategory->name }}"?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{{ route('admin.subcategories.destroy', ['subcategory' => $subCategory->id]) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
 @endsection
 
+@push('scripts')
+    @include('admin.partials.open-form-modal')
+@endpush

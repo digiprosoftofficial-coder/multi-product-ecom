@@ -96,6 +96,7 @@ class CategoryController extends Controller
     public function show(Category $category)
     {
         $category->load([
+            'subCategories.category',
             'subCategories.childCategories' => function ($q) {
                 $q->withCount('products')->orderBy('name');
             },
@@ -104,7 +105,9 @@ class CategoryController extends Controller
             },
         ]);
 
-        return view('admin.categories.show', compact('category'));
+        $categories = Category::orderBy('name')->get();
+
+        return view('admin.categories.show', compact('category', 'categories'));
     }
 
     public function update(Request $request, Category $category)

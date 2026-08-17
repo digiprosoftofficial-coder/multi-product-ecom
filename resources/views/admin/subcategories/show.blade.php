@@ -10,9 +10,9 @@
         <span class="badge bg-secondary">ID: {{ $subcategory->id }}</span>
     </div>
     <div class="d-flex gap-2">
-        <a href="{{ route('admin.subcategories.edit', ['subcategory' => $subcategory->id]) }}" class="btn btn-primary btn-sm">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editSubcategoryModal{{ $subcategory->id }}">
             <i class="fas fa-edit"></i> Edit
-        </a>
+        </button>
         <a href="{{ route('admin.subcategories.index') }}" class="btn btn-secondary btn-sm">
             Back
         </a>
@@ -64,7 +64,7 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h6 class="fw-bold mb-0">Child Categories ({{ $subcategory->childCategories->count() }})</h6>
-                            <a href="{{ route('admin.childcategories.create') }}" class="btn btn-sm btn-outline-primary">Add Child Category</a>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createChildCategoryModal">Add Child Category</button>
                         </div>
                         @forelse($subcategory->childCategories as $childCategory)
                             <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
@@ -116,4 +116,14 @@
         </div>
     </div>
 </div>
+
+@include('admin.subcategories.partials.edit-modal', ['subcategory' => $subcategory, 'categories' => $categories])
+@include('admin.childcategories.partials.create-modal', [
+    'subCategories' => $subCategories,
+    'defaultSubCategoryId' => $subcategory->id,
+])
 @endsection
+
+@push('scripts')
+    @include('admin.partials.open-form-modal')
+@endpush

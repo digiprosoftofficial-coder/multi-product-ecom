@@ -21,18 +21,14 @@ class ChildCategoryController extends Controller
             ->paginate(15);
         
         $totalChildCategories = ChildCategory::count();
+        $subCategories = SubCategory::with('category')->orderBy('name')->get();
 
-        return view('admin.childcategories.index', compact('childCategories', 'totalChildCategories'));
+        return view('admin.childcategories.index', compact('childCategories', 'totalChildCategories', 'subCategories'));
     }
 
     public function create()
     {
-        $subCategories = SubCategory::where('status', 1)
-            ->with('category')
-            ->orderBy('name')
-            ->get();
-        
-        return view('admin.childcategories.create', compact('subCategories'));
+        return redirect()->route('admin.childcategories.index');
     }
 
     public function store(Request $request)
@@ -88,7 +84,7 @@ class ChildCategoryController extends Controller
 
         ChildCategory::create($validated);
 
-        return redirect()->route('admin.childcategories.index')
+        return redirect()->back()
             ->with('success', 'Child category created successfully.');
     }
 
@@ -101,17 +97,14 @@ class ChildCategoryController extends Controller
             },
         ]);
 
-        return view('admin.childcategories.show', compact('childcategory'));
+        $subCategories = SubCategory::with('category')->orderBy('name')->get();
+
+        return view('admin.childcategories.show', compact('childcategory', 'subCategories'));
     }
 
     public function edit(ChildCategory $childcategory)
     {
-        $subcategories = SubCategory::where('status', 1)
-            ->with('category')
-            ->orderBy('name')
-            ->get();
-        
-        return view('admin.childcategories.edit', compact('childcategory', 'subcategories'));
+        return redirect()->route('admin.childcategories.show', $childcategory);
     }
 
     public function update(Request $request, ChildCategory $childcategory)
@@ -162,7 +155,7 @@ class ChildCategoryController extends Controller
 
         $childcategory->update($validated);
 
-        return redirect()->route('admin.childcategories.index')
+        return redirect()->back()
             ->with('success', 'Child category updated successfully.');
     }
 

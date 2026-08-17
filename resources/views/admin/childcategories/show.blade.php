@@ -10,9 +10,9 @@
         <span class="badge bg-secondary">ID: {{ $childcategory->id }}</span>
     </div>
     <div class="d-flex gap-2">
-        <a href="{{ route('admin.childcategories.edit', ['childcategory' => $childcategory->id]) }}" class="btn btn-primary btn-sm">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editChildCategoryModal{{ $childcategory->id }}">
             <i class="fas fa-edit"></i> Edit
-        </a>
+        </button>
         <a href="{{ route('admin.childcategories.index') }}" class="btn btn-secondary btn-sm">
             Back
         </a>
@@ -82,5 +82,11 @@
         </div>
     </div>
 </div>
+
+@include('admin.childcategories.partials.edit-modal', ['childcategory' => $childcategory, 'subCategories' => $subCategories])
 @endsection
+
+@push('scripts')
+    @include('admin.partials.open-form-modal')
+@endpush
 

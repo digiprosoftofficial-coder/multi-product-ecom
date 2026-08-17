@@ -62,7 +62,7 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h6 class="fw-bold mb-0">Subcategories ({{ $category->subCategories->count() }})</h6>
-                    <a href="{{ route('admin.subcategories.create') }}" class="btn btn-sm btn-outline-primary">Add Subcategory</a>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createSubcategoryModal">Add Subcategory</button>
                 </div>
                 @forelse($category->subCategories as $sub)
                     <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
@@ -94,7 +94,7 @@
                         $totalChildCategories = $allChildCategories->count();
                     @endphp
                     <h6 class="fw-bold mb-0">Child Categories ({{ $totalChildCategories }})</h6>
-                    <a href="{{ route('admin.childcategories.create') }}" class="btn btn-sm btn-outline-primary">Add Child Category</a>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createChildCategoryModal">Add Child Category</button>
                 </div>
                 @if($totalChildCategories > 0)
                     <div style="max-height: 400px; overflow-y: auto;">
@@ -165,18 +165,17 @@
 </div>
 
 @include('admin.categories.partials.edit-modal', ['category' => $category])
+@include('admin.subcategories.partials.create-modal', [
+    'categories' => $categories,
+    'defaultCategoryId' => $category->id,
+])
+@include('admin.childcategories.partials.create-modal', [
+    'subCategories' => $category->subCategories,
+    'defaultSubCategoryId' => null,
+])
 @endsection
 
 @push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        @if($errors->any() && old('_method') === 'PUT')
-            var modalEl = document.getElementById('editCategoryModal{{ $category->id }}');
-            if (modalEl && window.bootstrap) {
-                bootstrap.Modal.getOrCreateInstance(modalEl).show();
-            }
-        @endif
-    });
-</script>
+    @include('admin.partials.open-form-modal')
 @endpush
 
