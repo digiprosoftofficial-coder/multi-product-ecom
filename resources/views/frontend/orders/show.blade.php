@@ -22,8 +22,10 @@
                     </p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>Payment Method:</strong> {{ ucfirst(str_replace('_', ' ', $order->payment_method)) }}</p>
-                    <p><strong>Payment Status:</strong> {{ ucfirst($order->payment_status) }}</p>
+                    <p><strong>Payment Method:</strong> {{ $order->paymentMethodLabel() }}</p>
+                    <p><strong>Payment Status:</strong>
+                        <span class="badge bg-{{ $order->payment_badge }}">{{ ucfirst($order->payment_status) }}</span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -88,11 +90,25 @@
             <h5>Shipping Address</h5>
         </div>
         <div class="card-body">
-            <p>{{ $order->shipping_address }}</p>
+            <p class="mb-0">{!! nl2br(e($order->shipping_address)) !!}</p>
         </div>
     </div>
 
-    <div class="mt-4">
+    @if($order->notes)
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5>Order notes</h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">{!! nl2br(e($order->notes)) !!}</p>
+            </div>
+        </div>
+    @endif
+
+    <div class="mt-4 d-flex flex-wrap gap-2">
+        <a href="{{ route('orders.invoice', $order) }}" class="btn btn-primary">
+            <i class="fas fa-print me-1"></i> Print invoice
+        </a>
         <a href="{{ route('orders.index') }}" class="btn btn-secondary">Back to Orders</a>
     </div>
 </div>

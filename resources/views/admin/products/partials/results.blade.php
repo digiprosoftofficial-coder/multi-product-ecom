@@ -18,13 +18,10 @@
                 <tr>
                     <td>{{ $products->firstItem() + $loop->index }}</td>
                     <td>
-                        @if($product->thumbnail)
-                            <img src="{{ asset('uploads/products/thumbnails/' . $product->thumbnail) }}"
-                                 alt="{{ $product->name }}"
-                                 style="width: 50px; height: 50px; object-fit: cover;">
-                        @else
-                            <span class="text-muted">No Image</span>
-                        @endif
+                        <img src="{{ $product->thumbnail ? asset('uploads/products/thumbnails/' . $product->thumbnail) : asset('images/product-placeholder.svg') }}"
+                             alt="{{ $product->name }}"
+                             class="rounded"
+                             style="width: 50px; height: 50px; object-fit: cover; background: #e2e8f0;">
                     </td>
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->sku }}</td>
@@ -37,15 +34,17 @@
                         </span>
                     </td>
                     <td>
-                        <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info text-white">
-                            <i class="fas fa-eye"></i>
-                        </a>
-                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-edit"></i>
-                        </a>
-                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <div class="d-flex flex-wrap gap-2">
+                            <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info text-white">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             @empty

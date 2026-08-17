@@ -2,6 +2,7 @@ User-agent: *
 Disallow: /admin
 Disallow: /checkout
 Disallow: /cart
+Disallow: /orders
 Disallow: /dashboard
 Disallow: /login
 Disallow: /register

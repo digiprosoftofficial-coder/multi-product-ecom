@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class OrderController extends Controller
 {
@@ -16,7 +16,8 @@ class OrderController extends Controller
             ->paginate(10);
 
         $theme = setting('active_frontend_theme', 'organic-v1');
-        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.orders.index") ? "frontend.{$theme}.orders.index" : 'frontend.orders.index';
+        $view = View::exists("frontend.{$theme}.orders.index") ? "frontend.{$theme}.orders.index" : 'frontend.orders.index';
+
         return view($view, compact('orders'));
     }
 
@@ -29,8 +30,33 @@ class OrderController extends Controller
         $order->load('items.product');
 
         $theme = setting('active_frontend_theme', 'organic-v1');
-        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.orders.show") ? "frontend.{$theme}.orders.show" : 'frontend.orders.show';
+        $view = View::exists("frontend.{$theme}.orders.show") ? "frontend.{$theme}.orders.show" : 'frontend.orders.show';
+
         return view($view, compact('order'));
     }
-}
 
+    public function invoice(Order $order)
+    {
+        if (! $order->isAccessibleToCurrentRequest()) {
+            abort(403);
+        }
+
+        $order->load('items');
+        $logo = setting('site_logo');
+
+        if (Auth::check() && $order->user_id === Auth::id()) {
+            $backUrl = route('orders.show', $order);
+        } elseif ((int) session('placed_order_id') === (int) $order->id) {
+            $backUrl = route('checkout.thank-you', $order);
+        } else {
+            $backUrl = route('home');
+        }
+
+        return view('invoices.print', [
+            'order' => $order,
+            'siteName' => setting('site_name', config('app.name')),
+            'logoUrl' => $logo ? asset('uploads/settings/'.$logo) : null,
+            'backUrl' => $backUrl,
+        ]);
+    }
+}

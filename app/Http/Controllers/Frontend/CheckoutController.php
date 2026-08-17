@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\OrderConfirmation;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
@@ -10,19 +11,20 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\View;
 
 class CheckoutController extends Controller
 {
     public function index()
     {
         $cart = session('cart', []);
-        
+
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
-        // Eager load all products at once to avoid N+1 queries
         $productIds = array_keys($cart);
         $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
@@ -44,13 +46,14 @@ class CheckoutController extends Controller
 
         $taxRate = (float) Setting::get('tax_rate', 0);
         $vatRate = (float) Setting::get('vat_rate', 0);
-        
+
         $tax = ($subtotal * $taxRate) / 100;
         $vat = ($subtotal * $vatRate) / 100;
         $total = $subtotal + $tax + $vat;
 
         $theme = setting('active_frontend_theme', 'organic-v1');
-        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.checkout") ? "frontend.{$theme}.checkout" : 'frontend.checkout.index';
+        $view = View::exists("frontend.{$theme}.checkout") ? "frontend.{$theme}.checkout" : 'frontend.checkout.index';
+
         return view($view, compact('cartItems', 'subtotal', 'tax', 'vat', 'total'));
     }
 
@@ -64,15 +67,14 @@ class CheckoutController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-            $cart = session('cart', []);
-        
+        $cart = session('cart', []);
+
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
         DB::beginTransaction();
         try {
-            // Eager load all products at once to avoid N+1 queries
             $productIds = array_keys($cart);
             $products = Product::whereIn('id', $productIds)->lockForUpdate()->get()->keyBy('id');
 
@@ -81,9 +83,10 @@ class CheckoutController extends Controller
 
             foreach ($cart as $productId => $item) {
                 $product = $products->get($productId);
-                if (!$product || $product->stock < $item['quantity']) {
+                if (! $product || $product->stock < $item['quantity']) {
                     DB::rollBack();
                     $productName = $product ? $product->name : 'Unknown';
+
                     return back()->with('error', "Product '{$productName}' is out of stock or insufficient quantity.");
                 }
 
@@ -99,13 +102,12 @@ class CheckoutController extends Controller
 
             $taxRate = (float) Setting::get('tax_rate', 0);
             $vatRate = (float) Setting::get('vat_rate', 0);
-            
+
             $tax = ($subtotal * $taxRate) / 100;
             $vat = ($subtotal * $vatRate) / 100;
             $total = $subtotal + $tax + $vat;
 
             $order = Order::create([
-                // For guest checkout this will be null; that's OK if the column is nullable
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
@@ -132,30 +134,45 @@ class CheckoutController extends Controller
                     'total' => $item['total'],
                 ]);
 
-                // Update stock
                 $item['product']->decrement('stock', $item['quantity']);
             }
 
             DB::commit();
 
-            // Clear cart
-            session(['cart' => []]);
+            session(['cart' => [], 'placed_order_id' => $order->id]);
 
-            // Send confirmation email (optional)
-            // Mail::to($order->customer_email)->send(new OrderConfirmation($order));
-
-            // If user is logged in, show their order detail page; otherwise simple thank-you redirect
-            if (Auth::check()) {
-                return redirect()->route('orders.show', $order)
-                    ->with('success', 'Order placed successfully!');
+            try {
+                Mail::to($order->customer_email)->send(new OrderConfirmation($order));
+            } catch (\Throwable $e) {
+                Log::warning('Order confirmation email failed', [
+                    'order_id' => $order->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
-            return redirect()->route('home')
-                ->with('success', 'Order placed successfully! We will contact you shortly.');
+            return redirect()->route('checkout.thank-you', $order)
+                ->with('success', 'Order placed successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Failed to place order', ['error' => $e->getMessage()]);
+
             return back()->with('error', 'Failed to place order. Please try again.');
         }
     }
-}
 
+    public function thankYou(Order $order)
+    {
+        if (! $order->isAccessibleToCurrentRequest()) {
+            abort(403);
+        }
+
+        $order->load('items');
+        $invoiceUrl = route('orders.invoice', $order);
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = View::exists("frontend.{$theme}.checkout-thank-you")
+            ? "frontend.{$theme}.checkout-thank-you"
+            : 'frontend.checkout.thank-you';
+
+        return view($view, compact('order', 'invoiceUrl'));
+    }
+}

@@ -38,7 +38,10 @@ Route::prefix('cart')->name('cart.')->group(function () {
 Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/', [CheckoutController::class, 'store'])->name('store');
+    Route::get('/thank-you/{order}', [CheckoutController::class, 'thankYou'])->name('thank-you');
 });
+
+Route::get('/orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
 
 // Order Routes
 Route::middleware('auth')->prefix('orders')->name('orders.')->group(function () {

@@ -30,9 +30,14 @@
                                 </span>
                             </td>
                             <td>
-                                <a href="{{ route('orders.show', $order) }}" class="btn btn-sm btn-primary">
-                                    View Details
-                                </a>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{{ route('orders.show', $order) }}" class="btn btn-sm btn-primary">
+                                        View
+                                    </a>
+                                    <a href="{{ route('orders.invoice', $order) }}" class="btn btn-sm btn-outline-secondary">
+                                        Invoice
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @endforeach

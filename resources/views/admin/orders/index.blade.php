@@ -58,9 +58,14 @@
                             </td>
                             <td>{{ $order->created_at->format('M d, Y H:i') }}</td>
                             <td>
-                                <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-primary">
-                                    View
-                                </a>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-primary">
+                                        View
+                                    </a>
+                                    <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-sm btn-outline-secondary">
+                                        Invoice
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     @empty
