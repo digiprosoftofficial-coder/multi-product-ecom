@@ -6,9 +6,9 @@
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h5>All Categories <span class="badge bg-primary">Total: {{ $totalCategories }}</span></h5>
-    <a href="{{ route('admin.categories.create') }}" class="btn btn-primary">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
         <i class="fas fa-plus"></i> Add Main Category
-    </a>
+    </button>
 </div>
 
 <div class="card">
@@ -32,9 +32,9 @@
                             <td>{{ $loop->iteration }}</td>
                             <td>
                                 @if($category->image)
-                                    <img src="{{ asset('uploads/categories/thumbnails/' . $category->image) }}" 
-                                         alt="{{ $category->name }}" 
-                                         class="me-2" 
+                                    <img src="{{ asset('uploads/categories/thumbnails/' . $category->image) }}"
+                                         alt="{{ $category->name }}"
+                                         class="me-2"
                                          style="width: 40px; height: 40px; object-fit: cover;">
                                 @endif
                                 <strong>{{ $category->name }}</strong>
@@ -96,40 +96,14 @@
                                 <a href="{{ route('admin.categories.show', $category) }}" class="btn btn-sm btn-info text-white">
                                     <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-sm btn-primary">
+                                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editCategoryModal{{ $category->id }}">
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </button>
                                 <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $category->id }}">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
-
-                        <!-- Delete Modal -->
-                        <div class="modal fade" id="deleteModal{{ $category->id }}" tabindex="-1">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Delete Category</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p class="mb-2">Are you sure you want to delete "{{ $category->name }}"?</p>
-                                        <div class="alert alert-warning mb-0">
-                                            Please delete all the products under this category first.
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                        <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-danger">Delete</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     @empty
                         <tr>
                             <td colspan="7" class="text-center">No categories found.</td>
@@ -141,10 +115,81 @@
 
         @if($categories->count() == 0)
             <div class="text-center py-4">
-                <p class="text-muted">No categories found. <a href="{{ route('admin.categories.create') }}">Create your first category</a></p>
+                <p class="text-muted mb-0">
+                    No categories found.
+                    <button type="button" class="btn btn-link p-0 align-baseline" data-bs-toggle="modal" data-bs-target="#createCategoryModal">Create your first category</button>
+                </p>
             </div>
         @endif
     </div>
 </div>
+
+{{-- Create Modal --}}
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ route('admin.categories.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createCategoryModalLabel">Add Main Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    @include('admin.categories.partials.form-fields', ['category' => null])
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@foreach($categories as $category)
+    @include('admin.categories.partials.edit-modal', ['category' => $category])
+
+    {{-- Delete Modal --}}
+    <div class="modal fade" id="deleteModal{{ $category->id }}" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Category</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">Are you sure you want to delete "{{ $category->name }}"?</p>
+                    <div class="alert alert-warning mb-0">
+                        Please delete all the products under this category first.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form action="{{ route('admin.categories.destroy', $category) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+@endforeach
 @endsection
 
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if($errors->any())
+            @if(old('_method') === 'PUT' && old('edit_category_id'))
+                var modalEl = document.getElementById('editCategoryModal{{ (int) old('edit_category_id') }}');
+            @else
+                var modalEl = document.getElementById('createCategoryModal');
+            @endif
+            if (modalEl && window.bootstrap) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            }
+        @endif
+    });
+</script>
+@endpush

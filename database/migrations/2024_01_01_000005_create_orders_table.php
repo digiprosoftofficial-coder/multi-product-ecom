@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
             $table->string('order_number')->unique();
-            $table->unsignedBigInteger('user_id');
+            // For guest checkout this can be null
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('customer_name');
             $table->string('customer_email');
             $table->string('customer_phone')->nullable();

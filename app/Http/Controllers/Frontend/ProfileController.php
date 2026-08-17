@@ -12,7 +12,9 @@ class ProfileController extends Controller
 {
     public function edit()
     {
-        return view('frontend.profile.edit');
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.profile.edit") ? "frontend.{$theme}.profile.edit" : 'frontend.profile.edit';
+        return view($view);
     }
 
     public function update(Request $request)

@@ -1,0 +1,5 @@
+/* Admin theme fallback – minimal overrides when theme-specific CSS is missing */
+.admin-theme-organic-v1 .main-content,
+.admin-theme-gadget-v1 .main-content {
+  background: #f8f9fa;
+}

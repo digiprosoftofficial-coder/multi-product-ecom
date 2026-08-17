@@ -4,9 +4,9 @@
 @section('page-title', 'Dashboard')
 
 @section('content')
-<div class="row">
-    <div class="col-md-3">
-        <div class="card bg-primary text-white">
+<div class="row g-3 mb-3">
+    <div class="col-sm-6 col-md-3">
+        <div class="card bg-primary text-white h-100">
             <div class="card-body">
                 <h5 class="card-title">Total Products</h5>
                 <h2>{{ $stats['total_products'] }}</h2>
@@ -14,16 +14,16 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-success text-white">
+    <div class="col-sm-6 col-md-3">
+        <div class="card bg-success text-white h-100">
             <div class="card-body">
                 <h5 class="card-title">Total Categories</h5>
                 <h2>{{ $stats['total_categories'] }}</h2>
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-info text-white">
+    <div class="col-sm-6 col-md-3">
+        <div class="card bg-info text-white h-100">
             <div class="card-body">
                 <h5 class="card-title">Total Orders</h5>
                 <h2>{{ $stats['total_orders'] }}</h2>
@@ -31,11 +31,20 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
-        <div class="card bg-warning text-white">
+    <div class="col-sm-6 col-md-3">
+        <div class="card bg-warning text-white h-100">
             <div class="card-body">
                 <h5 class="card-title">Pending Orders</h5>
                 <h2>{{ $stats['pending_orders'] }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-md-3">
+        <div class="card bg-secondary text-white h-100">
+            <div class="card-body">
+                <h5 class="card-title">Total Users</h5>
+                <h2>{{ $stats['total_users'] }}</h2>
+                <small>Last 30 days: {{ $stats['new_users_30d'] }}</small>
             </div>
         </div>
     </div>

@@ -15,7 +15,9 @@ class OrderController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('frontend.orders.index', compact('orders'));
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.orders.index") ? "frontend.{$theme}.orders.index" : 'frontend.orders.index';
+        return view($view, compact('orders'));
     }
 
     public function show(Order $order)
@@ -26,7 +28,9 @@ class OrderController extends Controller
 
         $order->load('items.product');
 
-        return view('frontend.orders.show', compact('order'));
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.orders.show") ? "frontend.{$theme}.orders.show" : 'frontend.orders.show';
+        return view($view, compact('order'));
     }
 }
 

@@ -1,9 +1,10 @@
 <aside id="adminSidebar" class="bg-dark text-white sidebar-fixed" style="width: 250px; min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000; overflow-y: auto;">
-    <div class="p-3">
-        <h5 class="text-white mb-4">
-            <i class="fas fa-store"></i> Admin Panel
-        </h5>
-        <nav class="nav flex-column">
+    <div class="p-3 d-flex flex-column" style="min-height: 100vh;">
+        <div>
+            <h5 class="text-white mb-4 d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-store"></i> Admin Panel</span>
+            </h5>
+            <nav class="nav flex-column">
             <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'bg-primary' : '' }}" href="{{ route('admin.dashboard') }}">
                 <i class="fas fa-tachometer-alt"></i> Dashboard
             </a>
@@ -25,7 +26,32 @@
             <a class="nav-link text-white {{ request()->routeIs('admin.settings.*') ? 'bg-primary' : '' }}" href="{{ route('admin.settings.index') }}">
                 <i class="fas fa-cog"></i> Settings
             </a>
-        </nav>
+            <a class="nav-link text-white {{ request()->routeIs('admin.themes.*') ? 'bg-primary' : '' }}" href="{{ route('admin.themes.index') }}">
+                <i class="fas fa-palette"></i> Themes
+            </a>
+            </nav>
+        </div>
+
+        <div class="mt-auto pt-3 border-top border-secondary">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <i class="fas fa-user-circle fs-4"></i>
+                <div>
+                    <div class="fw-semibold">{{ Auth::user()->name }}</div>
+                    <small >{{ Auth::user()->email }}</small>
+                </div>
+            </div>
+            <div class="d-grid">
+                <a href="{{ route('admin.dashboard') }}" class="btn btn-sm btn-outline-light mb-2">
+                    <i class="fas fa-user"></i> Profile
+                </a>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-danger w-100">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 </aside>
 

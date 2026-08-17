@@ -49,7 +49,9 @@ class CheckoutController extends Controller
         $vat = ($subtotal * $vatRate) / 100;
         $total = $subtotal + $tax + $vat;
 
-        return view('frontend.checkout.index', compact('cartItems', 'subtotal', 'tax', 'vat', 'total'));
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.checkout") ? "frontend.{$theme}.checkout" : 'frontend.checkout.index';
+        return view($view, compact('cartItems', 'subtotal', 'tax', 'vat', 'total'));
     }
 
     public function store(Request $request)
@@ -103,6 +105,7 @@ class CheckoutController extends Controller
             $total = $subtotal + $tax + $vat;
 
             $order = Order::create([
+                // For guest checkout this will be null; that's OK if the column is nullable
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
@@ -141,8 +144,14 @@ class CheckoutController extends Controller
             // Send confirmation email (optional)
             // Mail::to($order->customer_email)->send(new OrderConfirmation($order));
 
-            return redirect()->route('orders.show', $order)
-                ->with('success', 'Order placed successfully!');
+            // If user is logged in, show their order detail page; otherwise simple thank-you redirect
+            if (Auth::check()) {
+                return redirect()->route('orders.show', $order)
+                    ->with('success', 'Order placed successfully!');
+            }
+
+            return redirect()->route('home')
+                ->with('success', 'Order placed successfully! We will contact you shortly.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to place order. Please try again.');

@@ -1,0 +1,10 @@
+{
+  "name": "Organic Store",
+  "slug": "organic-v1",
+  "description": "Clean organic & natural products ecommerce theme",
+  "version": "1.0.0",
+  "author": "Your Company Name",
+  "preview": "preview.png",
+  "supports": ["light"],
+  "deletable": true
+}

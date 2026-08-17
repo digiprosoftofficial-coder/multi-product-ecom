@@ -10,9 +10,9 @@
         <span class="badge bg-secondary">ID: {{ $category->id }}</span>
     </div>
     <div class="d-flex gap-2">
-        <a href="{{ route('admin.categories.edit', $category) }}" class="btn btn-primary btn-sm">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal{{ $category->id }}">
             <i class="fas fa-edit"></i> Edit
-        </a>
+        </button>
         <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary btn-sm">
             Back
         </a>
@@ -163,5 +163,20 @@
         </div>
     </div>
 </div>
+
+@include('admin.categories.partials.edit-modal', ['category' => $category])
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        @if($errors->any() && old('_method') === 'PUT')
+            var modalEl = document.getElementById('editCategoryModal{{ $category->id }}');
+            if (modalEl && window.bootstrap) {
+                bootstrap.Modal.getOrCreateInstance(modalEl).show();
+            }
+        @endif
+    });
+</script>
+@endpush
 

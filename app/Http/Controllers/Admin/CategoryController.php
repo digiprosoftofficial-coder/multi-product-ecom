@@ -38,7 +38,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Generate unique slug
@@ -90,7 +90,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category)
     {
-        return view('admin.categories.edit', compact('category'));
+        return redirect()->route('admin.categories.show', $category);
     }
 
     public function show(Category $category)
@@ -113,7 +113,7 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Generate unique slug (excluding current category)
@@ -154,7 +154,7 @@ class CategoryController extends Controller
 
         $category->update($validated);
 
-        return redirect()->route('admin.categories.index')
+        return redirect()->back()
             ->with('success', 'Category updated successfully.');
     }
 

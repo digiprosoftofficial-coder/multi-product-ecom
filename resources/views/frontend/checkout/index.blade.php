@@ -20,7 +20,7 @@
                             <label for="customer_name" class="form-label">Full Name <span class="text-danger">*</span></label>
                             <input type="text" class="form-control @error('customer_name') is-invalid @enderror" 
                                    id="customer_name" name="customer_name" 
-                                   value="{{ old('customer_name', Auth::user()->name) }}" required>
+                                   value="{{ old('customer_name', Auth::check() ? Auth::user()->name : '') }}" required>
                             @error('customer_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
@@ -30,7 +30,7 @@
                             <label for="customer_email" class="form-label">Email <span class="text-danger">*</span></label>
                             <input type="email" class="form-control @error('customer_email') is-invalid @enderror" 
                                    id="customer_email" name="customer_email" 
-                                   value="{{ old('customer_email', Auth::user()->email) }}" required>
+                                   value="{{ old('customer_email', Auth::check() ? Auth::user()->email : '') }}" required>
                             @error('customer_email')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

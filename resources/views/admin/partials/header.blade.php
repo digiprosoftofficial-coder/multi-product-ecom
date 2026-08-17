@@ -51,12 +51,6 @@
             <a href="{{ route('home') }}" class="btn btn-sm btn-outline-primary" target="_blank">
                 <i class="fas fa-external-link-alt"></i> View Site
             </a>
-            <form method="POST" action="{{ route('logout') }}" class="d-inline">
-                @csrf
-                <button type="submit" class="btn btn-sm btn-outline-danger">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </button>
-            </form>
         </div>
     </div>
 </header>

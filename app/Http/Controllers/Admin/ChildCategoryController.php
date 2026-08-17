@@ -42,7 +42,7 @@ class ChildCategoryController extends Controller
             'sub_category_id' => 'required|exists:subcategories,id',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Generate unique slug
@@ -121,7 +121,7 @@ class ChildCategoryController extends Controller
             'sub_category_id' => 'required|exists:subcategories,id',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         // Generate unique slug (excluding current child category)

@@ -1,0 +1,10 @@
+{
+  "name": "Gadget Store",
+  "slug": "gadget-v1",
+  "description": "Modern accessories & gadget ecommerce theme",
+  "version": "1.0.0",
+  "author": "Your Company Name",
+  "preview": "preview.png",
+  "supports": ["dark", "light"],
+  "deletable": true
+}

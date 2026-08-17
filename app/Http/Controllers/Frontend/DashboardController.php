@@ -17,7 +17,9 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        return view('frontend.dashboard', compact('user', 'recentOrders'));
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.dashboard") ? "frontend.{$theme}.dashboard" : 'frontend.dashboard';
+        return view($view, compact('user', 'recentOrders'));
     }
 }
 

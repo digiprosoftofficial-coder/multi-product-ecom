@@ -85,7 +85,8 @@
                 @auth
                     <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
                 @else
-                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg">Login to Checkout</a>
+                    <a href="{{ route('checkout.index') }}" class="btn btn-outline-primary btn-lg">Guest Checkout</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg">Login &amp; Checkout</a>
                 @endauth
             </div>
         </div>

@@ -18,9 +18,14 @@
                     <a class="nav-link d-flex align-items-center gap-1" href="{{ route('cart.index') }}">
                         <span id="cartIcon" class="position-relative">
                             <i class="fas fa-shopping-cart"></i>
-                            <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle">
-                                {{ session('cart') ? count(session('cart')) : 0 }}
-                            </span>
+                            @php $cartCount = session('cart') ? count(session('cart')) : 0; @endphp
+                            @if($cartCount > 0)
+                                <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+                                    {{ $cartCount }}
+                                </span>
+                            @else
+                                <span id="cart-count" class="badge bg-danger position-absolute top-0 start-100 translate-middle" style="display:none;"></span>
+                            @endif
                         </span>
                         <span>Cart</span>
                     </a>

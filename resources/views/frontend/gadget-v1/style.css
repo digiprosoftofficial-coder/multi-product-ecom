@@ -1,0 +1,164 @@
+/* Gadget v1 – theme CSS (served from public/gadget-v1/style.css) */
+/* This file documents the theme styles; pages link to asset('gadget-v1/style.css'). */
+
+:root {
+  --gadget-bg: #0d1117;
+  --gadget-surface: #161b22;
+  --gadget-border: #30363d;
+  --gadget-text: #e6edf3;
+  --gadget-muted: #8b949e;
+  --gadget-accent: #00d4aa;
+  --gadget-accent-hover: #00f5c4;
+  --gadget-neon: #00fff5;
+  --gadget-shadow: 0 0 20px rgba(0, 212, 170, 0.15);
+}
+
+body.gadget-v1,
+.gadget-v1 body {
+  background-color: var(--gadget-bg);
+  color: var(--gadget-text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.gadget-v1 .navbar,
+.gadget-v1 .gadget-header {
+  background: var(--gadget-surface) !important;
+  border-bottom: 1px solid var(--gadget-border);
+}
+
+.gadget-v1 .nav-link,
+.gadget-v1 .navbar-brand {
+  color: var(--gadget-text) !important;
+}
+
+.gadget-v1 .nav-link:hover,
+.gadget-v1 .navbar-brand:hover {
+  color: var(--gadget-accent) !important;
+}
+
+.gadget-v1 .btn-primary,
+.gadget-v1 .btn-accent {
+  background: var(--gadget-accent);
+  border-color: var(--gadget-accent);
+  color: #0d1117;
+}
+
+.gadget-v1 .btn-primary:hover,
+.gadget-v1 .btn-accent:hover {
+  background: var(--gadget-accent-hover);
+  border-color: var(--gadget-accent-hover);
+  color: #0d1117;
+  box-shadow: var(--gadget-shadow);
+}
+
+.gadget-v1 .card,
+.gadget-v1 .gadget-card {
+  background: var(--gadget-surface);
+  border: 1px solid var(--gadget-border);
+  color: var(--gadget-text);
+}
+
+.gadget-v1 .card-title,
+.gadget-v1 h1, .gadget-v1 h2, .gadget-v1 h3 {
+  color: var(--gadget-text);
+}
+
+.gadget-v1 .text-muted {
+  color: var(--gadget-muted) !important;
+}
+
+.gadget-v1 .border-bottom,
+.gadget-v1 .border-top {
+  border-color: var(--gadget-border) !important;
+}
+
+.gadget-v1 .form-control,
+.gadget-v1 .form-select {
+  background: var(--gadget-bg);
+  border-color: var(--gadget-border);
+  color: var(--gadget-text);
+}
+
+.gadget-v1 .form-control:focus,
+.gadget-v1 .form-select:focus {
+  border-color: var(--gadget-accent);
+  box-shadow: 0 0 0 0.2rem rgba(0, 212, 170, 0.25);
+}
+
+.gadget-v1 .badge.bg-primary,
+.gadget-v1 .gadget-badge {
+  background: var(--gadget-accent) !important;
+  color: #0d1117;
+}
+
+.gadget-v1 .link-accent {
+  color: var(--gadget-accent);
+}
+
+.gadget-v1 .link-accent:hover {
+  color: var(--gadget-accent-hover);
+}
+
+.gadget-v1 .text-accent {
+  color: var(--gadget-accent) !important;
+}
+
+.gadget-v1 .footer-gadget {
+  background: var(--gadget-surface);
+  border-top: 1px solid var(--gadget-border);
+  color: var(--gadget-muted);
+}
+
+.gadget-v1 .product-card-img {
+  background: var(--gadget-bg);
+  border: 1px solid var(--gadget-border);
+  overflow: hidden;
+}
+
+.gadget-v1 .offcanvas,
+.gadget-v1 .dropdown-menu {
+  background: var(--gadget-surface);
+  border-color: var(--gadget-border);
+}
+
+.gadget-v1 .dropdown-item {
+  color: var(--gadget-text);
+}
+
+.gadget-v1 .dropdown-item:hover {
+  background: var(--gadget-bg);
+  color: var(--gadget-accent);
+}
+
+.gadget-v1 .list-group-item {
+  background: var(--gadget-surface);
+  border-color: var(--gadget-border);
+  color: var(--gadget-text);
+}
+
+.gadget-v1 .table,
+.gadget-v1 .table th,
+.gadget-v1 .table td {
+  color: var(--gadget-text);
+  border-color: var(--gadget-border);
+}
+
+.gadget-v1 .pagination .page-link {
+  background: var(--gadget-surface);
+  border-color: var(--gadget-border);
+  color: var(--gadget-text);
+}
+
+.gadget-v1 .pagination .page-link:hover,
+.gadget-v1 .pagination .page-item.active .page-link {
+  background: var(--gadget-accent);
+  border-color: var(--gadget-accent);
+  color: #0d1117;
+}
+
+@media (max-width: 991.98px) {
+  .gadget-v1 .navbar-collapse {
+    background: var(--gadget-surface);
+    border: 1px solid var(--gadget-border);
+  }
+}

@@ -5,18 +5,21 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 class CartController extends Controller
 {
-    public function index()
+    /**
+     * Build cart items and total from session (shared by index and sidebar).
+     */
+    private function getCartData(): array
     {
         $cart = session('cart', []);
-        
+
         if (empty($cart)) {
-            return view('frontend.cart.index', ['cartItems' => [], 'total' => 0]);
+            return ['cartItems' => [], 'cartTotal' => 0];
         }
 
-        // Eager load all products at once to avoid N+1 queries
         $productIds = array_keys($cart);
         $products = Product::whereIn('id', $productIds)
             ->with('category')
@@ -24,19 +27,48 @@ class CartController extends Controller
             ->keyBy('id');
 
         $cartItems = [];
-        $total = 0;
+        $cartTotal = 0;
 
         foreach ($cart as $productId => $item) {
             $product = $products->get($productId);
             if ($product) {
                 $item['product'] = $product;
                 $item['subtotal'] = $product->final_price * $item['quantity'];
-                $total += $item['subtotal'];
+                $cartTotal += $item['subtotal'];
                 $cartItems[] = $item;
             }
         }
 
-        return view('frontend.cart.index', compact('cartItems', 'total'));
+        return ['cartItems' => $cartItems, 'cartTotal' => $cartTotal];
+    }
+
+    public function index()
+    {
+        $data = $this->getCartData();
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = View::exists("frontend.{$theme}.cart") ? "frontend.{$theme}.cart" : 'frontend.cart.index';
+        return view($view, [
+            'cartItems' => $data['cartItems'],
+            'total' => $data['cartTotal'],
+        ]);
+    }
+
+    /**
+     * Return sidebar cart HTML fragment for AJAX refresh (no page reload).
+     */
+    public function sidebar()
+    {
+        $data = $this->getCartData();
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $view = View::exists("frontend.{$theme}.partials.cart-sidebar-content")
+            ? "frontend.{$theme}.partials.cart-sidebar-content"
+            : 'frontend.partials.cart-sidebar-content';
+        $html = view($view, [
+            'cartItems' => $data['cartItems'],
+            'cartTotal' => $data['cartTotal'],
+        ])->render();
+
+        return response($html)->header('Content-Type', 'text/html; charset=UTF-8');
     }
 
     public function add(Request $request, Product $product)
@@ -93,13 +125,22 @@ class CartController extends Controller
         return back()->with('success', 'Cart updated successfully.');
     }
 
-    public function remove(Product $product)
+    public function remove(Request $request, Product $product)
     {
         $cart = session('cart', []);
 
         if (isset($cart[$product->id])) {
             unset($cart[$product->id]);
             session(['cart' => $cart]);
+        }
+
+        $cartCount = count($cart);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Product removed from cart.',
+                'cartCount' => $cartCount,
+            ]);
         }
 
         return back()->with('success', 'Product removed from cart.');

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Frontend\HomeController;
+use App\Http\Controllers\Frontend\PageController;
 use App\Http\Controllers\Frontend\ProductController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\CheckoutController;
@@ -12,6 +13,8 @@ require __DIR__.'/admin.php';
 
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
@@ -21,14 +24,15 @@ Route::get('/subcategory/{subCategory:slug}', [ProductController::class, 'subCat
 // Cart Routes
 Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::get('/sidebar', [CartController::class, 'sidebar'])->name('sidebar');
     Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
     Route::put('/update/{product}', [CartController::class, 'update'])->name('update');
     Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
 });
 
-// Checkout Routes
-Route::middleware('auth')->prefix('checkout')->name('checkout.')->group(function () {
+// Checkout Routes (guest checkout allowed)
+Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
     Route::post('/', [CheckoutController::class, 'store'])->name('store');
 });
