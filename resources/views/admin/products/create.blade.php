@@ -30,49 +30,7 @@
                         @enderror
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
-                                <select class="form-select @error('category_id') is-invalid @enderror" 
-                                        id="category_id" name="category_id" required>
-                                    <option value="">Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="sub_category_id" class="form-label">Sub Category</label>
-                                <select class="form-select @error('sub_category_id') is-invalid @enderror" 
-                                        id="sub_category_id" name="sub_category_id">
-                                    <option value="">Select Sub Category</option>
-                                </select>
-                                @error('sub_category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="child_category_id" class="form-label">Child Category</label>
-                                <select class="form-select @error('child_category_id') is-invalid @enderror" 
-                                        id="child_category_id" name="child_category_id">
-                                    <option value="">Select Child Category</option>
-                                </select>
-                                @error('child_category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
+                    @include('admin.products.partials.category-picker')
 
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
@@ -95,6 +53,7 @@
                         @enderror
                     </div>
 
+                    @if(compare_price_enabled())
                     <div class="mb-3">
                         <label for="compare_price" class="form-label">Compare Price (MRP)</label>
                         <input type="number" step="0.01" class="form-control @error('compare_price') is-invalid @enderror" 
@@ -104,6 +63,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    @endif
 
                     <div class="mb-3">
                         <label for="discount_percentage" class="form-label">Discount Percentage (%)</label>
@@ -198,103 +158,16 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const categorySelect = document.getElementById('category_id');
-    const subCategorySelect = document.getElementById('sub_category_id');
-    const childCategorySelect = document.getElementById('child_category_id');
-    
-    if (categorySelect) {
-        categorySelect.addEventListener('change', function() {
-            const categoryId = this.value;
-            
-            subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-            childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-            subCategorySelect.disabled = !categoryId;
-            childCategorySelect.disabled = true;
-            
-            if (categoryId) {
-                fetch(`/admin/categories/${categoryId}/subcategories`)
-                    .then(response => response.json())
-                    .then(data => {
-                        subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-                        if (data.length > 0) {
-                            data.forEach(subCategory => {
-                                const option = document.createElement('option');
-                                option.value = subCategory.id;
-                                option.textContent = subCategory.name;
-                                subCategorySelect.appendChild(option);
-                            });
-                        } else {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No subcategories available';
-                            option.disabled = true;
-                            subCategorySelect.appendChild(option);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        subCategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
-                    });
-            } else {
-                subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-            }
-        });
-        
-        // Trigger change on page load if category is pre-selected
-        if (categorySelect.value) {
-            categorySelect.dispatchEvent(new Event('change'));
-        }
-    }
-    
-    if (subCategorySelect) {
-        subCategorySelect.addEventListener('change', function() {
-            const subCategoryId = this.value;
-            
-            childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-            childCategorySelect.disabled = !subCategoryId;
-            
-            if (subCategoryId) {
-                fetch(`/admin/subcategories/${subCategoryId}/childcategories`)
-                    .then(response => response.json())
-                    .then(data => {
-                        childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-                        if (data.length > 0) {
-                            data.forEach(childCategory => {
-                                const option = document.createElement('option');
-                                option.value = childCategory.id;
-                                option.textContent = childCategory.name;
-                                childCategorySelect.appendChild(option);
-                            });
-                        } else {
-                            const option = document.createElement('option');
-                            option.value = '';
-                            option.textContent = 'No child categories available';
-                            option.disabled = true;
-                            childCategorySelect.appendChild(option);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        childCategorySelect.innerHTML = '<option value="">Error loading child categories</option>';
-                    });
-            } else {
-                childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-            }
-        });
-    }
-    
-    // Discount percentage calculation
     const priceInput = document.getElementById('price');
     const comparePriceInput = document.getElementById('compare_price');
     const discountPercentageInput = document.getElementById('discount_percentage');
-    const discountPriceInput = document.getElementById('discount_price');
-    
+
     function calculateDiscountPrice() {
-        const priceVal = parseFloat(priceInput.value) || 0; // base on price only
+        const priceVal = parseFloat(priceInput.value) || 0;
         const discountPercentage = parseFloat(discountPercentageInput.value) || 0;
         const discountPriceDisplay = document.getElementById('discount_price_display');
         const discountPriceHidden = document.getElementById('discount_price');
-        
+
         if (priceVal > 0 && discountPercentage > 0 && discountPercentage <= 100) {
             const discountAmount = (priceVal * discountPercentage) / 100;
             const finalPriceValue = (priceVal - discountAmount).toFixed(2);
@@ -305,15 +178,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (discountPriceHidden) discountPriceHidden.value = '';
         }
     }
-    
+
     if (comparePriceInput) {
         comparePriceInput.addEventListener('input', calculateDiscountPrice);
     }
-    
     if (priceInput) {
         priceInput.addEventListener('input', calculateDiscountPrice);
     }
-    
     if (discountPercentageInput) {
         discountPercentageInput.addEventListener('input', calculateDiscountPrice);
     }

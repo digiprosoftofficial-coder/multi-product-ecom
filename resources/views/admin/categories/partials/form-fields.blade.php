@@ -1,13 +1,38 @@
 @php
     $isEdit = !empty($category);
     $submitted = $isEdit
-        ? old('_method') === 'PUT' && (string) old('edit_category_id') === (string) $category->id
-        : old('_method') !== 'PUT';
+        ? old('form_type') === 'edit_category' && (string) old('edit_category_id') === (string) $category->id
+        : old('form_type') === 'create_category';
     $name = $submitted ? old('name', $isEdit ? $category->name : '') : ($isEdit ? $category->name : '');
     $description = $submitted ? old('description', $isEdit ? $category->description : '') : ($isEdit ? $category->description : '');
     $status = (string) ($submitted ? old('status', $isEdit ? $category->status : '1') : ($isEdit ? $category->status : '1'));
-    $fieldId = $isEdit ? $category->id : 'create';
+    $parentId = (string) ($submitted
+        ? old('parent_id', $isEdit ? $category->parent_id : ($defaultParentId ?? ''))
+        : ($isEdit ? $category->parent_id : ($defaultParentId ?? '')));
+    $fieldId = $isEdit ? 'cat-'.$category->id : 'cat-create';
+    $parentOptions = $eligibleParents ?? collect();
 @endphp
+
+<div class="mb-3">
+    <label for="parent_id-{{ $fieldId }}" class="form-label">Parent category</label>
+    <select class="form-select @error('parent_id') {{ $submitted ? 'is-invalid' : '' }} @enderror"
+            id="parent_id-{{ $fieldId }}" name="parent_id">
+        <option value="">None (main category)</option>
+        @foreach($parentOptions as $parentOption)
+            @if(!$isEdit || (int) $parentOption->id !== (int) $category->id)
+                <option value="{{ $parentOption->id }}" {{ (string) $parentOption->id === $parentId ? 'selected' : '' }}>
+                    {{ $parentOption->path_name ?? $parentOption->name }}
+                </option>
+            @endif
+        @endforeach
+    </select>
+    <div class="form-text">Leave empty for a top-level category. You can only add a child if the parent has no products and is under max depth.</div>
+    @if($submitted)
+        @error('parent_id')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    @endif
+</div>
 
 <div class="mb-3">
     <label for="name-{{ $fieldId }}" class="form-label">Name <span class="text-danger">*</span></label>
@@ -46,7 +71,7 @@
     <label for="image-{{ $fieldId }}" class="form-label">{{ $isEdit ? 'New Image' : 'Image' }}</label>
     <input type="file" class="form-control @error('image') {{ $submitted ? 'is-invalid' : '' }} @enderror"
            id="image-{{ $fieldId }}" name="image" accept=".jpg,.jpeg,.png,.gif,.webp,image/webp">
-    <div class="form-text">JPG, PNG, GIF or WebP. Max 2MB.</div>
+    <div class="form-text">JPG, PNG, GIF or WebP. Max 2MB. Every category level can have an image.</div>
     @if($submitted)
         @error('image')
             <div class="invalid-feedback d-block">{{ $message }}</div>

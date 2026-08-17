@@ -18,6 +18,7 @@ class CategoryFactory extends Factory
             'slug' => Str::slug($name),
             'description' => $this->faker->sentence(),
             'status' => 1,
+            'parent_id' => null,
             'image' => null,
         ];
     }

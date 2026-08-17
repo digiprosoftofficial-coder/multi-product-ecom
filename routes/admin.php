@@ -2,8 +2,6 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\SubCategoryController;
-use App\Http\Controllers\Admin\ChildCategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -14,15 +12,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     // Categories
+    Route::get('categories/children', [CategoryController::class, 'children'])->name('categories.children');
     Route::resource('categories', CategoryController::class);
-    Route::get('categories/{category}/subcategories', [CategoryController::class, 'getSubcategories'])->name('categories.subcategories');
-    
-    // Subcategories
-    Route::resource('subcategories', SubCategoryController::class);
-    Route::get('subcategories/{subcategory}/childcategories', [SubCategoryController::class, 'getChildCategories'])->name('subcategories.childcategories');
-    
-    // Child Categories
-    Route::resource('childcategories', ChildCategoryController::class);
     
     // Products
     Route::resource('products', ProductController::class);

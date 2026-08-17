@@ -16,9 +16,9 @@
             <p class="card-text text-muted small">{{ Str::limit($category->description, 100) }}</p>
         @endif
         
-        @if($category->subCategories->count() > 0)
+        @if($category->children->count() > 0)
             <p class="text-muted small mb-2">
-                <i class="fas fa-tags"></i> {{ $category->subCategories->count() }} subcategories
+                <i class="fas fa-tags"></i> {{ $category->children->count() }} subcategories
             </p>
         @endif
         

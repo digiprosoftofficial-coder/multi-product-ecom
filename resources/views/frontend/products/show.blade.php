@@ -54,12 +54,12 @@
                 @if($product->discount_price)
                     <span class="text-danger fw-bold fs-3">${{ number_format($product->discount_price, 2) }}</span>
                     <span class="text-muted text-decoration-line-through ms-2 fs-5">${{ number_format($product->price, 2) }}</span>
-                    @if($product->compare_price)
+                    @if(compare_price_enabled() && $product->compare_price)
                         <!-- <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->compare_price, 2) }}</span> -->
                     @endif
                 @else
                     <span class="fw-bold fs-3">${{ number_format($product->price, 2) }}</span>
-                    @if($product->compare_price)
+                    @if(compare_price_enabled() && $product->compare_price)
                         <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->compare_price, 2) }}</span>
                     @endif
                 @endif
@@ -73,10 +73,7 @@
             @endif
 
             <div class="mb-3">
-                <p><strong>Category:</strong> {{ $product->category->name ?? '-' }}</p>
-                @if($product->subCategory)
-                    <p><strong>Sub Category:</strong> {{ $product->subCategory->name }}</p>
-                @endif
+                <p><strong>Category:</strong> {{ $product->category?->pathName() ?? '-' }}</p>
                 <p><strong>Stock:</strong> 
                     @if($product->isInStock())
                         <span class="text-success">{{ $product->stock }} available</span>

@@ -13,9 +13,9 @@ class HomeController extends Controller
     {
         // Load active categories with their active subcategories for the Organic v1 homepage
         $categories = Category::where('status', 1)
-            ->with(['subCategories' => function ($query) {
-                $query->where('status', 1)
-                    ->orderBy('name');
+            ->whereNull('parent_id')
+            ->with(['children' => function ($query) {
+                $query->where('status', 1)->orderBy('name');
             }])
             ->orderBy('name')
             ->get();

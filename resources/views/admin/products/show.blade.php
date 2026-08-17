@@ -68,27 +68,12 @@
                         <h6 class="fw-bold mb-3">Product Information</h6>
                         
                         <div class="row mb-3">
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Category:</strong> 
-                                    <span class="badge bg-info">{{ $product->category->name ?? 'N/A' }}</span>
-                                </p>
-                            </div>
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Subcategory:</strong> 
-                                    <span class="badge bg-secondary">{{ $product->subCategory->name ?? 'N/A' }}</span>
+                            <div class="col-md-12">
+                                <p class="mb-1"><strong>Category:</strong>
+                                    <span class="badge bg-info">{{ $product->category?->pathName() ?? 'N/A' }}</span>
                                 </p>
                             </div>
                         </div>
-
-                        @if($product->childCategory)
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <p class="mb-1"><strong>Child Category:</strong> 
-                                    <span class="badge bg-success">{{ $product->childCategory->name }}</span>
-                                </p>
-                            </div>
-                        </div>
-                        @endif
 
                         <div class="row mb-3">
                             <div class="col-md-4">
@@ -96,7 +81,7 @@
                                     <span class="text-success fw-bold">${{ number_format($product->price, 2) }}</span>
                                 </p>
                             </div>
-                            @if($product->compare_price)
+                            @if(compare_price_enabled() && $product->compare_price)
                             <div class="col-md-4">
                                 <p class="mb-1"><strong>Compare Price:</strong> 
                                     <span class="text-decoration-line-through text-muted">${{ number_format($product->compare_price, 2) }}</span>

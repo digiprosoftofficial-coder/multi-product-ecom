@@ -3,10 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
-use App\Models\ChildCategory;
 use App\Models\Product;
-use App\Models\SubCategory;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Str;
 
 class CatalogSeeder extends Seeder
 {
@@ -143,46 +142,21 @@ class CatalogSeeder extends Seeder
         $productCount = 0;
 
         foreach ($tree as $categoryData) {
-            $category = Category::firstOrCreate(
-                ['slug' => \Illuminate\Support\Str::slug($categoryData['name'])],
-                [
-                    'name' => $categoryData['name'],
-                    'description' => $categoryData['description'],
-                    'status' => 1,
-                ]
-            );
+            $category = $this->upsertCategory($categoryData['name'], $categoryData['description'], null);
 
             foreach ($categoryData['subs'] as $subData) {
-                $sub = SubCategory::firstOrCreate(
-                    ['slug' => \Illuminate\Support\Str::slug($subData['name'])],
-                    [
-                        'name' => $subData['name'],
-                        'category_id' => $category->id,
-                        'description' => $subData['name'].' under '.$category->name,
-                        'status' => 1,
-                    ]
-                );
+                $sub = $this->upsertCategory($subData['name'], $subData['name'].' under '.$category->name, $category->id);
 
                 foreach ($subData['children'] as $childData) {
-                    $child = ChildCategory::firstOrCreate(
-                        ['slug' => \Illuminate\Support\Str::slug($childData['name'])],
-                        [
-                            'name' => $childData['name'],
-                            'sub_category_id' => $sub->id,
-                            'description' => $childData['name'].' under '.$sub->name,
-                            'status' => 1,
-                        ]
-                    );
+                    $child = $this->upsertCategory($childData['name'], $childData['name'].' under '.$sub->name, $sub->id);
 
                     foreach ($childData['products'] as $productData) {
                         Product::firstOrCreate(
                             ['sku' => $productData['sku']],
                             [
                                 'name' => $productData['name'],
-                                'slug' => \Illuminate\Support\Str::slug($productData['name']),
-                                'category_id' => $category->id,
-                                'sub_category_id' => $sub->id,
-                                'child_category_id' => $child->id,
+                                'slug' => Str::slug($productData['name']),
+                                'category_id' => $child->id,
                                 'description' => $productData['description'],
                                 'price' => $productData['price'],
                                 'compare_price' => $productData['compare'],
@@ -199,6 +173,19 @@ class CatalogSeeder extends Seeder
             }
         }
 
-        $this->command->info("Catalog seeded: 3 categories, 6 subcategories, 12 child categories, {$productCount} products.");
+        $this->command->info("Catalog seeded: nested category tree with {$productCount} products on leaf categories.");
+    }
+
+    private function upsertCategory(string $name, ?string $description, ?int $parentId): Category
+    {
+        return Category::firstOrCreate(
+            ['slug' => Str::slug($name)],
+            [
+                'name' => $name,
+                'parent_id' => $parentId,
+                'description' => $description,
+                'status' => 1,
+            ]
+        );
     }
 }

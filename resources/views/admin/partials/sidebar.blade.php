@@ -11,12 +11,6 @@
             <a class="nav-link text-white {{ request()->routeIs('admin.categories.*') ? 'bg-primary' : '' }}" href="{{ route('admin.categories.index') }}">
                 <i class="fas fa-folder"></i> Categories
             </a>
-            <a class="nav-link text-white {{ request()->routeIs('admin.subcategories.*') ? 'bg-primary' : '' }}" href="{{ route('admin.subcategories.index') }}">
-                <i class="fas fa-folder-open"></i> Subcategories
-            </a>
-            <a class="nav-link text-white {{ request()->routeIs('admin.childcategories.*') ? 'bg-primary' : '' }}" href="{{ route('admin.childcategories.index') }}">
-                <i class="fas fa-tags"></i> Child Categories
-            </a>
             <a class="nav-link text-white {{ request()->routeIs('admin.products.*') ? 'bg-primary' : '' }}" href="{{ route('admin.products.index') }}">
                 <i class="fas fa-box"></i> Products
             </a>

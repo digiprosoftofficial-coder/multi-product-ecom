@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Intervention\Image\ImageManager;
@@ -19,6 +20,8 @@ class SettingsController extends Controller
             'footer_text' => Setting::get('footer_text', ''),
             'tax_rate' => Setting::get('tax_rate', '0'),
             'vat_rate' => Setting::get('vat_rate', '0'),
+            'category_max_depth' => Setting::get('category_max_depth', '3'),
+            'enable_compare_price' => Setting::get('enable_compare_price', '1'),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -32,12 +35,26 @@ class SettingsController extends Controller
             'footer_text' => 'nullable|string',
             'tax_rate' => 'nullable|numeric|min:0|max:100',
             'vat_rate' => 'nullable|numeric|min:0|max:100',
+            'category_max_depth' => 'required|integer|in:0,2,3,4,5,6',
+            'enable_compare_price' => 'nullable|in:0,1',
         ]);
 
         Setting::set('site_name', $validated['site_name']);
         Setting::set('footer_text', $validated['footer_text'] ?? '');
         Setting::set('tax_rate', $validated['tax_rate'] ?? '0');
         Setting::set('vat_rate', $validated['vat_rate'] ?? '0');
+        Setting::set('enable_compare_price', $request->boolean('enable_compare_price') ? '1' : '0');
+
+        $newMax = (int) $validated['category_max_depth'];
+        $currentMax = Category::currentTreeMaxDepth();
+        if ($newMax > 0 && $newMax < $currentMax) {
+            return redirect()->route('admin.settings.index')
+                ->withInput()
+                ->withErrors([
+                    'category_max_depth' => "Cannot set max depth to {$newMax}. The current category tree already goes {$currentMax} levels deep.",
+                ]);
+        }
+        Setting::set('category_max_depth', (string) $newMax);
 
         // Handle logo upload
         if ($request->hasFile('site_logo')) {

@@ -2,6 +2,8 @@
     $openModalId = null;
     if ($errors->any()) {
         $openModalId = match (old('form_type')) {
+            'create_category' => 'createCategoryModal',
+            'edit_category' => old('edit_category_id') ? 'editCategoryModal'.((int) old('edit_category_id')) : null,
             'create_subcategory' => 'createSubcategoryModal',
             'edit_subcategory' => old('edit_subcategory_id') ? 'editSubcategoryModal'.((int) old('edit_subcategory_id')) : null,
             'create_childcategory' => 'createChildCategoryModal',

@@ -7,15 +7,22 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h5 class="mb-1">{{ $category->name }}</h5>
-        <span class="badge bg-secondary">ID: {{ $category->id }}</span>
+        <span class="badge bg-secondary">{{ $category->pathName() }}</span>
+        <span class="badge bg-{{ $category->status ? 'success' : 'danger' }}">{{ $category->status ? 'Active' : 'Inactive' }}</span>
+        @if($category->isLeaf())
+            <span class="badge bg-info">Leaf — products go here</span>
+        @endif
     </div>
     <div class="d-flex gap-2">
         <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editCategoryModal{{ $category->id }}">
             <i class="fas fa-edit"></i> Edit
         </button>
-        <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary btn-sm">
-            Back
-        </a>
+        @if($category->canAddChild($parentMap, $category->products()->count()))
+            <button type="button" class="btn btn-success btn-sm add-child-btn" data-bs-toggle="modal" data-bs-target="#createCategoryModal" data-parent-id="{{ $category->id }}">
+                <i class="fas fa-plus"></i> Add child
+            </button>
+        @endif
+        <a href="{{ route('admin.categories.index') }}" class="btn btn-secondary btn-sm">Back</a>
     </div>
 </div>
 
@@ -24,158 +31,84 @@
         <div class="card h-100">
             <div class="card-body">
                 <h6 class="fw-bold mb-3">Summary</h6>
-                
                 @if($category->image)
                     <div class="mb-3 text-center">
-                        <img src="{{ asset('uploads/categories/medium/' . $category->image) }}" 
-                             alt="{{ $category->name }}" 
+                        <img src="{{ asset('uploads/categories/medium/' . $category->image) }}"
+                             alt="{{ $category->name }}"
                              class="img-fluid rounded"
-                             style="max-width: 100%; height: auto; max-height: 300px; object-fit: cover;">
-                    </div>
-                @else
-                    <div class="mb-3 text-center bg-light rounded p-4">
-                        <i class="fas fa-image fa-3x text-muted"></i>
-                        <p class="text-muted small mt-2 mb-0">No Image</p>
+                             style="max-height: 240px; object-fit: cover;">
                     </div>
                 @endif
-                
-                <p class="mb-1"><strong>Subcategories:</strong> {{ $category->subCategories->count() }}</p>
-                @php
-                    $totalChildCategories = $category->subCategories->flatMap->childCategories->count();
-                @endphp
-                <p class="mb-1"><strong>Child Categories:</strong> {{ $totalChildCategories }}</p>
-                <p class="mb-1"><strong>Products:</strong> {{ $category->products->count() }}</p>
-                <p class="mb-1"><strong>Status:</strong>
-                    <span class="badge bg-{{ $category->status ? 'success' : 'danger' }}">
-                        {{ $category->status ? 'Active' : 'Inactive' }}
-                    </span>
-                </p>
+                @if($category->parent)
+                    <p class="mb-1"><strong>Parent:</strong> {{ $category->parent->name }}</p>
+                @endif
+                <p class="mb-1"><strong>Children:</strong> {{ $category->children->count() }}</p>
+                <p class="mb-1"><strong>Products in this branch:</strong> {{ $products->total() }}</p>
                 @if($category->description)
                     <p class="mt-3 text-muted">{{ $category->description }}</p>
                 @endif
             </div>
         </div>
     </div>
-
-    <div class="col-md-4">
-        <div class="card h-100">
+    <div class="col-md-8">
+        <div class="card mb-4">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0">Subcategories ({{ $category->subCategories->count() }})</h6>
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createSubcategoryModal">Add Subcategory</button>
-                </div>
-                @forelse($category->subCategories as $sub)
+                <h6 class="fw-bold mb-3">Child categories</h6>
+                @forelse($category->children as $child)
                     <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
-                        <div>
-                            <div class="fw-semibold">{{ $sub->name }}</div>
-                            <small class="text-muted">Status: {{ $sub->status ? 'Active' : 'Inactive' }}</small>
+                        <div class="d-flex align-items-center gap-2">
+                            @if($child->image)
+                                <img src="{{ asset('uploads/categories/thumbnails/' . $child->image) }}" alt="" style="width:32px;height:32px;object-fit:cover;" class="rounded">
+                            @endif
+                            <div>
+                                <div class="fw-semibold">{{ $child->name }}</div>
+                                <small class="text-muted">{{ $child->children_count }} children · {{ $child->products_count }} products</small>
+                            </div>
                         </div>
-                        <form action="{{ route('admin.subcategories.destroy', ['subcategory' => $sub->id]) }}" method="POST" onsubmit="return confirm('Delete subcategory {{ $sub->name }}?')" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        <a href="{{ route('admin.categories.show', $child) }}" class="btn btn-sm btn-info text-white"><i class="fas fa-eye"></i></a>
                     </div>
                 @empty
-                    <p class="text-muted mb-0">No subcategories found.</p>
+                    <p class="text-muted mb-0">No child categories. {{ $category->isLeaf() ? 'This is a leaf — assign products here.' : '' }}</p>
                 @endforelse
             </div>
         </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    @php
-                        $allChildCategories = $category->subCategories->flatMap->childCategories;
-                        $totalChildCategories = $allChildCategories->count();
-                    @endphp
-                    <h6 class="fw-bold mb-0">Child Categories ({{ $totalChildCategories }})</h6>
-                    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#createChildCategoryModal">Add Child Category</button>
-                </div>
-                @if($totalChildCategories > 0)
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        @foreach($category->subCategories as $subCategory)
-                            @if($subCategory->childCategories->count() > 0)
-                                <div class="mb-3">
-                                    <h6 class="fw-semibold mb-2 small">
-                                        <span class="badge bg-info">{{ $subCategory->name }}</span>
-                                    </h6>
-                                    @foreach($subCategory->childCategories as $childCategory)
-                                        <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
-                                            <div>
-                                                <div class="fw-semibold small">{{ $childCategory->name }}</div>
-                                                <small class="text-muted">
-                                                    Products: {{ $childCategory->products_count ?? 0 }} | 
-                                                    Status: 
-                                                    <span class="badge bg-{{ $childCategory->status ? 'success' : 'danger' }} badge-sm">
-                                                        {{ $childCategory->status ? 'Active' : 'Inactive' }}
-                                                    </span>
-                                                </small>
-                                            </div>
-                                            <a href="{{ route('admin.childcategories.show', ['childcategory' => $childCategory->id]) }}" class="btn btn-sm btn-info text-white">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-muted mb-0">No child categories found.</p>
-                @endif
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row g-4 mt-2">
-    <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="fw-bold mb-0">Products ({{ $category->products->count() }})</h6>
-                    <a href="{{ route('admin.products.create') }}" class="btn btn-sm btn-outline-primary">Add Product</a>
-                </div>
-                @forelse($category->products as $product)
+                <h6 class="fw-bold mb-3">Products</h6>
+                @forelse($products as $product)
                     <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
                         <div>
                             <div class="fw-semibold">{{ $product->name }}</div>
                             <small class="text-muted">SKU: {{ $product->sku }}</small>
                         </div>
-                        <form action="{{ route('admin.products.destroy', $product) }}" method="POST" onsubmit="return confirm('Delete product {{ $product->name }}?')" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <input type="hidden" name="redirect" value="{{ url()->current() }}">
-                            <button type="submit" class="btn btn-sm btn-danger">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </form>
+                        <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary"><i class="fas fa-edit"></i></a>
                     </div>
                 @empty
-                    <p class="text-muted mb-0">No products found.</p>
+                    <p class="text-muted mb-0">No products in this branch.</p>
                 @endforelse
+                <div class="mt-3">{{ $products->links() }}</div>
             </div>
         </div>
     </div>
 </div>
 
-@include('admin.categories.partials.edit-modal', ['category' => $category])
-@include('admin.subcategories.partials.create-modal', [
-    'categories' => $categories,
-    'defaultCategoryId' => $category->id,
-])
-@include('admin.childcategories.partials.create-modal', [
-    'subCategories' => $category->subCategories,
-    'defaultSubCategoryId' => null,
-])
+@include('admin.categories.partials.create-modal', ['eligibleParents' => $eligibleParents, 'defaultParentId' => $category->id])
+@include('admin.categories.partials.edit-modal', ['category' => $category, 'eligibleParents' => $eligibleParents])
 @endsection
 
 @push('scripts')
     @include('admin.partials.open-form-modal')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var createModal = document.getElementById('createCategoryModal');
+            if (!createModal) return;
+            createModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var parentSelect = createModal.querySelector('[name="parent_id"]');
+                if (!parentSelect) return;
+                var parentId = button && button.getAttribute('data-parent-id') ? button.getAttribute('data-parent-id') : '{{ $category->id }}';
+                parentSelect.value = parentId;
+            });
+        });
+    </script>
 @endpush
-

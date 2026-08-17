@@ -19,7 +19,9 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');
 Route::get('/category/{category:slug}', [ProductController::class, 'category'])->name('products.category');
-Route::get('/subcategory/{subCategory:slug}', [ProductController::class, 'subCategory'])->name('products.subcategory');
+Route::get('/subcategory/{slug}', function (string $slug) {
+    return redirect()->route('products.category', $slug);
+});
 
 // Cart Routes
 Route::prefix('cart')->name('cart.')->group(function () {

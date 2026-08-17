@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\SubCategory;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
@@ -17,34 +16,43 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::with('category', 'subCategory');
+        $query = Product::with('category');
 
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('sku', 'like', '%' . $request->search . '%');
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('sku', 'like', '%'.$search.'%');
+            });
         }
 
-        if ($request->has('category_id')) {
+        if ($request->filled('category_id')) {
             $query->where('category_id', $request->category_id);
         }
 
-        if ($request->has('status')) {
+        if ($request->has('status') && $request->status !== '') {
             $query->where('status', $request->status);
         }
 
-        $products = $query->latest()->paginate(15);
-        $categories = Category::where('status', 1)->orderBy('name')->get();
+        $products = $query->latest()->paginate(15)->withQueryString();
+        $categories = Category::leafSelectOptions();
         $totalProducts = Product::count();
+
+        if ($request->ajax()) {
+            return response()
+                ->view('admin.products.partials.results', compact('products'))
+                ->header('X-Products-Total', (string) $products->total())
+                ->header('X-Products-All', (string) $totalProducts);
+        }
 
         return view('admin.products.index', compact('products', 'categories', 'totalProducts'));
     }
 
     public function create()
     {
-        $categories = Category::where('status', 1)
-            ->orderBy('name')
-            ->get();
-        return view('admin.products.create', compact('categories'));
+        $categoryPickerLevels = Category::pickerLevels(old('category_id') ? (int) old('category_id') : null);
+
+        return view('admin.products.create', compact('categoryPickerLevels'));
     }
 
     public function store(Request $request)
@@ -52,9 +60,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|unique:products,sku',
-            'category_id' => 'required|exists:categories,id',
-            'sub_category_id' => 'nullable|exists:subcategories,id',
-            'child_category_id' => 'nullable|exists:child_categories,id',
+            'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
@@ -85,6 +91,10 @@ class ProductController extends Controller
 
         // Remove discount_percentage from validated as it's not a database field
         unset($validated['discount_percentage']);
+
+        if (! compare_price_enabled()) {
+            $validated['compare_price'] = null;
+        }
 
         $validated['slug'] = Str::slug($validated['name']);
 
@@ -133,8 +143,6 @@ class ProductController extends Controller
     {
         $product->load([
             'category',
-            'subCategory',
-            'childCategory',
             'images' => function ($q) {
                 $q->orderBy('sort_order');
             },
@@ -146,13 +154,11 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $product->load('images');
-        $categories = Category::where('status', 1)->orderBy('name')->get();
-        $subCategories = SubCategory::where('category_id', $product->category_id)
-            ->where('status', 1)
-            ->orderBy('name')
-            ->get();
+        $categoryPickerLevels = Category::pickerLevels(
+            old('category_id', $product->category_id) ? (int) old('category_id', $product->category_id) : null
+        );
 
-        return view('admin.products.edit', compact('product', 'categories', 'subCategories'));
+        return view('admin.products.edit', compact('product', 'categoryPickerLevels'));
     }
 
     public function update(Request $request, Product $product)
@@ -160,9 +166,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|unique:products,sku,' . $product->id,
-            'category_id' => 'required|exists:categories,id',
-            'sub_category_id' => 'nullable|exists:subcategories,id',
-            'child_category_id' => 'nullable|exists:child_categories,id',
+            'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
@@ -192,6 +196,10 @@ class ProductController extends Controller
 
         // Remove discount_percentage from validated as it's not a database field
         unset($validated['discount_percentage']);
+
+        if (! compare_price_enabled()) {
+            unset($validated['compare_price']);
+        }
 
         $validated['slug'] = Str::slug($validated['name']);
 
@@ -268,6 +276,16 @@ class ProductController extends Controller
         $productImage->delete();
 
         return back()->with('success', 'Image deleted successfully.');
+    }
+
+    private function leafCategoryRule(): \Closure
+    {
+        return function (string $attribute, mixed $value, \Closure $fail) {
+            $category = Category::find($value);
+            if ($category && ! $category->isLeaf()) {
+                $fail('Products can only be assigned to a last-level category. Add children first, then put products on the deepest category.');
+            }
+        };
     }
 
     private function ensureDirectoriesExist(string $type): void

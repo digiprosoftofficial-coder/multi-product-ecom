@@ -16,8 +16,6 @@ class Product extends Model
         'slug',
         'sku',
         'category_id',
-        'sub_category_id',
-        'child_category_id',
         'description',
         'price',
         'compare_price',
@@ -60,16 +58,6 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
-    }
-
-    public function subCategory(): BelongsTo
-    {
-        return $this->belongsTo(SubCategory::class, 'sub_category_id');
-    }
-
-    public function childCategory(): BelongsTo
-    {
-        return $this->belongsTo(ChildCategory::class, 'child_category_id');
     }
 
     public function images(): HasMany

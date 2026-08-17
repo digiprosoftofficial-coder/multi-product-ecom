@@ -73,6 +73,42 @@
                 </div>
             </div>
 
+            <div class="mb-3">
+                <label for="category_max_depth" class="form-label">Category max depth</label>
+                <select class="form-select @error('category_max_depth') is-invalid @enderror" id="category_max_depth" name="category_max_depth">
+                    @php $depth = (string) old('category_max_depth', $settings['category_max_depth']); @endphp
+                    <option value="2" {{ $depth === '2' ? 'selected' : '' }}>2 levels</option>
+                    <option value="3" {{ $depth === '3' ? 'selected' : '' }}>3 levels</option>
+                    <option value="4" {{ $depth === '4' ? 'selected' : '' }}>4 levels</option>
+                    <option value="5" {{ $depth === '5' ? 'selected' : '' }}>5 levels</option>
+                    <option value="6" {{ $depth === '6' ? 'selected' : '' }}>6 levels</option>
+                    <option value="0" {{ $depth === '0' ? 'selected' : '' }}>Unlimited</option>
+                </select>
+                <div class="form-text">How deep the category tree can go (child of child, and so on). Products can only be placed on the last level. Every level can have an image.</div>
+                @error('category_max_depth')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                @php $compareOn = (string) old('enable_compare_price', $settings['enable_compare_price']) === '1'; @endphp
+                <div class="form-check form-switch">
+                    <input type="hidden" name="enable_compare_price" value="0">
+                    <input class="form-check-input @error('enable_compare_price') is-invalid @enderror"
+                           type="checkbox"
+                           role="switch"
+                           id="enable_compare_price"
+                           name="enable_compare_price"
+                           value="1"
+                           {{ $compareOn ? 'checked' : '' }}>
+                    <label class="form-check-label" for="enable_compare_price">Enable compare price (MRP)</label>
+                </div>
+                <div class="form-text">When off, the Compare Price field is hidden on add/edit product forms and is not shown on the storefront.</div>
+                @error('enable_compare_price')
+                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                @enderror
+            </div>
+
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Update Settings</button>
             </div>

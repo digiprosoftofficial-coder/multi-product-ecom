@@ -41,59 +41,7 @@
                         @enderror
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="category_id" class="form-label">Category <span class="text-danger">*</span></label>
-                                <select class="form-select @error('category_id') is-invalid @enderror" 
-                                        id="category_id" name="category_id" required>
-                                    <option value="">Select Category</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" 
-                                            {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
-                                            {{ $category->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="sub_category_id" class="form-label">Sub Category</label>
-                                <select class="form-select @error('sub_category_id') is-invalid @enderror" 
-                                        id="sub_category_id" name="sub_category_id">
-                                    <option value="">Select Sub Category</option>
-                                    @foreach($subCategories as $subCategory)
-                                        <option value="{{ $subCategory->id }}" 
-                                            {{ old('sub_category_id', $product->sub_category_id) == $subCategory->id ? 'selected' : '' }}>
-                                            {{ $subCategory->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('sub_category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="child_category_id" class="form-label">Child Category</label>
-                                <select class="form-select @error('child_category_id') is-invalid @enderror" 
-                                        id="child_category_id" name="child_category_id">
-                                    <option value="">Select Child Category</option>
-                                    @if($product->childCategory)
-                                        <option value="{{ $product->childCategory->id }}" selected>{{ $product->childCategory->name }}</option>
-                                    @endif
-                                </select>
-                                @error('child_category_id')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                        </div>
-                    </div>
+                    @include('admin.products.partials.category-picker')
 
                     <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
@@ -116,6 +64,7 @@
                         @enderror
                     </div>
 
+                    @if(compare_price_enabled())
                     <div class="mb-3">
                         <label for="compare_price" class="form-label">Compare Price (MRP)</label>
                         <input type="number" step="0.01" class="form-control @error('compare_price') is-invalid @enderror" 
@@ -126,6 +75,7 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
+                    @endif
 
                     <div class="mb-3">
                         <label for="discount_percentage" class="form-label">Discount Percentage (%)</label>
@@ -265,94 +215,12 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const categorySelect = document.getElementById('category_id');
-    const subCategorySelect = document.getElementById('sub_category_id');
-    const childCategorySelect = document.getElementById('child_category_id');
-    const currentSubCategoryId = {{ $product->sub_category_id ?? 'null' }};
-    const currentChildCategoryId = {{ $product->child_category_id ?? 'null' }};
-    
-    // Load subcategories when category changes
-    if (categorySelect) {
-        categorySelect.addEventListener('change', function() {
-            const categoryId = this.value;
-            
-            subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-            childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-            subCategorySelect.disabled = !categoryId;
-            childCategorySelect.disabled = true;
-            
-            if (categoryId) {
-                fetch(`/admin/categories/${categoryId}/subcategories`)
-                    .then(response => response.json())
-                    .then(data => {
-                        subCategorySelect.innerHTML = '<option value="">Select Sub Category</option>';
-                        if (data.length > 0) {
-                            data.forEach(subCategory => {
-                                const option = document.createElement('option');
-                                option.value = subCategory.id;
-                                option.textContent = subCategory.name;
-                                if (subCategory.id == currentSubCategoryId) {
-                                    option.selected = true;
-                                }
-                                subCategorySelect.appendChild(option);
-                            });
-                            if (subCategorySelect.value) {
-                                subCategorySelect.dispatchEvent(new Event('change'));
-                            }
-                        }
-                    })
-                    .catch(() => {
-                        subCategorySelect.innerHTML = '<option value="">Error loading subcategories</option>';
-                    });
-            }
-        });
-        
-        // Load subcategories on page load
-        if (categorySelect.value) {
-            categorySelect.dispatchEvent(new Event('change'));
-        }
-    }
-    
-    // Load child categories when subcategory changes
-    if (subCategorySelect) {
-        subCategorySelect.addEventListener('change', function() {
-            const subCategoryId = this.value;
-            
-            childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-            childCategorySelect.disabled = !subCategoryId;
-            
-            if (subCategoryId) {
-                fetch(`/admin/subcategories/${subCategoryId}/childcategories`)
-                    .then(response => response.json())
-                    .then(data => {
-                        childCategorySelect.innerHTML = '<option value="">Select Child Category</option>';
-                        if (data.length > 0) {
-                            data.forEach(childCategory => {
-                                const option = document.createElement('option');
-                                option.value = childCategory.id;
-                                option.textContent = childCategory.name;
-                                if (childCategory.id == currentChildCategoryId) {
-                                    option.selected = true;
-                                }
-                                childCategorySelect.appendChild(option);
-                            });
-                        }
-                    })
-                    .catch(() => {
-                        childCategorySelect.innerHTML = '<option value="">Error loading child categories</option>';
-                    });
-            }
-        });
-    }
-    
-    // Discount percentage calculation
     const priceInput = document.getElementById('price');
     const comparePriceInput = document.getElementById('compare_price');
     const discountPercentageInput = document.getElementById('discount_percentage');
     const discountPriceDisplay = document.getElementById('discount_price_display');
     const discountPriceHidden = document.getElementById('discount_price');
-    
-    // Calculate initial discount percentage from existing discount_price (base on price)
+
     @if($product->price && $product->discount_price)
         const basePriceInit = {{ $product->price }};
         const discountPriceInit = {{ $product->discount_price }};
@@ -363,15 +231,15 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
     @endif
-    
+
     function calculateDiscountPrice() {
-        if (!comparePriceInput || !priceInput || !discountPercentageInput || !discountPriceDisplay || !discountPriceHidden) {
+        if (!priceInput || !discountPercentageInput || !discountPriceDisplay || !discountPriceHidden) {
             return;
         }
-        
-        const priceVal = parseFloat(priceInput.value) || 0; // base on price only
+
+        const priceVal = parseFloat(priceInput.value) || 0;
         const discountPercentageVal = parseFloat(discountPercentageInput.value) || 0;
-        
+
         if (priceVal > 0 && discountPercentageVal > 0 && discountPercentageVal <= 100) {
             const discountAmount = (priceVal * discountPercentageVal) / 100;
             const finalPriceValue = (priceVal - discountAmount).toFixed(2);
@@ -382,15 +250,13 @@ document.addEventListener('DOMContentLoaded', function() {
             discountPriceHidden.value = '';
         }
     }
-    
+
     if (comparePriceInput) {
         comparePriceInput.addEventListener('input', calculateDiscountPrice);
     }
-    
     if (priceInput) {
         priceInput.addEventListener('input', calculateDiscountPrice);
     }
-    
     if (discountPercentageInput) {
         discountPercentageInput.addEventListener('input', calculateDiscountPrice);
     }

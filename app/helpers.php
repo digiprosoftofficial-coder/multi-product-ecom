@@ -8,3 +8,10 @@ if (!function_exists('setting')) {
         return Setting::get($key, $default);
     }
 }
+
+if (!function_exists('compare_price_enabled')) {
+    function compare_price_enabled(): bool
+    {
+        return (string) setting('enable_compare_price', '1') === '1';
+    }
+}

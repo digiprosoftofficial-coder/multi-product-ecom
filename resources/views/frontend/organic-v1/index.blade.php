@@ -56,7 +56,7 @@
         <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex flex-column gap-2 mb-0">
           @isset($categories)
               @foreach($categories as $category)
-                  @if($category->subCategories->count())
+                  @if($category->children->count())
                       <li class="nav-item border-dashed">
                         <button class="btn btn-toggle dropdown-toggle position-relative w-100 d-flex justify-content-between align-items-center text-dark p-2" data-bs-toggle="collapse" data-bs-target="#cat-{{ $category->id }}-collapse" aria-expanded="true">
                           <div class="d-flex gap-3 align-items-center">
@@ -72,17 +72,17 @@
                         </button>
                         <div class="collapse show" id="cat-{{ $category->id }}-collapse">
                           <ul class="btn-toggle-nav list-unstyled fw-normal ps-4 pb-2">
-                            @foreach($category->subCategories as $subCategory)
+                            @foreach($category->children as $child)
                                 <li class="border-bottom py-1">
-                                  <a href="{{ route('products.subcategory', $subCategory->slug) }}" class="dropdown-item d-flex align-items-center gap-2">
-                                    @if($subCategory->image_url ?? false)
-                                        <img src="{{ $subCategory->image_url }}" alt="{{ $subCategory->name }}" class="rounded-circle" style="width: 26px; height: 26px; object-fit: cover;">
+                                  <a href="{{ route('products.category', $child->slug) }}" class="dropdown-item d-flex align-items-center gap-2">
+                                    @if($child->image_url)
+                                        <img src="{{ $child->image_url }}" alt="{{ $child->name }}" class="rounded-circle" style="width: 26px; height: 26px; object-fit: cover;">
                                     @else
                                         <span class="rounded-circle bg-light d-inline-flex align-items-center justify-content-center" style="width: 26px; height: 26px;">
                                             <svg width="14" height="14" viewBox="0 0 24 24"><use xlink:href="#category"></use></svg>
                                         </span>
                                     @endif
-                                    <span>{{ $subCategory->name }}</span>
+                                    <span>{{ $child->name }}</span>
                                   </a>
                                 </li>
                             @endforeach
@@ -382,7 +382,7 @@
                                   </div>
 
                                   @php
-                                      $compare = $product->compare_price;
+                                      $compare = compare_price_enabled() ? $product->compare_price : null;
                                       $final = $product->final_price;
                                       $hasDiscount = $compare && $compare > $final;
                                       $discountPercent = $hasDiscount ? round((($compare - $final) / $compare) * 100) : null;

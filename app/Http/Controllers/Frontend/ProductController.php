@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\SubCategory;
 use App\Models\Product;
 use Illuminate\Http\Request;
 
@@ -12,25 +11,28 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Product::where('status', 1)->with('category', 'subCategory', 'images');
+        $query = Product::where('status', 1)->with('category', 'images');
 
-        if ($request->has('category')) {
-            $query->where('category_id', $request->category);
+        if ($request->filled('category')) {
+            $category = Category::find($request->category);
+            if ($category) {
+                $query->whereIn('category_id', $category->subtreeIds());
+            }
         }
 
-        if ($request->has('subcategory')) {
-            $query->where('sub_category_id', $request->subcategory);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('description', 'like', '%'.$search.'%');
+            });
         }
 
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('description', 'like', '%' . $request->search . '%');
-        }
-
-        $products = $query->paginate(12);
-        $categories = Category::where('status', 1)->get();
+        $products = $query->paginate(12)->withQueryString();
+        $categories = Category::where('status', 1)->whereNull('parent_id')->orderBy('name')->get();
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.shop") ? "frontend.{$theme}.shop" : 'frontend.products.index';
+
         return view($view, compact('products', 'categories'));
     }
 
@@ -40,7 +42,7 @@ class ProductController extends Controller
             abort(404);
         }
 
-        $product->load('category', 'subCategory', 'images');
+        $product->load('category', 'images');
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
             ->where('status', 1)
@@ -51,35 +53,27 @@ class ProductController extends Controller
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.product") ? "frontend.{$theme}.product"
             : (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.show") ? "frontend.{$theme}.products.show" : 'frontend.products.show');
+
         return view($view, compact('product', 'relatedProducts'));
     }
 
     public function category(Category $category)
     {
-        $products = Product::where('category_id', $category->id)
+        if ($category->status != 1) {
+            abort(404);
+        }
+
+        $products = Product::whereIn('category_id', $category->subtreeIds())
             ->where('status', 1)
             ->with('images')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
-        $subCategories = \App\Models\SubCategory::where('category_id', $category->id)
-            ->where('status', 1)
-            ->get();
+        $children = $category->children()->where('status', 1)->orderBy('name')->get();
 
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category") ? "frontend.{$theme}.products.category" : 'frontend.products.category';
-        return view($view, compact('category', 'products', 'subCategories'));
-    }
 
-    public function subCategory(SubCategory $subCategory)
-    {
-        $products = Product::where('sub_category_id', $subCategory->id)
-            ->where('status', 1)
-            ->with('images')
-            ->paginate(12);
-
-        $theme = setting('active_frontend_theme', 'organic-v1');
-        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.subcategory") ? "frontend.{$theme}.products.subcategory" : 'frontend.products.subcategory';
-        return view($view, compact('subCategory', 'products'));
+        return view($view, compact('category', 'products', 'children'));
     }
 }
-

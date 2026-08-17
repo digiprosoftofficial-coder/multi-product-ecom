@@ -22,7 +22,6 @@ class ProductFactory extends Factory
             'slug' => Str::slug($name) . '-' . Str::random(4),
             'sku' => 'SKU-' . strtoupper(Str::random(8)),
             'category_id' => Category::factory(),
-            'sub_category_id' => null,
             'description' => $this->faker->paragraphs(3, true),
             'price' => $price,
             'compare_price' => $comparePrice,

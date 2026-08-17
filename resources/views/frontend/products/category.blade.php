@@ -14,36 +14,35 @@
 
     <div class="d-flex align-items-center gap-3 mb-4">
         <h2 class="mb-0">{{ $category->name }}</h2>
-
-        <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="subCatDropdown"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                Subcategories ({{ $subCategories->count() }})
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="subCatDropdown">
-                @forelse($subCategories as $subCategory)
-                    <li>
-                        <a class="dropdown-item" href="{{ route('products.subcategory', $subCategory) }}">
-                            {{ $subCategory->name }}
-                        </a>
-                    </li>
-                @empty
-                    <li><span class="dropdown-item text-muted">No subcategories</span></li>
-                @endforelse
-            </ul>
-        </div>
+        @if($children->count() > 0)
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    Subcategories ({{ $children->count() }})
+                </button>
+                <ul class="dropdown-menu">
+                    @foreach($children as $child)
+                        <li>
+                            <a class="dropdown-item" href="{{ route('products.category', $child) }}">{{ $child->name }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </div>
 
-    @if($subCategories->count() > 0)
+    @if($children->count() > 0)
         <div class="mb-4">
             <h5>Sub Categories</h5>
             <div class="row">
-                @foreach($subCategories as $subCategory)
+                @foreach($children as $child)
                     <div class="col-md-3 mb-3">
-                        <a href="{{ route('products.subcategory', $subCategory) }}" class="text-decoration-none">
+                        <a href="{{ route('products.category', $child) }}" class="text-decoration-none">
                             <div class="card">
+                                @if($child->image)
+                                    <img src="{{ asset('uploads/categories/thumbnails/' . $child->image) }}" class="card-img-top" alt="{{ $child->name }}" style="height: 140px; object-fit: cover;">
+                                @endif
                                 <div class="card-body text-center">
-                                    <h6>{{ $subCategory->name }}</h6>
+                                    <h6>{{ $child->name }}</h6>
                                 </div>
                             </div>
                         </a>
@@ -70,4 +69,3 @@
     </div>
 </div>
 @endsection
-
