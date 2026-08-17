@@ -1,11 +1,107 @@
 <?php
 
 use App\Models\Setting;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('setting')) {
     function setting(string $key, $default = null)
     {
         return Setting::get($key, $default);
+    }
+}
+
+if (!function_exists('site_name')) {
+    function site_name(): string
+    {
+        return (string) setting('site_name', config('app.name', 'Store'));
+    }
+}
+
+if (!function_exists('setting_image_url')) {
+    function setting_image_url(?string $filename): ?string
+    {
+        if (! $filename) {
+            return null;
+        }
+
+        $path = 'uploads/settings/'.$filename;
+
+        if (Storage::disk('public')->exists($path)) {
+            $version = Storage::disk('public')->lastModified($path);
+
+            return '/storage/'.$path.($version ? '?v='.$version : '');
+        }
+
+        if (file_exists(public_path($path))) {
+            return asset($path);
+        }
+
+        return null;
+    }
+}
+
+if (!function_exists('site_logo_url')) {
+    function site_logo_url(): ?string
+    {
+        return setting_image_url(setting('site_logo'));
+    }
+}
+
+if (!function_exists('footer_logo_url')) {
+    function footer_logo_url(): ?string
+    {
+        return setting_image_url(setting('footer_logo')) ?: site_logo_url();
+    }
+}
+
+if (!function_exists('favicon_url')) {
+    function favicon_url(): ?string
+    {
+        return setting_image_url(setting('favicon')) ?: site_logo_url();
+    }
+}
+
+if (!function_exists('currency_symbol')) {
+    function currency_symbol(): string
+    {
+        $symbol = trim((string) setting('currency_symbol', '$'));
+
+        return $symbol !== '' ? $symbol : '$';
+    }
+}
+
+if (!function_exists('money')) {
+    function money($amount): string
+    {
+        return currency_symbol().number_format((float) $amount, 2);
+    }
+}
+
+if (!function_exists('image_upload_rules')) {
+    function image_upload_rules(int $maxKb = 2048, array $extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']): array
+    {
+        return [
+            'nullable',
+            'file',
+            'max:'.$maxKb,
+            function (string $attribute, $value, $fail) use ($extensions) {
+                if (! $value instanceof \Illuminate\Http\UploadedFile || ! $value->isValid()) {
+                    return;
+                }
+
+                $ext = strtolower($value->getClientOriginalExtension());
+                if (! in_array($ext, $extensions, true)) {
+                    $fail('The '.$attribute.' must be a file of type: '.implode(', ', $extensions).'.');
+
+                    return;
+                }
+
+                $path = $value->getRealPath();
+                if (! $path || @getimagesize($path) === false) {
+                    $fail('The '.$attribute.' must be a valid image.');
+                }
+            },
+        ];
     }
 }
 

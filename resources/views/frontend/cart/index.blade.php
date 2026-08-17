@@ -3,7 +3,7 @@
 @section('title', 'Shopping Cart')
 
 @section('content')
-<div class="container my-5">
+<div class="container-lg py-5">
     <h2 class="mb-4">Shopping Cart</h2>
 
     @if(count($cartItems) > 0)
@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td>${{ number_format($item['product']->final_price, 2) }}</td>
+                                    <td>{{ money($item['product']->final_price) }}</td>
                             <td>
                                 <form action="{{ route('cart.update', $item['product']) }}" method="POST" class="d-inline">
                                     @csrf
@@ -49,7 +49,7 @@
                                            onchange="this.form.submit()">
                                 </form>
                             </td>
-                            <td>${{ number_format($item['subtotal'], 2) }}</td>
+                            <td>{{ money($item['subtotal']) }}</td>
                             <td>
                                 <form action="{{ route('cart.remove', $item['product']) }}" method="POST" class="d-inline">
                                     @csrf
@@ -65,7 +65,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                        <td><strong>${{ number_format($total, 2) }}</strong></td>
+                        <td><strong>{{ money($total) }}</strong></td>
                         <td></td>
                     </tr>
                 </tfoot>
@@ -73,20 +73,20 @@
         </div>
 
         <div class="d-flex justify-content-between mt-4">
-            <a href="{{ route('products.index') }}" class="btn btn-secondary">Continue Shopping</a>
+            <a href="{{ route('products.index') }}" class="btn btn-outline-dark rounded-1">Continue Shopping</a>
             <div class="d-flex gap-2">
                 <form action="{{ route('cart.clear') }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-warning" onclick="return confirm('Are you sure you want to clear the cart?')">
+                    <button type="submit" class="btn btn-outline-secondary rounded-1" onclick="return confirm('Are you sure you want to clear the cart?')">
                         Clear Cart
                     </button>
                 </form>
                 @auth
-                    <a href="{{ route('checkout.index') }}" class="btn btn-primary btn-lg">Proceed to Checkout</a>
+                    <a href="{{ route('checkout.index') }}" class="btn btn-primary rounded-1 btn-lg">Proceed to Checkout</a>
                 @else
-                    <a href="{{ route('checkout.index') }}" class="btn btn-outline-primary btn-lg">Guest Checkout</a>
-                    <a href="{{ route('login') }}" class="btn btn-primary btn-lg">Login &amp; Checkout</a>
+                    <a href="{{ route('checkout.index') }}" class="btn btn-outline-primary rounded-1 btn-lg">Guest Checkout</a>
+                    <a href="{{ route('login') }}" class="btn btn-primary rounded-1 btn-lg">Login &amp; Checkout</a>
                 @endauth
             </div>
         </div>

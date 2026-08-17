@@ -42,7 +42,6 @@ class OrderController extends Controller
         }
 
         $order->load('items');
-        $logo = setting('site_logo');
 
         if (Auth::check() && $order->user_id === Auth::id()) {
             $backUrl = route('orders.show', $order);
@@ -54,8 +53,8 @@ class OrderController extends Controller
 
         return view('invoices.print', [
             'order' => $order,
-            'siteName' => setting('site_name', config('app.name')),
-            'logoUrl' => $logo ? asset('uploads/settings/'.$logo) : null,
+            'siteName' => site_name(),
+            'logoUrl' => site_logo_url(),
             'backUrl' => $backUrl,
         ]);
     }

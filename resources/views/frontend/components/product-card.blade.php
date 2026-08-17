@@ -1,49 +1,55 @@
-<div class="card h-100 shadow-sm">
-    @if($product->thumbnail)
-        <img src="{{ asset('uploads/products/thumbnails/' . $product->thumbnail) }}" 
-             class="card-img-top" 
-             alt="{{ $product->name }}"
-             style="height: 200px; object-fit: cover;">
-    @else
-        <div class="bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-            <span class="text-muted">No Image</span>
+<div class="product-item h-100">
+    <figure>
+        <a href="{{ route('products.show', $product->slug) }}">
+            <img
+                src="{{ $product->thumbnail_url ?: asset('images/product-placeholder.svg') }}"
+                alt="{{ $product->name }}"
+                class="tab-image"
+            >
+        </a>
+    </figure>
+    <div class="d-flex flex-column text-center">
+        <h3 class="fs-6 fw-normal product-title">
+            <a href="{{ route('products.show', $product->slug) }}" class="text-decoration-none text-dark">{{ $product->name }}</a>
+        </h3>
+
+        @php
+            $compare = compare_price_enabled() ? $product->compare_price : null;
+            $final = $product->final_price;
+            $hasDiscount = $compare && $compare > $final;
+            $discountPercent = $hasDiscount ? round((($compare - $final) / $compare) * 100) : null;
+        @endphp
+        <div class="d-flex justify-content-center align-items-center gap-2">
+            @if($hasDiscount)
+                <del>{{ money($compare) }}</del>
+            @elseif($product->discount_price)
+                <del>{{ money($product->price) }}</del>
+            @endif
+            <span class="text-dark fw-semibold">{{ money($final) }}</span>
+            @if($hasDiscount && $discountPercent > 0)
+                <span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">
+                    {{ $discountPercent }}% OFF
+                </span>
+            @endif
         </div>
-    @endif
-    
-    <div class="card-body d-flex flex-column">
-        <h5 class="card-title">{{ $product->name }}</h5>
-        <p class="card-text text-muted small">{{ $product->description_excerpt }}</p>
-        
-        <div class="mt-auto">
-            <div class="mb-2">
-                @if($product->discount_price)
-                    <span class="text-danger fw-bold fs-5">${{ number_format($product->discount_price, 2) }}</span>
-                    <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->price, 2) }}</span>
-                @else
-                    <span class="fw-bold fs-5">${{ number_format($product->price, 2) }}</span>
-                @endif
-            </div>
-            
-            <div class="d-flex gap-2">
-                <a href="{{ route('products.show', $product) }}" class="btn btn-primary btn-sm flex-grow-1">
-                    View Details
-                </a>
-                @if($product->isInStock())
-                    <form action="{{ route('cart.add', $product) }}" method="POST" class="d-inline js-add-to-cart"
-                          data-product-id="{{ $product->id }}"
-                          data-product-name="{{ $product->name }}"
-                          data-product-image="{{ $product->thumbnail ? asset('uploads/products/thumbnails/' . $product->thumbnail) : '' }}">
-                        @csrf
-                        <input type="hidden" name="quantity" value="1">
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="fas fa-cart-plus"></i>
-                        </button>
-                    </form>
-                @else
-                    <button class="btn btn-secondary btn-sm" disabled>Out of Stock</button>
-                @endif
-            </div>
+
+        <div class="button-area p-3 pt-0">
+            @if($product->isInStock())
+                <form action="{{ route('cart.add', $product) }}" method="POST"
+                      class="w-100 js-add-to-cart"
+                      data-product-id="{{ $product->id }}"
+                      data-product-name="{{ $product->name }}"
+                      data-product-image="{{ $product->thumbnail_url }}">
+                    @csrf
+                    <input type="hidden" name="quantity" value="1">
+                    <button type="submit" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100 mt-2">
+                        <i class="fa-solid fa-cart-shopping me-1"></i>
+                        Add to Cart
+                    </button>
+                </form>
+            @else
+                <button class="btn btn-outline-secondary rounded-1 p-2 fs-7 w-100 mt-2" disabled>Out of Stock</button>
+            @endif
         </div>
     </div>
 </div>
-

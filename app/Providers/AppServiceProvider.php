@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Order;
+use App\Support\Storefront;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -23,6 +24,13 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrapFive();
+
+        View::composer('layouts.app', function ($view) {
+            $cart = Storefront::cartData();
+            $view->with('navCategories', Storefront::navCategories())
+                ->with('cartItems', $cart['cartItems'])
+                ->with('cartTotal', $cart['cartTotal']);
+        });
 
         View::composer('admin.partials.header', function ($view) {
             if (auth()->check()) {

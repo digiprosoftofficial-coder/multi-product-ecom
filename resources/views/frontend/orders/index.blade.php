@@ -3,7 +3,7 @@
 @section('title', 'My Orders')
 
 @section('content')
-<div class="container my-5">
+<div class="container-lg py-5">
     <h2 class="mb-4">My Orders</h2>
 
     @if($orders->count() > 0)
@@ -23,7 +23,7 @@
                         <tr>
                             <td>{{ $order->order_number }}</td>
                             <td>{{ $order->created_at->format('M d, Y') }}</td>
-                            <td>${{ number_format($order->total, 2) }}</td>
+                            <td>{{ money($order->total) }}</td>
                             <td>
                                 <span class="badge bg-{{ $order->status_badge }}">
                                     {{ ucfirst($order->order_status) }}

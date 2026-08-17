@@ -31,29 +31,32 @@
       },
     });
 
-    var category_swiper = new Swiper(".category-carousel", {
-      slidesPerView: 8,
-      spaceBetween: 30,
-      speed: 500,
-      navigation: {
-        nextEl: ".category-carousel-next",
-        prevEl: ".category-carousel-prev",
-      },
-      breakpoints: {
-        0: {
-          slidesPerView: 2,
+    var categoryCarousel = document.querySelector(".category-carousel");
+    if (categoryCarousel) {
+      var category_swiper = new Swiper(".category-carousel", {
+        slidesPerView: 8,
+        spaceBetween: 30,
+        speed: 500,
+        navigation: {
+          nextEl: ".category-carousel-next",
+          prevEl: ".category-carousel-prev",
         },
-        768: {
-          slidesPerView: 3,
-        },
-        991: {
-          slidesPerView: 5,
-        },
-        1500: {
-          slidesPerView: 8,
-        },
-      }
-    });
+        breakpoints: {
+          0: {
+            slidesPerView: 2,
+          },
+          768: {
+            slidesPerView: 3,
+          },
+          991: {
+            slidesPerView: 5,
+          },
+          1500: {
+            slidesPerView: 8,
+          },
+        }
+      });
+    }
 
     $(".products-carousel").each(function(){
       var $el_id = $(this).attr('id');

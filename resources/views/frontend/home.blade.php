@@ -8,7 +8,7 @@
     <div class="container">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h1 class="display-4 fw-bold">Welcome to {{ config('app.name') }}</h1>
+                <h1 class="display-4 fw-bold">Welcome to {{ site_name() }}</h1>
                 <p class="lead">Your one-stop shop for all your needs</p>
                 <a href="{{ route('products.index') }}" class="btn btn-light btn-lg">Shop Now</a>
             </div>

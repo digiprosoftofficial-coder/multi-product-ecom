@@ -1,121 +1,134 @@
 @extends('layouts.app')
 
-@section('title', $product->seoTitle().' – '.config('app.name'))
+@section('title', $product->seoTitle().' – '.site_name())
 
 @push('head')
     @include('frontend.partials.product-seo')
 @endpush
 
 @section('content')
-<div class="container my-5">
-    @include('frontend.components.breadcrumb', [
-        'items' => [
-            ['name' => 'Home', 'url' => route('home')],
-            ['name' => 'Products', 'url' => route('products.index')],
-            ['name' => $product->name, 'url' => null],
-        ]
-    ])
+<section class="py-5">
+    <div class="container-lg">
+        @php
+            $crumbs = [
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Shop', 'url' => route('products.index')],
+            ];
+            if ($product->category) {
+                $crumbs[] = ['name' => $product->category->name, 'url' => route('products.category', $product->category)];
+            }
+            $crumbs[] = ['name' => $product->name, 'url' => null];
+        @endphp
+        @include('frontend.components.breadcrumb', ['items' => $crumbs])
 
-    <div class="row">
-        <div class="col-md-6">
-            @if($product->images->count() > 0)
-                <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                    <div class="carousel-inner">
-                        @foreach($product->images as $index => $image)
-                            <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                <img src="{{ asset('uploads/products/' . $image->filename) }}" 
-                                     class="d-block w-100" 
-                                     alt="{{ $product->name }}"
-                                     style="height: 500px; object-fit: cover;">
-                            </div>
-                        @endforeach
+        <div class="row g-5">
+            <div class="col-md-6">
+                @if($product->images->count() > 0)
+                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner border rounded-3 overflow-hidden">
+                            @foreach($product->images as $index => $image)
+                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
+                                    <img src="{{ asset('uploads/products/' . $image->filename) }}"
+                                         class="d-block w-100"
+                                         alt="{{ $product->name }}"
+                                         style="height: 480px; object-fit: contain; background: #f8f9fa;">
+                                </div>
+                            @endforeach
+                        </div>
+                        @if($product->images->count() > 1)
+                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        @endif
                     </div>
-                    @if($product->images->count() > 1)
-                        <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                            <span class="carousel-control-prev-icon"></span>
-                        </button>
-                        <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                            <span class="carousel-control-next-icon"></span>
-                        </button>
-                    @endif
-                </div>
-            @elseif($product->thumbnail)
-                <img src="{{ asset('uploads/products/thumbnails/' . $product->thumbnail) }}" 
-                     class="img-fluid" 
-                     alt="{{ $product->name }}">
-            @else
-                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 500px;">
-                    <span class="text-muted">No Image Available</span>
-                </div>
-            @endif
-        </div>
-
-        <div class="col-md-6">
-            <h1>{{ $product->name }}</h1>
-            <p class="text-muted">SKU: {{ $product->sku }}</p>
-
-            <div class="mb-3">
-                @if($product->discount_price)
-                    <span class="text-danger fw-bold fs-3">${{ number_format($product->discount_price, 2) }}</span>
-                    <span class="text-muted text-decoration-line-through ms-2 fs-5">${{ number_format($product->price, 2) }}</span>
-                    @if(compare_price_enabled() && $product->compare_price)
-                        <!-- <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->compare_price, 2) }}</span> -->
-                    @endif
+                @elseif($product->thumbnail)
+                    <img src="{{ $product->thumbnail_url }}" class="img-fluid border rounded-3" alt="{{ $product->name }}">
                 @else
-                    <span class="fw-bold fs-3">${{ number_format($product->price, 2) }}</span>
-                    @if(compare_price_enabled() && $product->compare_price)
-                        <span class="text-muted text-decoration-line-through ms-2">${{ number_format($product->compare_price, 2) }}</span>
-                    @endif
+                    <div class="bg-light border rounded-3 d-flex align-items-center justify-content-center" style="height: 420px;">
+                        <span class="text-muted">No Image Available</span>
+                    </div>
                 @endif
             </div>
 
-            @if($product->hasDescription())
-                <div class="mb-3">
-                    <h5>Description</h5>
-                    <div class="product-description">{!! $product->description_html !!}</div>
-                </div>
-            @endif
+            <div class="col-md-6">
+                <h1 class="display-6">{{ $product->name }}</h1>
+                <p class="text-muted">SKU: {{ $product->sku }}</p>
 
-            <div class="mb-3">
-                <p><strong>Category:</strong> {{ $product->category?->pathName() ?? '-' }}</p>
-                <p><strong>Stock:</strong> 
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    @if($product->discount_price)
+                        <del class="text-muted">{{ money($product->price) }}</del>
+                        <span class="text-dark fw-semibold fs-3">{{ money($product->discount_price) }}</span>
+                    @else
+                        <span class="text-dark fw-semibold fs-3">{{ money($product->price) }}</span>
+                    @endif
+                    @if(compare_price_enabled() && $product->compare_price && $product->compare_price > $product->final_price)
+                        <span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">
+                            {{ round((($product->compare_price - $product->final_price) / $product->compare_price) * 100) }}% OFF
+                        </span>
+                    @endif
+                </div>
+
+                @if($product->hasDescription())
+                    <div class="mb-4 product-description">
+                        {!! $product->description_html !!}
+                    </div>
+                @endif
+
+                <p class="mb-1"><strong>Category:</strong>
+                    @if($product->category)
+                        <a href="{{ route('products.category', $product->category) }}">{{ $product->category->pathName() }}</a>
+                    @else
+                        -
+                    @endif
+                </p>
+                <p class="mb-4">
+                    <strong>Stock:</strong>
                     @if($product->isInStock())
                         <span class="text-success">{{ $product->stock }} available</span>
                     @else
                         <span class="text-danger">Out of Stock</span>
                     @endif
                 </p>
-            </div>
 
-            @if($product->isInStock())
-                <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex gap-2 align-items-center">
-                    @csrf
-                    <div class="input-group" style="width: 150px;">
-                        <label class="input-group-text">Qty</label>
-                        <input type="number" name="quantity" class="form-control" value="1" min="1" max="{{ $product->stock }}" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg">
-                        <i class="fas fa-cart-plus"></i> Add to Cart
-                    </button>
-                </form>
-            @else
-                <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
-            @endif
+                @if($product->isInStock())
+                    <form action="{{ route('cart.add', $product) }}" method="POST"
+                          class="row g-2 align-items-center js-add-to-cart"
+                          data-product-id="{{ $product->id }}"
+                          data-product-name="{{ $product->name }}"
+                          data-product-image="{{ $product->thumbnail_url }}">
+                        @csrf
+                        <div class="col-3 col-sm-2">
+                            <input type="number" name="quantity" class="form-control border-dark-subtle quantity" value="1" min="1" max="{{ $product->stock }}" required>
+                        </div>
+                        <div class="col-9 col-sm-6">
+                            <button type="submit" class="btn btn-primary rounded-1 btn-cart w-100">
+                                <i class="fa-solid fa-cart-shopping me-1"></i> Add to Cart
+                            </button>
+                        </div>
+                    </form>
+                @else
+                    <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
+                @endif
+            </div>
         </div>
+
+        @if($relatedProducts->count() > 0)
+            <div class="mt-5 pt-4">
+                <div class="section-header d-flex flex-wrap justify-content-between my-4">
+                    <h2 class="section-title">Related products</h2>
+                </div>
+                <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                    @foreach($relatedProducts as $relatedProduct)
+                        <div class="col">
+                            @include('frontend.components.product-card', ['product' => $relatedProduct])
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </div>
-
-    @if($relatedProducts->count() > 0)
-        <div class="mt-5">
-            <h3>Related Products</h3>
-            <div class="row">
-                @foreach($relatedProducts as $relatedProduct)
-                    <div class="col-md-3 mb-4">
-                        @include('frontend.components.product-card', ['product' => $relatedProduct])
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
-</div>
+</section>
 @endsection
-

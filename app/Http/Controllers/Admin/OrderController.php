@@ -41,12 +41,11 @@ class OrderController extends Controller
     public function invoice(Order $order)
     {
         $order->load('items');
-        $logo = setting('site_logo');
 
         return view('invoices.print', [
             'order' => $order,
-            'siteName' => setting('site_name', config('app.name')),
-            'logoUrl' => $logo ? asset('uploads/settings/'.$logo) : null,
+            'siteName' => site_name(),
+            'logoUrl' => site_logo_url(),
             'backUrl' => route('admin.orders.show', $order),
         ]);
     }

@@ -32,7 +32,7 @@ class OrderConfirmation extends Mailable
             view: 'emails.orders.confirmation',
             with: [
                 'order' => $this->order,
-                'siteName' => setting('site_name', config('app.name')),
+                'siteName' => site_name(),
                 'invoiceUrl' => URL::temporarySignedRoute(
                     'orders.invoice',
                     now()->addDays(30),

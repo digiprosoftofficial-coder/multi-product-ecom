@@ -3,7 +3,7 @@
 @section('title', 'Order placed')
 
 @section('content')
-<div class="container my-5">
+<div class="container-lg py-5">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">

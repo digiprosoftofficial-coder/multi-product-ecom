@@ -138,7 +138,7 @@ class CategoryController extends Controller
             'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
             'status' => 'required|in:0,1',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'image' => image_upload_rules(),
         ]);
 
         $validated['parent_id'] = $validated['parent_id'] ?: null;

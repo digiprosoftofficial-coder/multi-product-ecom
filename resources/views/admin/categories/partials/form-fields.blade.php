@@ -70,7 +70,7 @@
 <div class="mb-3">
     <label for="image-{{ $fieldId }}" class="form-label">{{ $isEdit ? 'New Image' : 'Image' }}</label>
     <input type="file" class="form-control @error('image') {{ $submitted ? 'is-invalid' : '' }} @enderror"
-           id="image-{{ $fieldId }}" name="image" accept=".jpg,.jpeg,.png,.gif,.webp,image/webp">
+           id="image-{{ $fieldId }}" name="image" accept="image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.png,.gif,.webp">
     <div class="form-text">JPG, PNG, GIF or WebP. Max 2MB. Every category level can have an image.</div>
     @if($submitted)
         @error('image')

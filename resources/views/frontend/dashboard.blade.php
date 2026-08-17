@@ -3,14 +3,14 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="container my-5">
+<div class="container-lg py-5">
     <h2 class="mb-4">My Dashboard</h2>
 
     <div class="row mb-4">
         <div class="col-md-4">
-            <div class="card bg-primary text-white">
+            <div class="card border border-primary">
                 <div class="card-body">
-                    <h5>Total Orders</h5>
+                    <h5 class="text-primary">Total Orders</h5>
                     <h3>{{ $recentOrders->count() }}</h3>
                 </div>
             </div>
@@ -39,7 +39,7 @@
                                 <tr>
                                     <td>{{ $order->order_number }}</td>
                                     <td>{{ $order->created_at->format('M d, Y') }}</td>
-                                    <td>${{ number_format($order->total, 2) }}</td>
+                                    <td>{{ money($order->total) }}</td>
                                     <td>
                                         <span class="badge bg-{{ $order->status_badge }}">
                                             {{ ucfirst($order->order_status) }}

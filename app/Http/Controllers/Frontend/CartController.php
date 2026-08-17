@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Support\Storefront;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -14,32 +15,7 @@ class CartController extends Controller
      */
     private function getCartData(): array
     {
-        $cart = session('cart', []);
-
-        if (empty($cart)) {
-            return ['cartItems' => [], 'cartTotal' => 0];
-        }
-
-        $productIds = array_keys($cart);
-        $products = Product::whereIn('id', $productIds)
-            ->with('category')
-            ->get()
-            ->keyBy('id');
-
-        $cartItems = [];
-        $cartTotal = 0;
-
-        foreach ($cart as $productId => $item) {
-            $product = $products->get($productId);
-            if ($product) {
-                $item['product'] = $product;
-                $item['subtotal'] = $product->final_price * $item['quantity'];
-                $cartTotal += $item['subtotal'];
-                $cartItems[] = $item;
-            }
-        }
-
-        return ['cartItems' => $cartItems, 'cartTotal' => $cartTotal];
+        return Storefront::cartData();
     }
 
     public function index()
@@ -120,6 +96,15 @@ class CartController extends Controller
         if (isset($cart[$product->id])) {
             $cart[$product->id]['quantity'] = $request->quantity;
             session(['cart' => $cart]);
+        }
+
+        $cartCount = count(session('cart', []));
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'message' => 'Cart updated successfully.',
+                'cartCount' => $cartCount,
+            ]);
         }
 
         return back()->with('success', 'Cart updated successfully.');

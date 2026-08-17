@@ -3,7 +3,7 @@
 @section('title', 'Order #' . $order->order_number)
 
 @section('content')
-<div class="container my-5">
+<div class="container-lg py-5">
     <h2 class="mb-4">Order Details</h2>
 
     <div class="card mb-3">

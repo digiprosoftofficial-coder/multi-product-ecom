@@ -3,7 +3,7 @@
 @section('title', 'Checkout')
 
 @section('content')
-<div class="container my-5">
+<div class="container-lg py-5">
     <h2 class="mb-4">Checkout</h2>
 
     <div class="row">
@@ -88,7 +88,7 @@
                                 <small class="text-muted">Qty: {{ $item['quantity'] }}</small>
                             </div>
                             <div class="text-end">
-                                ${{ number_format($item['total'], 2) }}
+                                {{ money($item['total']) }}
                             </div>
                         </div>
                     @endforeach
@@ -97,20 +97,20 @@
 
                     <div class="d-flex justify-content-between mb-2">
                         <span>Subtotal:</span>
-                        <span>${{ number_format($subtotal, 2) }}</span>
+                        <span>{{ money($subtotal) }}</span>
                     </div>
 
                     @if($tax > 0)
                         <div class="d-flex justify-content-between mb-2">
                             <span>Tax:</span>
-                            <span>${{ number_format($tax, 2) }}</span>
+                            <span>{{ money($tax) }}</span>
                         </div>
                     @endif
 
                     @if($vat > 0)
                         <div class="d-flex justify-content-between mb-2">
                             <span>VAT:</span>
-                            <span>${{ number_format($vat, 2) }}</span>
+                            <span>{{ money($vat) }}</span>
                         </div>
                     @endif
 
@@ -118,7 +118,7 @@
 
                     <div class="d-flex justify-content-between">
                         <strong>Total:</strong>
-                        <strong class="fs-5">${{ number_format($total, 2) }}</strong>
+                        <strong class="fs-5">{{ money($total) }}</strong>
                     </div>
                 </div>
             </div>

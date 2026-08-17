@@ -2,7 +2,7 @@
     <div class="p-3 d-flex flex-column" style="min-height: 100vh;">
         <div>
             <h5 class="text-white mb-4 d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-store"></i> Admin Panel</span>
+                <span><i class="fas fa-store"></i> {{ site_name() }}</span>
             </h5>
             <nav class="nav flex-column">
             <a class="nav-link text-white {{ request()->routeIs('admin.dashboard') ? 'bg-primary' : '' }}" href="{{ route('admin.dashboard') }}">

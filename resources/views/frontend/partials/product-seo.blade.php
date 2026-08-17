@@ -7,7 +7,7 @@
 <meta name="description" content="{{ $seoDescription }}">
 <link rel="canonical" href="{{ $seoUrl }}">
 <meta property="og:type" content="product">
-<meta property="og:site_name" content="{{ config('app.name') }}">
+<meta property="og:site_name" content="{{ site_name() }}">
 <meta property="og:title" content="{{ $seoTitle }}">
 <meta property="og:description" content="{{ $seoDescription }}">
 <meta property="og:url" content="{{ $seoUrl }}">

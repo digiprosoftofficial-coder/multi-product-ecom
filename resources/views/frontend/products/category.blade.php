@@ -1,71 +1,61 @@
 @extends('layouts.app')
 
-@section('title', $category->name)
+@section('title', $category->name.' – '.site_name())
 
 @section('content')
-<div class="container my-5">
-    @include('frontend.components.breadcrumb', [
-        'items' => [
-            ['name' => 'Home', 'url' => route('home')],
-            ['name' => 'Categories', 'url' => route('products.index')],
-            ['name' => $category->name, 'url' => null],
-        ]
-    ])
+<section class="py-5">
+    <div class="container-lg">
+        @include('frontend.components.breadcrumb', [
+            'items' => [
+                ['name' => 'Home', 'url' => route('home')],
+                ['name' => 'Shop', 'url' => route('products.index')],
+                ['name' => $category->name, 'url' => null],
+            ]
+        ])
 
-    <div class="d-flex align-items-center gap-3 mb-4">
-        <h2 class="mb-0">{{ $category->name }}</h2>
+        <div class="section-header d-flex flex-wrap align-items-center justify-content-between my-4">
+            <h1 class="section-title mb-0">{{ $category->name }}</h1>
+        </div>
+
         @if($children->count() > 0)
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    Subcategories ({{ $children->count() }})
-                </button>
-                <ul class="dropdown-menu">
+            <div class="mb-5">
+                <h5 class="widget-title mb-3">Sub Categories</h5>
+                <div class="row g-4">
                     @foreach($children as $child)
-                        <li>
-                            <a class="dropdown-item" href="{{ route('products.category', $child) }}">{{ $child->name }}</a>
-                        </li>
+                        <div class="col-6 col-sm-4 col-md-3 col-xl-2 text-center">
+                            <a href="{{ route('products.category', $child) }}" class="nav-link">
+                                <img
+                                    src="{{ $child->thumbnail_url }}"
+                                    class="rounded-circle"
+                                    alt="{{ $child->name }}"
+                                    style="width: 110px; height: 110px; object-fit: cover;"
+                                >
+                                <h4 class="fs-6 mt-3 fw-normal category-title">{{ $child->name }}</h4>
+                            </a>
+                        </div>
                     @endforeach
-                </ul>
+                </div>
+            </div>
+        @endif
+
+        <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4">
+            @forelse($products as $product)
+                <div class="col">
+                    @include('frontend.components.product-card', ['product' => $product])
+                </div>
+            @empty
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted">No products found in this category.</p>
+                    <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1 mt-2">Browse all products</a>
+                </div>
+            @endforelse
+        </div>
+
+        @if($products->hasPages())
+            <div class="d-flex justify-content-center mt-4">
+                {{ $products->links() }}
             </div>
         @endif
     </div>
-
-    @if($children->count() > 0)
-        <div class="mb-4">
-            <h5>Sub Categories</h5>
-            <div class="row">
-                @foreach($children as $child)
-                    <div class="col-md-3 mb-3">
-                        <a href="{{ route('products.category', $child) }}" class="text-decoration-none">
-                            <div class="card">
-                                @if($child->image)
-                                    <img src="{{ asset('uploads/categories/thumbnails/' . $child->image) }}" class="card-img-top" alt="{{ $child->name }}" style="height: 140px; object-fit: cover;">
-                                @endif
-                                <div class="card-body text-center">
-                                    <h6>{{ $child->name }}</h6>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @endif
-
-    <div class="row">
-        @forelse($products as $product)
-            <div class="col-md-3 mb-4">
-                @include('frontend.components.product-card', ['product' => $product])
-            </div>
-        @empty
-            <div class="col-12 text-center py-5">
-                <p class="text-muted">No products found in this category.</p>
-            </div>
-        @endforelse
-    </div>
-
-    <div class="mt-4">
-        {{ $products->links() }}
-    </div>
-</div>
+</section>
 @endsection
