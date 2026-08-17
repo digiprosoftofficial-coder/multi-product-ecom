@@ -118,6 +118,73 @@ class Product extends Model
         return asset('uploads/products/thumbnails/' . $this->thumbnail);
     }
 
-  
+    public function seoTitle(): string
+    {
+        return filled($this->meta_title) ? $this->meta_title : $this->name;
+    }
+
+    public function seoDescription(): string
+    {
+        if (filled($this->meta_description)) {
+            return Str::limit(trim($this->meta_description), 160);
+        }
+
+        $excerpt = trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->description)));
+
+        return Str::limit($excerpt !== '' ? $excerpt : $this->name, 160);
+    }
+
+    public function seoImageUrls(): array
+    {
+        $urls = [];
+        if ($this->thumbnail_url) {
+            $urls[] = $this->thumbnail_url;
+        }
+        foreach ($this->images as $image) {
+            $urls[] = $image->image_url;
+        }
+
+        return array_values(array_unique($urls));
+    }
+
+    public function seoImageUrl(): ?string
+    {
+        return $this->seoImageUrls()[0] ?? null;
+    }
+
+    public function jsonLd(): array
+    {
+        $url = route('products.show', $this);
+        $images = $this->seoImageUrls();
+
+        $data = [
+            '@context' => 'https://schema.org/',
+            '@type' => 'Product',
+            'name' => $this->name,
+            'description' => $this->seoDescription(),
+            'sku' => $this->sku,
+            'url' => $url,
+            'offers' => [
+                '@type' => 'Offer',
+                'url' => $url,
+                'priceCurrency' => 'USD',
+                'price' => number_format((float) $this->final_price, 2, '.', ''),
+                'availability' => $this->isInStock()
+                    ? 'https://schema.org/InStock'
+                    : 'https://schema.org/OutOfStock',
+                'itemCondition' => 'https://schema.org/NewCondition',
+            ],
+        ];
+
+        if ($images) {
+            $data['image'] = count($images) === 1 ? $images[0] : $images;
+        }
+
+        if ($this->category) {
+            $data['category'] = $this->category->pathName();
+        }
+
+        return $data;
+    }
 }
 

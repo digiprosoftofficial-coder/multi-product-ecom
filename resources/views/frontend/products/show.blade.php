@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
-@section('title', $product->name)
+@section('title', $product->seoTitle().' – '.config('app.name'))
+
+@push('head')
+    @include('frontend.partials.product-seo')
+@endpush
 
 @section('content')
 <div class="container my-5">
