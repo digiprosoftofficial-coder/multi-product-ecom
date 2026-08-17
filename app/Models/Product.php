@@ -93,6 +93,23 @@ class Product extends Model
         return $this->price;
     }
 
+    public function hasDescription(): bool
+    {
+        return trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->description))) !== '';
+    }
+
+    public function getDescriptionHtmlAttribute(): string
+    {
+        return sanitize_rich_text($this->description) ?? '';
+    }
+
+    public function getDescriptionExcerptAttribute(): string
+    {
+        $text = trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->description)));
+
+        return Str::limit($text, 100);
+    }
+
     public function getThumbnailUrlAttribute(): ?string
     {
         if (!$this->thumbnail) {

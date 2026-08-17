@@ -8,3 +8,31 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
+.product-description h2 {
+    font-size: 1.25rem;
+    margin: 1rem 0 .5rem;
+}
+.product-description h3 {
+    font-size: 1.1rem;
+    margin: .85rem 0 .4rem;
+}
+.product-description p {
+    margin-bottom: .75rem;
+}
+.product-description ul,
+.product-description ol {
+    padding-left: 1.25rem;
+    margin-bottom: .75rem;
+}
+.product-description table {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-collapse: collapse;
+}
+.product-description th,
+.product-description td {
+    border: 1px solid #dee2e6;
+    padding: .4rem .6rem;
+    vertical-align: top;
+}

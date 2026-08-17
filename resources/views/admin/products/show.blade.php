@@ -119,10 +119,10 @@
                             </div>
                         </div>
 
-                        @if($product->description)
+                        @if($product->hasDescription())
                         <div class="mb-3">
                             <p class="mb-1"><strong>Description:</strong></p>
-                            <div class="text-muted">{!! nl2br(e($product->description)) !!}</div>
+                            <div class="product-description">{!! $product->description_html !!}</div>
                         </div>
                         @endif
 

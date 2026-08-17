@@ -12,7 +12,7 @@
     
     <div class="card-body d-flex flex-column">
         <h5 class="card-title">{{ $product->name }}</h5>
-        <p class="card-text text-muted small">{{ Str::limit($product->description, 100) }}</p>
+        <p class="card-text text-muted small">{{ $product->description_excerpt }}</p>
         
         <div class="mt-auto">
             <div class="mb-2">

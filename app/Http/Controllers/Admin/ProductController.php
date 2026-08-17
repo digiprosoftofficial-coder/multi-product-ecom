@@ -61,7 +61,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|unique:products,sku',
             'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:20000',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
@@ -91,6 +91,10 @@ class ProductController extends Controller
 
         // Remove discount_percentage from validated as it's not a database field
         unset($validated['discount_percentage']);
+
+        if (array_key_exists('description', $validated)) {
+            $validated['description'] = sanitize_rich_text($validated['description'] ?? null);
+        }
 
         if (! compare_price_enabled()) {
             $validated['compare_price'] = null;
@@ -167,7 +171,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'sku' => 'nullable|string|unique:products,sku,' . $product->id,
             'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
-            'description' => 'nullable|string',
+            'description' => 'nullable|string|max:20000',
             'price' => 'required|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
@@ -196,6 +200,10 @@ class ProductController extends Controller
 
         // Remove discount_percentage from validated as it's not a database field
         unset($validated['discount_percentage']);
+
+        if (array_key_exists('description', $validated)) {
+            $validated['description'] = sanitize_rich_text($validated['description'] ?? null);
+        }
 
         if (! compare_price_enabled()) {
             unset($validated['compare_price']);

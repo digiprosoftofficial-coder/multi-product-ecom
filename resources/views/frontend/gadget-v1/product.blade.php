@@ -8,6 +8,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="{{ asset('gadget-v1/style.css') }}">
+  <style>
+    .product-description h2 { font-size: 1.25rem; margin: 1rem 0 .5rem; }
+    .product-description h3 { font-size: 1.1rem; margin: .85rem 0 .4rem; }
+    .product-description ul, .product-description ol { padding-left: 1.25rem; }
+    .product-description table { width: 100%; border-collapse: collapse; }
+    .product-description th, .product-description td { border: 1px solid #444; padding: .4rem .6rem; }
+  </style>
 </head>
 <body class="gadget-v1">
   @include('frontend.gadget-v1.partials.header')
@@ -51,8 +58,8 @@
         <h1 class="h4 mb-2">{{ $product->name }}</h1>
         <p class="text-muted small">SKU: {{ $product->sku }}</p>
         <p class="h5 text-accent mb-3">${{ number_format($product->final_price, 2) }}</p>
-        @if($product->description)
-        <p class="text-muted">{{ $product->description }}</p>
+        @if($product->hasDescription())
+        <div class="product-description text-muted">{!! $product->description_html !!}</div>
         @endif
         <p class="small text-muted">Category: {{ $product->category->name ?? '-' }}</p>
         <p class="small text-muted">Stock: {{ $product->stock }}</p>

@@ -65,10 +65,10 @@
                 @endif
             </div>
 
-            @if($product->description)
+            @if($product->hasDescription())
                 <div class="mb-3">
                     <h5>Description</h5>
-                    <p>{{ $product->description }}</p>
+                    <div class="product-description">{!! $product->description_html !!}</div>
                 </div>
             @endif
 
