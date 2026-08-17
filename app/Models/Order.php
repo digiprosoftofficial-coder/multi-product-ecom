@@ -105,7 +105,7 @@ class Order extends Model
         return request()->hasValidSignature();
     }
 
-    public function applyStatus(string $newStatus): void
+    public function applyStatus(string $newStatus, ?string $paymentStatus = null): void
     {
         $oldStatus = $this->order_status;
 
@@ -121,7 +121,12 @@ class Order extends Model
             $this->order_status = $newStatus;
         }
 
-        $this->syncPaymentStatus($newStatus);
+        if ($paymentStatus) {
+            $this->payment_status = $paymentStatus;
+        } else {
+            $this->syncPaymentStatus($newStatus);
+        }
+
         $this->save();
     }
 

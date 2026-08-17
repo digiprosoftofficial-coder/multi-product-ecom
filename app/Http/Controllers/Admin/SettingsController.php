@@ -32,9 +32,6 @@ class SettingsController extends Controller
             'vat_rate' => Setting::get('vat_rate', '0'),
             'category_max_depth' => Setting::get('category_max_depth', '3'),
             'enable_compare_price' => Setting::get('enable_compare_price', '1'),
-            'about_content' => Setting::get('about_content', ''),
-            'privacy_content' => Setting::get('privacy_content', ''),
-            'terms_content' => Setting::get('terms_content', ''),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -62,9 +59,6 @@ class SettingsController extends Controller
             'vat_rate' => 'nullable|numeric|min:0|max:100',
             'category_max_depth' => 'required|integer|in:0,2,3,4,5,6',
             'enable_compare_price' => 'nullable|in:0,1',
-            'about_content' => 'nullable|string',
-            'privacy_content' => 'nullable|string',
-            'terms_content' => 'nullable|string',
         ]);
 
         $newMax = (int) $validated['category_max_depth'];
@@ -90,9 +84,6 @@ class SettingsController extends Controller
         Setting::set('vat_rate', $validated['vat_rate'] ?? '0');
         Setting::set('enable_compare_price', $request->boolean('enable_compare_price') ? '1' : '0');
         Setting::set('category_max_depth', (string) $newMax);
-        Setting::set('about_content', sanitize_rich_text($validated['about_content'] ?? null) ?? '');
-        Setting::set('privacy_content', sanitize_rich_text($validated['privacy_content'] ?? null) ?? '');
-        Setting::set('terms_content', sanitize_rich_text($validated['terms_content'] ?? null) ?? '');
 
         $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);
         $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);

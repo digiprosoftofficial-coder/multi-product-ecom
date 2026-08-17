@@ -9,6 +9,7 @@ class PageController extends Controller
     public function about()
     {
         return view('frontend.about', [
+            'title' => filled($title = \App\Support\Homepage::get('about_title')) ? $title : 'About '.site_name(),
             'content' => setting('about_content'),
         ]);
     }

@@ -225,40 +225,8 @@
         </div>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="mb-0">Pages</h5>
-        </div>
-        <div class="card-body">
-            <p class="text-muted small mb-4">Add your own copy. Privacy and Terms should be reviewed for your business — these boxes start empty on purpose.</p>
-
-            <div class="mb-4">
-                <label for="about_content" class="form-label">About page</label>
-                <textarea class="form-control js-page-editor @error('about_content') is-invalid @enderror"
-                          id="about_content" name="about_content" rows="8">{{ old('about_content', $settings['about_content']) }}</textarea>
-                @error('about_content')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="privacy_content" class="form-label">Privacy policy</label>
-                <textarea class="form-control js-page-editor @error('privacy_content') is-invalid @enderror"
-                          id="privacy_content" name="privacy_content" rows="8">{{ old('privacy_content', $settings['privacy_content']) }}</textarea>
-                @error('privacy_content')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="mb-0">
-                <label for="terms_content" class="form-label">Terms &amp; conditions</label>
-                <textarea class="form-control js-page-editor @error('terms_content') is-invalid @enderror"
-                          id="terms_content" name="terms_content" rows="8">{{ old('terms_content', $settings['terms_content']) }}</textarea>
-                @error('terms_content')
-                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                @enderror
-            </div>
-        </div>
+    <div class="alert alert-info">
+        About, Privacy, and Terms are now edited under <a href="{{ route('admin.pages.index') }}">Pages</a>.
     </div>
 
     <div class="d-flex gap-2 sticky-bottom bg-body py-3 border-top" style="z-index: 10;">
@@ -306,7 +274,6 @@
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/tinymce@7.6.0/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.js-remove-brand-image').forEach(function (btn) {
@@ -317,31 +284,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (input) input.value = '1';
             wrap.classList.add('d-none');
         });
-    });
-
-    if (typeof tinymce === 'undefined') return;
-
-    tinymce.init({
-        selector: 'textarea.js-page-editor',
-        license_key: 'gpl',
-        menubar: false,
-        branding: false,
-        promotion: false,
-        height: 280,
-        plugins: 'lists link table autoresize',
-        toolbar: 'blocks | bold italic underline | bullist numlist | link table | undo redo',
-        block_formats: 'Paragraph=p; Heading 2=h2; Heading 3=h3',
-        convert_urls: false,
-        default_link_target: '_blank',
-        link_default_target: '_blank',
-        content_style: 'body { font-family: Figtree, Segoe UI, sans-serif; font-size: 14px; line-height: 1.6; }',
-        setup: function (editor) {
-            var form = editor.getElement().closest('form');
-            if (!form) return;
-            form.addEventListener('submit', function () {
-                editor.save();
-            });
-        }
     });
 });
 </script>

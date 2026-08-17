@@ -17,7 +17,7 @@
                     <div class="bg-light rounded p-3 mb-4">
                         <div class="text-muted small text-uppercase">Order number</div>
                         <div class="fs-4 fw-semibold">{{ $order->order_number }}</div>
-                        <div class="text-muted mt-1">${{ number_format($order->total, 2) }} &middot; {{ $order->created_at->format('M d, Y H:i') }}</div>
+                        <div class="text-muted mt-1">{{ money($order->total) }} &middot; {{ $order->created_at->format('M d, Y H:i') }}</div>
                     </div>
 
                     <div class="d-flex flex-wrap justify-content-center gap-2 mb-4">
@@ -51,14 +51,14 @@
                                     <tr>
                                         <td>{{ $item->product_name }}</td>
                                         <td>{{ $item->quantity }}</td>
-                                        <td class="text-end">${{ number_format($item->total, 2) }}</td>
+                                        <td class="text-end">{{ money($item->total) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>
                                     <th colspan="2" class="text-end">Total</th>
-                                    <th class="text-end">${{ number_format($order->total, 2) }}</th>
+                                    <th class="text-end">{{ money($order->total) }}</th>
                                 </tr>
                             </tfoot>
                         </table>

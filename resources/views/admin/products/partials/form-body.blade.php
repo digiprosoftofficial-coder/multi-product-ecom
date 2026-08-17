@@ -212,6 +212,25 @@
                                name="status" value="1" {{ $status === '1' ? 'checked' : '' }}>
                         <label class="form-check-label" for="status">Active</label>
                     </div>
+                    <hr>
+                    <h6 class="fw-semibold mb-3">Homepage</h6>
+                    <p class="text-muted small">Tick where this product should appear.</p>
+                    @php
+                        $homeFlags = [
+                            'is_best_selling' => 'Best selling',
+                            'is_featured' => 'Featured',
+                            'is_popular' => 'Most popular',
+                            'is_new_arrival' => 'Just arrived',
+                        ];
+                    @endphp
+                    @foreach($homeFlags as $flag => $label)
+                        <div class="form-check">
+                            <input type="hidden" name="{{ $flag }}" value="0">
+                            <input class="form-check-input" type="checkbox" id="{{ $flag }}" name="{{ $flag }}" value="1"
+                                   {{ (string) old($flag, $isEdit && $product->{$flag} ? '1' : '0') === '1' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="{{ $flag }}">{{ $label }}</label>
+                        </div>
+                    @endforeach
                     @error('status')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror

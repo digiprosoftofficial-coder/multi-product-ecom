@@ -54,11 +54,12 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'order_status' => 'required|in:pending,processing,shipped,delivered,cancelled',
+            'payment_status' => 'required|in:pending,paid,cancelled,refunded',
         ]);
 
         DB::transaction(function () use ($order, $validated) {
             $locked = Order::whereKey($order->id)->lockForUpdate()->firstOrFail();
-            $locked->applyStatus($validated['order_status']);
+            $locked->applyStatus($validated['order_status'], $validated['payment_status']);
         });
 
         return redirect()->route('admin.orders.show', $order)

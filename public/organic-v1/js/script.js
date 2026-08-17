@@ -7,10 +7,14 @@
     var Body = $('body');
         Body.addClass('preloader-site');
     });
-    $(window).load(function() {
+    $(window).on('load', function() {
         $('.preloader-wrapper').fadeOut();
         $('body').removeClass('preloader-site');
     });
+    setTimeout(function() {
+        $('.preloader-wrapper').fadeOut();
+        $('body').removeClass('preloader-site');
+    }, 1500);
   }
 
   // init Chocolat light box
@@ -23,17 +27,19 @@
 
   var initSwiper = function() {
 
-    var swiper = new Swiper(".main-swiper", {
-      speed: 500,
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-    });
+    if (document.querySelector(".main-swiper")) {
+      new Swiper(".main-swiper", {
+        speed: 500,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+      });
+    }
 
     var categoryCarousel = document.querySelector(".category-carousel");
     if (categoryCarousel) {
-      var category_swiper = new Swiper(".category-carousel", {
+      new Swiper(".category-carousel", {
         slidesPerView: 8,
         spaceBetween: 30,
         speed: 500,
@@ -60,11 +66,13 @@
 
     $(".products-carousel").each(function(){
       var $el_id = $(this).attr('id');
+      if (!$el_id) return;
 
-      var products_swiper = new Swiper("#"+$el_id+" .swiper", {
+      new Swiper("#"+$el_id+" .swiper", {
         slidesPerView: 5,
         spaceBetween: 30,
         speed: 500,
+        watchOverflow: true,
         navigation: {
           nextEl: "#"+$el_id+" .products-carousel-next",
           prevEl: "#"+$el_id+" .products-carousel-prev",
@@ -89,34 +97,34 @@
 
 
     // product single page
-    var thumb_slider = new Swiper(".product-thumbnail-slider", {
-      slidesPerView: 5,
-      spaceBetween: 20,
-      // autoplay: true,
-      direction: "vertical",
-      breakpoints: {
-        0: {
-          direction: "horizontal"
+    if (document.querySelector(".product-thumbnail-slider") && document.querySelector(".product-large-slider")) {
+      var thumb_slider = new Swiper(".product-thumbnail-slider", {
+        slidesPerView: 5,
+        spaceBetween: 20,
+        direction: "vertical",
+        breakpoints: {
+          0: {
+            direction: "horizontal"
+          },
+          992: {
+            direction: "vertical"
+          },
         },
-        992: {
-          direction: "vertical"
-        },
-      },
-    });
+      });
 
-    var large_slider = new Swiper(".product-large-slider", {
-      slidesPerView: 1,
-      // autoplay: true,
-      spaceBetween: 0,
-      effect: 'fade',
-      thumbs: {
-        swiper: thumb_slider,
-      },
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-    });
+      new Swiper(".product-large-slider", {
+        slidesPerView: 1,
+        spaceBetween: 0,
+        effect: 'fade',
+        thumbs: {
+          swiper: thumb_slider,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+      });
+    }
   }
 
   // input spinner

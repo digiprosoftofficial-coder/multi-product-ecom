@@ -213,8 +213,8 @@
                         <td>{{ $item->product_name }}</td>
                         <td>{{ $item->product_sku }}</td>
                         <td class="num">{{ $item->quantity }}</td>
-                        <td class="num">${{ number_format($item->price, 2) }}</td>
-                        <td class="num">${{ number_format($item->total, 2) }}</td>
+                        <td class="num">{{ money($item->price) }}</td>
+                        <td class="num">{{ money($item->total) }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -223,23 +223,23 @@
         <table class="totals">
             <tr>
                 <td>Subtotal</td>
-                <td class="num">${{ number_format($order->subtotal, 2) }}</td>
+                <td class="num">{{ money($order->subtotal) }}</td>
             </tr>
             @if($order->tax > 0)
                 <tr>
                     <td>Tax</td>
-                    <td class="num">${{ number_format($order->tax, 2) }}</td>
+                    <td class="num">{{ money($order->tax) }}</td>
                 </tr>
             @endif
             @if($order->vat > 0)
                 <tr>
                     <td>VAT</td>
-                    <td class="num">${{ number_format($order->vat, 2) }}</td>
+                    <td class="num">{{ money($order->vat) }}</td>
                 </tr>
             @endif
             <tr class="grand">
                 <td>Total due</td>
-                <td class="num">${{ number_format($order->total, 2) }}</td>
+                <td class="num">{{ money($order->total) }}</td>
             </tr>
         </table>
 

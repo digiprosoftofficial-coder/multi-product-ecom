@@ -24,9 +24,6 @@
           <h5 class="widget-title">{{ site_name() }}</h5>
           <ul class="menu-list list-unstyled">
             <li class="menu-item"><a href="{{ route('about') }}" class="nav-link">About</a></li>
-            <li class="menu-item"><a href="{{ route('privacy') }}" class="nav-link">Privacy Policy</a></li>
-            <li class="menu-item"><a href="{{ route('terms') }}" class="nav-link">Terms &amp; Conditions</a></li>
-            <li class="menu-item"><a href="{{ route('contact') }}" class="nav-link">Contact</a></li>
           </ul>
         </div>
       </div>

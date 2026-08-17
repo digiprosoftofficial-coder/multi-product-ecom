@@ -68,6 +68,10 @@ class ProductController extends Controller
             'discount_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:0,1',
+            'is_featured' => 'nullable|boolean',
+            'is_popular' => 'nullable|boolean',
+            'is_new_arrival' => 'nullable|boolean',
+            'is_best_selling' => 'nullable|boolean',
             'thumbnail' => image_upload_rules(),
             'images.*' => image_upload_rules(),
             'meta_title' => 'nullable|string|max:255',
@@ -91,6 +95,10 @@ class ProductController extends Controller
 
         // Remove discount_percentage from validated as it's not a database field
         unset($validated['discount_percentage']);
+
+        foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
+            $validated[$flag] = $request->boolean($flag);
+        }
 
         if (array_key_exists('description', $validated)) {
             $validated['description'] = sanitize_rich_text($validated['description'] ?? null);
@@ -178,6 +186,10 @@ class ProductController extends Controller
             'discount_price' => 'nullable|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:0,1',
+            'is_featured' => 'nullable|boolean',
+            'is_popular' => 'nullable|boolean',
+            'is_new_arrival' => 'nullable|boolean',
+            'is_best_selling' => 'nullable|boolean',
             'thumbnail' => image_upload_rules(),
             'images.*' => image_upload_rules(),
             'meta_title' => 'nullable|string|max:255',
@@ -200,6 +212,10 @@ class ProductController extends Controller
 
         // Remove discount_percentage from validated as it's not a database field
         unset($validated['discount_percentage']);
+
+        foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
+            $validated[$flag] = $request->boolean($flag);
+        }
 
         if (array_key_exists('description', $validated)) {
             $validated['description'] = sanitize_rich_text($validated['description'] ?? null);

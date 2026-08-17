@@ -22,6 +22,10 @@ class Product extends Model
         'discount_price',
         'stock',
         'status',
+        'is_featured',
+        'is_popular',
+        'is_new_arrival',
+        'is_best_selling',
         'thumbnail',
         'meta_title',
         'meta_description',
@@ -33,6 +37,10 @@ class Product extends Model
         'discount_price' => 'decimal:2',
         'stock' => 'integer',
         'status' => 'integer',
+        'is_featured' => 'boolean',
+        'is_popular' => 'boolean',
+        'is_new_arrival' => 'boolean',
+        'is_best_selling' => 'boolean',
     ];
 
     protected static function boot()

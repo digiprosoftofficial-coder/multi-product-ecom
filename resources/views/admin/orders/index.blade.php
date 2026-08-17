@@ -50,7 +50,7 @@
                                 <div>{{ $order->customer_name }}</div>
                                 <small class="text-muted">{{ $order->customer_email }}</small>
                             </td>
-                            <td>${{ number_format($order->total, 2) }}</td>
+                            <td>{{ money($order->total) }}</td>
                             <td>
                                 <span class="badge bg-{{ $order->status_badge }}">
                                     {{ ucfirst($order->order_status) }}

@@ -41,11 +41,22 @@ class Storefront
 
     public static function navCategories(): Collection
     {
+        return self::shopCategories();
+    }
+
+    public static function shopCategories(): Collection
+    {
+        $children = function ($query) {
+            $query->where('status', 1)
+                ->orderBy('name')
+                ->with(['children' => function ($childQuery) {
+                    $childQuery->where('status', 1)->orderBy('name');
+                }]);
+        };
+
         return Category::where('status', 1)
             ->whereNull('parent_id')
-            ->with(['children' => function ($query) {
-                $query->where('status', 1)->orderBy('name');
-            }])
+            ->with(['children' => $children])
             ->orderBy('name')
             ->get();
     }

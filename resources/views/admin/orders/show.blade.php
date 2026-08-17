@@ -35,8 +35,8 @@
                                     <td>{{ $item->product_name }}</td>
                                     <td>{{ $item->product_sku }}</td>
                                     <td>{{ $item->quantity }}</td>
-                                    <td>${{ number_format($item->price, 2) }}</td>
-                                    <td>${{ number_format($item->total, 2) }}</td>
+                                    <td>{{ money($item->price) }}</td>
+                                    <td>{{ money($item->total) }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -74,24 +74,24 @@
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
                     <span>Subtotal:</span>
-                    <span>${{ number_format($order->subtotal, 2) }}</span>
+                    <span>{{ money($order->subtotal) }}</span>
                 </div>
                 @if($order->tax > 0)
                     <div class="d-flex justify-content-between mb-2">
                         <span>Tax:</span>
-                        <span>${{ number_format($order->tax, 2) }}</span>
+                        <span>{{ money($order->tax) }}</span>
                     </div>
                 @endif
                 @if($order->vat > 0)
                     <div class="d-flex justify-content-between mb-2">
                         <span>VAT:</span>
-                        <span>${{ number_format($order->vat, 2) }}</span>
+                        <span>{{ money($order->vat) }}</span>
                     </div>
                 @endif
                 <hr>
                 <div class="d-flex justify-content-between">
                     <strong>Total:</strong>
-                    <strong>${{ number_format($order->total, 2) }}</strong>
+                    <strong>{{ money($order->total) }}</strong>
                 </div>
                 <hr>
                 <div class="d-flex justify-content-between mb-2">
@@ -114,7 +114,8 @@
                     @csrf
                     @method('PATCH')
                     <div class="mb-3">
-                        <select name="order_status" class="form-select @error('order_status') is-invalid @enderror" required>
+                        <label for="order_status" class="form-label">Order status</label>
+                        <select name="order_status" id="order_status" class="form-select @error('order_status') is-invalid @enderror" required>
                             <option value="pending" {{ $order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
                             <option value="processing" {{ $order->order_status == 'processing' ? 'selected' : '' }}>Processing</option>
                             <option value="shipped" {{ $order->order_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
@@ -122,6 +123,18 @@
                             <option value="cancelled" {{ $order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                         </select>
                         @error('order_status')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_status" class="form-label">Payment status</label>
+                        <select name="payment_status" id="payment_status" class="form-select @error('payment_status') is-invalid @enderror" required>
+                            <option value="pending" {{ $order->payment_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="paid" {{ $order->payment_status == 'paid' ? 'selected' : '' }}>Paid</option>
+                            <option value="cancelled" {{ $order->payment_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                            <option value="refunded" {{ $order->payment_status == 'refunded' ? 'selected' : '' }}>Refunded</option>
+                        </select>
+                        @error('payment_status')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>

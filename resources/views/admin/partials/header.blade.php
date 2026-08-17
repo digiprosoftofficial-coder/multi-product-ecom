@@ -36,7 +36,7 @@
                                 <div>
                                     <div class="fw-semibold">Order: {{ $order->order_number }}</div>
                                     <small class="text-muted">
-                                        {{ $order->customer_name }} · ${{ number_format($order->total, 2) }}
+                                        {{ $order->customer_name }} · {{ money($order->total) }}
                                     </small>
                                 </div>
                                 <small class="text-muted ms-2">{{ $order->created_at->diffForHumans() }}</small>

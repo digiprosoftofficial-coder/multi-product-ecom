@@ -57,7 +57,7 @@
         </ul>
       </div>
 
-      <div class="col-sm-8 col-lg-2 d-flex gap-5 align-items-center justify-content-center justify-content-sm-end">
+      <div class="col-sm-8 col-lg-2 d-flex gap-3 align-items-center justify-content-center justify-content-sm-end">
         <ul class="d-flex justify-content-end list-unstyled m-0 align-items-center">
           <li>
             @auth
@@ -81,6 +81,16 @@
               </span>
             </a>
           </li>
+          @auth
+            <li>
+              <form method="POST" action="{{ route('logout') }}" class="m-0">
+                @csrf
+                <button type="submit" class="p-2 mx-1 border-0 bg-transparent" title="Logout" aria-label="Logout">
+                  <i class="fa-solid fa-right-from-bracket fa-lg"></i>
+                </button>
+              </form>
+            </li>
+          @endauth
         </ul>
       </div>
     </div>

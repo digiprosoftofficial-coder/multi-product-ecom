@@ -70,5 +70,25 @@
         @endif
       @endforeach
     </ul>
+    <ul class="navbar-nav list-unstyled d-flex flex-column gap-2 mt-4 pt-3 border-top mb-0">
+      @auth
+        <li class="nav-item">
+          <a href="{{ route('dashboard') }}" class="nav-link text-dark p-2">My account</a>
+        </li>
+        <li class="nav-item">
+          <form method="POST" action="{{ route('logout') }}">
+            @csrf
+            <button type="submit" class="nav-link border-0 bg-transparent text-dark p-2 w-100 text-start">Logout</button>
+          </form>
+        </li>
+      @else
+        <li class="nav-item">
+          <a href="{{ route('login') }}" class="nav-link text-dark p-2">Login</a>
+        </li>
+        <li class="nav-item">
+          <a href="{{ route('register') }}" class="nav-link text-dark p-2">Register</a>
+        </li>
+      @endauth
+    </ul>
   </div>
 </div>

@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Support\Storefront;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -20,16 +22,11 @@ class ProductController extends Controller
             }
         }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%'.$search.'%')
-                    ->orWhere('description', 'like', '%'.$search.'%');
-            });
-        }
+        $this->applySearch($query, $request);
+        $this->applySort($query, $request);
 
         $products = $query->paginate(12)->withQueryString();
-        $categories = Category::where('status', 1)->whereNull('parent_id')->orderBy('name')->get();
+        $categories = Storefront::shopCategories();
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.shop") ? "frontend.{$theme}.shop" : 'frontend.products.index';
 
@@ -57,23 +54,49 @@ class ProductController extends Controller
         return view($view, compact('product', 'relatedProducts'));
     }
 
-    public function category(Category $category)
+    public function category(Request $request, Category $category)
     {
         if ($category->status != 1) {
             abort(404);
         }
 
-        $products = Product::whereIn('category_id', $category->subtreeIds())
+        $query = Product::whereIn('category_id', $category->subtreeIds())
             ->where('status', 1)
-            ->with('images')
-            ->paginate(12)
-            ->withQueryString();
+            ->with(['images', 'category']);
 
+        $this->applySearch($query, $request);
+        $this->applySort($query, $request);
+
+        $products = $query->paginate(12)->withQueryString();
         $children = $category->children()->where('status', 1)->orderBy('name')->get();
+        $categories = Storefront::shopCategories();
 
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category") ? "frontend.{$theme}.products.category" : 'frontend.products.category';
 
-        return view($view, compact('category', 'products', 'children'));
+        return view($view, compact('category', 'products', 'children', 'categories'));
+    }
+
+    protected function applySearch(Builder $query, Request $request): void
+    {
+        if (! $request->filled('search')) {
+            return;
+        }
+
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', '%'.$search.'%')
+                ->orWhere('description', 'like', '%'.$search.'%');
+        });
+    }
+
+    protected function applySort(Builder $query, Request $request): void
+    {
+        match ($request->get('sort')) {
+            'price_asc' => $query->orderByRaw('COALESCE(discount_price, price) asc'),
+            'price_desc' => $query->orderByRaw('COALESCE(discount_price, price) desc'),
+            'name' => $query->orderBy('name'),
+            default => $query->latest(),
+        };
     }
 }
