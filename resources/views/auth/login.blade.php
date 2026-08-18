@@ -6,7 +6,23 @@
 <style>
     main { background: #f6f7f2; }
     .login-card { background: #fff; }
-    .login-card .form-control { background: #fff; }
+    .login-card .form-control {
+        background: #fff;
+        border: 1px solid #cfd5cc;
+        box-shadow: none;
+    }
+    .login-card .form-control:focus {
+        border-color: #6BB252;
+        box-shadow: 0 0 0 0.2rem rgba(107, 178, 82, 0.2);
+    }
+    .login-card .form-check-input {
+        border: 1px solid #cfd5cc;
+        background-color: #fff;
+    }
+    .login-card .form-check-input:checked {
+        background-color: #6BB252;
+        border-color: #6BB252;
+    }
 </style>
 @endpush
 
