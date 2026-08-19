@@ -131,6 +131,7 @@ class CheckoutController extends Controller
                     'product_sku' => $item['product']->sku,
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
+                    'cost_price' => $item['product']->cost_price,
                     'total' => $item['total'],
                 ]);
 

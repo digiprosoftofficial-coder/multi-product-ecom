@@ -6,6 +6,7 @@
         top: 1rem;
     }
     .product-dropzone {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -18,6 +19,13 @@
         text-align: center;
         color: #64748b;
         margin: 0;
+    }
+    .product-file-input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+        overflow: hidden;
     }
     .product-dropzone-wide {
         min-height: 160px;
@@ -92,7 +100,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     var form = document.getElementById('productForm');
     var priceInput = document.getElementById('price');
+    var costPriceInput = document.getElementById('cost_price');
     var comparePriceInput = document.getElementById('compare_price');
+    var estimatedProfit = document.getElementById('estimatedProfit');
     var discountPercentageInput = document.getElementById('discount_percentage');
     var discountPriceHidden = document.getElementById('discount_price');
     var customerPays = document.getElementById('customerPays');
@@ -109,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var metaTouched = metaTitle && metaTitle.value.trim() !== '';
 
     function money(value) {
-        return '$' + (Number(value) || 0).toFixed(2);
+        return @json(currency_symbol()) + (Number(value) || 0).toFixed(2);
     }
 
     function updatePriceSummary() {
@@ -135,6 +145,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 saveAmount.textContent = '';
             }
         }
+        if (estimatedProfit) {
+            var cost = parseFloat(costPriceInput && costPriceInput.value) || 0;
+            if (cost > 0) {
+                estimatedProfit.hidden = false;
+                estimatedProfit.textContent = 'Est. profit per unit: ' + money(finalPrice - cost);
+                estimatedProfit.className = 'small mt-1 ' + (finalPrice >= cost ? 'text-success' : 'text-danger');
+            } else {
+                estimatedProfit.hidden = true;
+                estimatedProfit.textContent = '';
+            }
+        }
     }
 
     function markDirty() {
@@ -142,6 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (priceInput) priceInput.addEventListener('input', updatePriceSummary);
+    if (costPriceInput) costPriceInput.addEventListener('input', updatePriceSummary);
     if (comparePriceInput) comparePriceInput.addEventListener('input', updatePriceSummary);
     if (discountPercentageInput) discountPercentageInput.addEventListener('input', updatePriceSummary);
     if (discountPercentageInput && !discountPercentageInput.value && priceInput && discountPriceHidden) {
@@ -192,6 +214,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    var galleryBag = new DataTransfer();
+    var mergingGallery = false;
+
     function renderGallery(files) {
         if (!galleryPreview) return;
         galleryPreview.innerHTML = '';
@@ -206,11 +231,11 @@ document.addEventListener('DOMContentLoaded', function () {
             remove.innerHTML = '<i class="fas fa-times"></i>';
             remove.addEventListener('click', function () {
                 var dt = new DataTransfer();
-                Array.prototype.forEach.call(galleryInput.files, function (kept, keptIndex) {
+                Array.prototype.forEach.call(galleryBag.files, function (kept, keptIndex) {
                     if (keptIndex !== index) dt.items.add(kept);
                 });
-                galleryInput.files = dt.files;
-                renderGallery(galleryInput.files);
+                galleryBag = dt;
+                syncGalleryInput();
             });
             wrap.appendChild(img);
             wrap.appendChild(remove);
@@ -218,10 +243,26 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function syncGalleryInput() {
+        mergingGallery = true;
+        galleryInput.files = galleryBag.files;
+        mergingGallery = false;
+        renderGallery(galleryBag.files);
+    }
+
+    function addGalleryFiles(fileList) {
+        Array.prototype.forEach.call(fileList || [], function (file) {
+            if (!file || (file.type && file.type.indexOf('image/') !== 0)) return;
+            galleryBag.items.add(file);
+        });
+        syncGalleryInput();
+    }
+
     if (galleryInput) {
         var galleryZone = galleryInput.closest('.product-dropzone');
         galleryInput.addEventListener('change', function () {
-            renderGallery(galleryInput.files);
+            if (mergingGallery) return;
+            addGalleryFiles(galleryInput.files);
         });
         if (galleryZone) {
             ['dragenter', 'dragover'].forEach(function (eventName) {
@@ -239,8 +280,7 @@ document.addEventListener('DOMContentLoaded', function () {
             galleryZone.addEventListener('drop', function (event) {
                 event.preventDefault();
                 if (event.dataTransfer.files.length) {
-                    galleryInput.files = event.dataTransfer.files;
-                    renderGallery(galleryInput.files);
+                    addGalleryFiles(event.dataTransfer.files);
                 }
             });
         }

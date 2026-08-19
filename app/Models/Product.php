@@ -18,6 +18,7 @@ class Product extends Model
         'category_id',
         'description',
         'price',
+        'cost_price',
         'compare_price',
         'discount_price',
         'stock',
@@ -33,6 +34,7 @@ class Product extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'cost_price' => 'decimal:2',
         'compare_price' => 'decimal:2',
         'discount_price' => 'decimal:2',
         'stock' => 'integer',

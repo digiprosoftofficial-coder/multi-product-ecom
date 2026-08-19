@@ -77,21 +77,26 @@
 
                         <div class="row mb-3">
                             <div class="col-md-4">
+                                <p class="mb-1"><strong>Purchase price:</strong>
+                                    <span>{{ $product->cost_price !== null ? money($product->cost_price) : '—' }}</span>
+                                </p>
+                            </div>
+                            <div class="col-md-4">
                                 <p class="mb-1"><strong>Price:</strong> 
-                                    <span class="text-success fw-bold">${{ number_format($product->price, 2) }}</span>
+                                    <span class="text-success fw-bold">{{ money($product->price) }}</span>
                                 </p>
                             </div>
                             @if(compare_price_enabled() && $product->compare_price)
                             <div class="col-md-4">
                                 <p class="mb-1"><strong>Compare Price:</strong> 
-                                    <span class="text-decoration-line-through text-muted">${{ number_format($product->compare_price, 2) }}</span>
+                                    <span class="text-decoration-line-through text-muted">{{ money($product->compare_price) }}</span>
                                 </p>
                             </div>
                             @endif
                             @if($product->discount_price)
                             <div class="col-md-4">
                                 <p class="mb-1"><strong>Discount Price:</strong> 
-                                    <span class="text-danger fw-bold">${{ number_format($product->discount_price, 2) }}</span>
+                                    <span class="text-danger fw-bold">{{ money($product->discount_price) }}</span>
                                 </p>
                             </div>
                             @endif

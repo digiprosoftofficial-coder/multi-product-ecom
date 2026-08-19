@@ -3,6 +3,7 @@
     $name = old('name', $isEdit ? $product->name : '');
     $sku = old('sku', $isEdit ? $product->sku : '');
     $price = old('price', $isEdit ? $product->price : '');
+    $costPrice = old('cost_price', $isEdit ? $product->cost_price : '');
     $comparePrice = old('compare_price', $isEdit ? $product->compare_price : '');
     $discountPrice = old('discount_price', $isEdit ? $product->discount_price : '');
     $stock = old('stock', $isEdit ? $product->stock : 0);
@@ -50,8 +51,8 @@
                     <div class="col-md-4">
                         <label class="form-label">Thumbnail</label>
                         <label class="product-dropzone" for="thumbnail">
-                            <input type="file" class="d-none @error('thumbnail') is-invalid @enderror"
-                                   id="thumbnail" name="thumbnail" accept="image/*">
+                            <input type="file" class="product-file-input @error('thumbnail') is-invalid @enderror"
+                                   id="thumbnail" name="thumbnail" accept="image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.jfif,.png,.gif,.webp">
                             <img id="thumbnailPreview"
                                  class="product-dropzone-image {{ $isEdit && $product->thumbnail ? '' : 'd-none' }}"
                                  src="{{ $isEdit && $product->thumbnail ? asset('uploads/products/thumbnails/' . $product->thumbnail) : '' }}"
@@ -68,16 +69,24 @@
                     <div class="col-md-8">
                         <label class="form-label">Gallery</label>
                         <label class="product-dropzone product-dropzone-wide" for="images">
-                            <input type="file" class="d-none @error('images.*') is-invalid @enderror"
-                                   id="images" name="images[]" accept="image/*" multiple>
+                            <input type="file" class="product-file-input @error('images') is-invalid @enderror @error('images.*') is-invalid @enderror"
+                                   id="images" name="images[]" accept="image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.jfif,.png,.gif,.webp" multiple>
                             <span class="product-dropzone-empty">
                                 <i class="fas fa-images mb-2"></i>
                                 Drop or click to add images
                             </span>
                         </label>
-                        @error('images.*')
+                        <div class="form-text">JPG, PNG, GIF or WEBP. Up to 10MB each. You can select several at once.</div>
+                        @error('images')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
+                        @foreach($errors->getMessages() as $field => $messages)
+                            @if(str_starts_with($field, 'images.'))
+                                @foreach($messages as $message)
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @endforeach
+                            @endif
+                        @endforeach
                         <div id="galleryPreview" class="product-gallery-preview mt-2"></div>
                         @if($isEdit && $product->images->count())
                             <div class="row g-2 mt-2">
@@ -149,9 +158,21 @@
                 <div class="card-body">
                     <h6 class="fw-semibold mb-3">Pricing</h6>
                     <div class="mb-3">
+                        <label for="cost_price" class="form-label">Purchase price</label>
+                        <div class="input-group">
+                            <span class="input-group-text">{{ currency_symbol() }}</span>
+                            <input type="number" step="0.01" min="0" class="form-control @error('cost_price') is-invalid @enderror"
+                                   id="cost_price" name="cost_price" value="{{ $costPrice }}">
+                        </div>
+                        <div class="form-text">What you paid per unit. Used for dashboard profit.</div>
+                        @error('cost_price')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
                         <label for="price" class="form-label">Selling price <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">{{ currency_symbol() }}</span>
                             <input type="number" step="0.01" min="0" class="form-control @error('price') is-invalid @enderror"
                                    id="price" name="price" value="{{ $price }}" required>
                         </div>
@@ -163,7 +184,7 @@
                     <div class="mb-3">
                         <label for="compare_price" class="form-label">Compare price (MRP)</label>
                         <div class="input-group">
-                            <span class="input-group-text">$</span>
+                            <span class="input-group-text">{{ currency_symbol() }}</span>
                             <input type="number" step="0.01" min="0" class="form-control @error('compare_price') is-invalid @enderror"
                                    id="compare_price" name="compare_price" value="{{ $comparePrice }}">
                         </div>
@@ -189,8 +210,9 @@
                     <input type="hidden" id="discount_price" name="discount_price" value="{{ $discountPrice }}">
                     <div class="product-price-summary" id="priceSummary">
                         <div class="text-muted small">Customer pays</div>
-                        <div class="fs-4 fw-semibold" id="customerPays">$0.00</div>
+                        <div class="fs-4 fw-semibold" id="customerPays">{{ money(0) }}</div>
                         <div class="small text-success" id="saveAmount" hidden></div>
+                        <div class="small mt-1" id="estimatedProfit" hidden></div>
                     </div>
                 </div>
             </div>

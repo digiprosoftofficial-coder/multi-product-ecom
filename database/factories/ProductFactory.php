@@ -24,6 +24,7 @@ class ProductFactory extends Factory
             'category_id' => Category::factory(),
             'description' => $this->faker->paragraphs(3, true),
             'price' => $price,
+            'cost_price' => round($price * 0.65, 2),
             'compare_price' => $comparePrice,
             'discount_price' => $this->faker->boolean(30) ? $price * 0.8 : null,
             'stock' => $this->faker->numberBetween(0, 100),

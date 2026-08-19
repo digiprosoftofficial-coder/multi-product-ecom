@@ -26,7 +26,7 @@
                     <td>{{ $product->name }}</td>
                     <td>{{ $product->sku }}</td>
                     <td>{{ $product->category->name ?? '-' }}</td>
-                    <td>${{ number_format($product->price, 2) }}</td>
+                    <td>{{ money($product->price) }}</td>
                     <td>{{ $product->stock }}</td>
                     <td>
                         <span class="badge bg-{{ $product->status ? 'success' : 'danger' }}">

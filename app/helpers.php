@@ -78,20 +78,29 @@ if (!function_exists('money')) {
 }
 
 if (!function_exists('image_upload_rules')) {
-    function image_upload_rules(int $maxKb = 2048, array $extensions = ['jpg', 'jpeg', 'png', 'gif', 'webp']): array
+    function image_upload_rules(int $maxKb = 10240, array $extensions = ['jpg', 'jpeg', 'jfif', 'png', 'gif', 'webp']): array
     {
         return [
             'nullable',
             'file',
             'max:'.$maxKb,
             function (string $attribute, $value, $fail) use ($extensions) {
-                if (! $value instanceof \Illuminate\Http\UploadedFile || ! $value->isValid()) {
+                if (! $value instanceof \Illuminate\Http\UploadedFile) {
+                    return;
+                }
+
+                if (! $value->isValid()) {
+                    $fail('The '.$attribute.' failed to upload. Use a JPG, PNG, GIF, or WEBP file under 10MB.');
+
                     return;
                 }
 
                 $ext = strtolower($value->getClientOriginalExtension());
-                if (! in_array($ext, $extensions, true)) {
-                    $fail('The '.$attribute.' must be a file of type: '.implode(', ', $extensions).'.');
+                $mime = (string) $value->getMimeType();
+                $allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+                if (! in_array($ext, $extensions, true) && ! in_array($mime, $allowedMimes, true)) {
+                    $fail('The '.$attribute.' must be a JPG, PNG, GIF, or WEBP image.');
 
                     return;
                 }

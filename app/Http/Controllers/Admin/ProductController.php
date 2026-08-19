@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -63,6 +64,7 @@ class ProductController extends Controller
             'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
             'description' => 'nullable|string|max:20000',
             'price' => 'required|numeric|min:0',
+            'cost_price' => 'nullable|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discount_price' => 'nullable|numeric|min:0',
@@ -73,9 +75,17 @@ class ProductController extends Controller
             'is_new_arrival' => 'nullable|boolean',
             'is_best_selling' => 'nullable|boolean',
             'thumbnail' => image_upload_rules(),
+            'images' => 'nullable|array|max:20',
             'images.*' => image_upload_rules(),
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+        ], [
+            'images.max' => 'You can upload at most 20 gallery images at once.',
+            'images.*.max' => 'Each gallery image must be 10MB or smaller.',
+        ], [
+            'thumbnail' => 'thumbnail',
+            'images' => 'gallery',
+            'images.*' => 'gallery image',
         ]);
 
         // Calculate discount_price from discount_percentage if provided (base on price)
@@ -94,7 +104,7 @@ class ProductController extends Controller
         }
 
         // Remove discount_percentage from validated as it's not a database field
-        unset($validated['discount_percentage']);
+        unset($validated['discount_percentage'], $validated['images']);
 
         foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
             $validated[$flag] = $request->boolean($flag);
@@ -131,20 +141,17 @@ class ProductController extends Controller
 
         $product = Product::create($validated);
 
-        // Handle multiple images
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $index => $image) {
-                $filename = time() . '_' . $index . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                
-                $this->processProductImage($image, $filename);
-                
-                ProductImage::create([
-                    'product_id' => $product->id,
-                    'filename' => $filename,
-                    'is_primary' => $index === 0,
-                    'sort_order' => $index,
-                ]);
-            }
+        foreach ($this->uploadedGalleryImages($request) as $index => $image) {
+            $filename = time() . '_' . $index . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+
+            $this->processProductImage($image, $filename);
+
+            ProductImage::create([
+                'product_id' => $product->id,
+                'filename' => $filename,
+                'is_primary' => $index === 0,
+                'sort_order' => $index,
+            ]);
         }
 
         return redirect()->route('admin.products.index')
@@ -181,6 +188,7 @@ class ProductController extends Controller
             'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
             'description' => 'nullable|string|max:20000',
             'price' => 'required|numeric|min:0',
+            'cost_price' => 'nullable|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discount_price' => 'nullable|numeric|min:0',
@@ -191,9 +199,17 @@ class ProductController extends Controller
             'is_new_arrival' => 'nullable|boolean',
             'is_best_selling' => 'nullable|boolean',
             'thumbnail' => image_upload_rules(),
+            'images' => 'nullable|array|max:20',
             'images.*' => image_upload_rules(),
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+        ], [
+            'images.max' => 'You can upload at most 20 gallery images at once.',
+            'images.*.max' => 'Each gallery image must be 10MB or smaller.',
+        ], [
+            'thumbnail' => 'thumbnail',
+            'images' => 'gallery',
+            'images.*' => 'gallery image',
         ]);
 
         // Calculate discount_price from discount_percentage if provided (base on price)
@@ -211,7 +227,7 @@ class ProductController extends Controller
         }
 
         // Remove discount_percentage from validated as it's not a database field
-        unset($validated['discount_percentage']);
+        unset($validated['discount_percentage'], $validated['images']);
 
         foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
             $validated[$flag] = $request->boolean($flag);
@@ -249,11 +265,11 @@ class ProductController extends Controller
 
         $product->update($validated);
 
-        // Handle new images
-        if ($request->hasFile('images')) {
+        $galleryImages = $this->uploadedGalleryImages($request);
+        if ($galleryImages) {
             $maxSortOrder = $product->images()->max('sort_order') ?? -1;
 
-            foreach ($request->file('images') as $index => $image) {
+            foreach ($galleryImages as $index => $image) {
                 $filename = time() . '_' . ($maxSortOrder + $index + 1) . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
 
                 $this->processProductImage($image, $filename);
@@ -300,6 +316,21 @@ class ProductController extends Controller
         $productImage->delete();
 
         return back()->with('success', 'Image deleted successfully.');
+    }
+
+    /**
+     * @return list<UploadedFile>
+     */
+    private function uploadedGalleryImages(Request $request): array
+    {
+        $files = $request->file('images', []);
+        if (! is_array($files)) {
+            $files = $files ? [$files] : [];
+        }
+
+        return array_values(array_filter($files, function ($image) {
+            return $image instanceof UploadedFile && $image->isValid();
+        }));
     }
 
     private function leafCategoryRule(): \Closure
