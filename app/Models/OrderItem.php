@@ -39,15 +39,20 @@ class OrderItem extends Model
      * Product profit on paid orders: (selling price - purchase price) * qty.
      * Lines without a purchase price are skipped so missing cost does not inflate profit.
      */
-    public static function paidProfit(?string $date = null): float
+    public static function paidProfit(?string $from = null, ?string $to = null): float
     {
         $query = static::query()
             ->join('orders', 'orders.id', '=', 'order_items.order_id')
             ->where('orders.payment_status', 'paid')
             ->whereNotNull('order_items.cost_price');
 
-        if ($date) {
-            $query->whereDate('orders.created_at', $date);
+        if ($from && $to) {
+            $query->whereBetween('orders.created_at', [
+                \Carbon\Carbon::parse($from)->startOfDay(),
+                \Carbon\Carbon::parse($to)->endOfDay(),
+            ]);
+        } elseif ($from) {
+            $query->whereDate('orders.created_at', $from);
         }
 
         return (float) $query

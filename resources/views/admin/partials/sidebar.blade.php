@@ -17,6 +17,9 @@
             <a class="nav-link text-white {{ request()->routeIs('admin.orders.*') ? 'bg-primary' : '' }}" href="{{ route('admin.orders.index') }}">
                 <i class="fas fa-shopping-bag"></i> Orders
             </a>
+            <a class="nav-link text-white {{ request()->routeIs('admin.reports.*') ? 'bg-primary' : '' }}" href="{{ route('admin.reports.index') }}">
+                <i class="fas fa-chart-bar"></i> Reports
+            </a>
             <a class="nav-link text-white {{ request()->routeIs('admin.homepage.*') ? 'bg-primary' : '' }}" href="{{ route('admin.homepage.index') }}">
                 <i class="fas fa-home"></i> Homepage
             </a>

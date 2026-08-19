@@ -36,6 +36,7 @@
                     <tr>
                         <th>Order Number</th>
                         <th>Customer</th>
+                        <th>Product</th>
                         <th>Total</th>
                         <th>Status</th>
                         <th>Date</th>
@@ -49,6 +50,18 @@
                             <td>
                                 <div>{{ $order->customer_name }}</div>
                                 <small class="text-muted">{{ $order->customer_email }}</small>
+                            </td>
+                            <td>
+                                @forelse($order->items as $item)
+                                    <div>
+                                        {{ $item->product_name }}
+                                        @if($item->quantity > 1)
+                                            <small class="text-muted">× {{ $item->quantity }}</small>
+                                        @endif
+                                    </div>
+                                @empty
+                                    <span class="text-muted">—</span>
+                                @endforelse
                             </td>
                             <td>{{ money($order->total) }}</td>
                             <td>
@@ -70,7 +83,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center">No orders found.</td>
+                            <td colspan="7" class="text-center">No orders found.</td>
                         </tr>
                     @endforelse
                 </tbody>

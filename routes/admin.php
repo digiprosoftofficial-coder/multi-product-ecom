@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('reports', [\App\Http\Controllers\Admin\ReportController::class, 'index'])->name('reports.index');
+    Route::get('reports/print', [\App\Http\Controllers\Admin\ReportController::class, 'print'])->name('reports.print');
     
     // Categories
     Route::get('categories/children', [CategoryController::class, 'children'])->name('categories.children');
