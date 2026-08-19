@@ -65,11 +65,16 @@
         <p class="small text-muted">Category: {{ $product->category->name ?? '-' }}</p>
         <p class="small text-muted">Stock: {{ $product->stock }}</p>
 
-        <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex align-items-center gap-2 flex-wrap">
+        @if($product->stock > 0)
+        <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex align-items-center gap-2 flex-wrap js-add-to-cart">
           @csrf
           <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control" style="width: 80px;">
           <button type="submit" class="btn btn-primary">Add to cart</button>
+          <button type="submit" name="buy_now" value="1" class="btn btn-outline-light">Order Now</button>
         </form>
+        @else
+        <button class="btn btn-secondary" disabled>Out of Stock</button>
+        @endif
       </div>
     </div>
 

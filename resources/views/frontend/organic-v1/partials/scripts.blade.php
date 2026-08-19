@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       const formData = new FormData(form);
+      if (e.submitter && e.submitter.name) {
+        formData.set(e.submitter.name, e.submitter.value);
+      }
 
       fetch(form.action, {
         method: 'POST',
@@ -41,6 +44,10 @@ document.addEventListener('DOMContentLoaded', function () {
           return res.json();
         })
         .then(function (data) {
+          if (data.redirect) {
+            window.location.href = data.redirect;
+            return;
+          }
           if (typeof data.cartCount !== 'undefined') {
             updateCartCount(data.cartCount);
             refreshCartSidebar();

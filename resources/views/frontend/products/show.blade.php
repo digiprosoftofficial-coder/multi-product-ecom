@@ -94,21 +94,7 @@
                 </p>
 
                 @if($product->isInStock())
-                    <form action="{{ route('cart.add', $product) }}" method="POST"
-                          class="row g-2 align-items-center js-add-to-cart"
-                          data-product-id="{{ $product->id }}"
-                          data-product-name="{{ $product->name }}"
-                          data-product-image="{{ $product->thumbnail_url }}">
-                        @csrf
-                        <div class="col-3 col-sm-2">
-                            <input type="number" name="quantity" class="form-control border-dark-subtle quantity" value="1" min="1" max="{{ $product->stock }}" required>
-                        </div>
-                        <div class="col-9 col-sm-6">
-                            <button type="submit" class="btn btn-primary rounded-1 btn-cart w-100">
-                                <i class="fa-solid fa-cart-shopping me-1"></i> Add to Cart
-                            </button>
-                        </div>
-                    </form>
+                    @include('frontend.partials.add-to-cart-actions', ['product' => $product, 'showQty' => true])
                 @else
                     <button class="btn btn-secondary btn-lg" disabled>Out of Stock</button>
                 @endif

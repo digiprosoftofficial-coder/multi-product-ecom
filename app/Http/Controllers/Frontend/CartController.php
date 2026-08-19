@@ -73,16 +73,25 @@ class CartController extends Controller
         session(['cart' => $cart]);
 
         $cartCount = count($cart);
+        $buyNow = $request->boolean('buy_now');
 
         if ($request->expectsJson()) {
-            return response()->json([
+            $payload = [
                 'message' => 'Product added to cart successfully.',
                 'cartCount' => $cartCount,
                 'productId' => $product->id,
-            ]);
+            ];
+
+            if ($buyNow) {
+                $payload['redirect'] = route('checkout.index');
+            }
+
+            return response()->json($payload);
         }
 
-        return back()->with('success', 'Product added to cart successfully.');
+        return $buyNow
+            ? redirect()->route('checkout.index')
+            : back()->with('success', 'Product added to cart successfully.');
     }
 
     public function update(Request $request, Product $product)

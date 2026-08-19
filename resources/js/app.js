@@ -51,9 +51,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('form.js-add-to-cart').forEach((form) => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
-            const submitBtn = form.querySelector('button[type="submit"]') || form;
+            const submitBtn = e.submitter || form.querySelector('button[type="submit"]') || form;
 
             const formData = new FormData(form);
+            if (e.submitter && e.submitter.name) {
+                formData.set(e.submitter.name, e.submitter.value);
+            }
 
             fetch(form.action, {
                 method: 'POST',
@@ -73,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     return res.json();
                 })
                 .then((data) => {
+                    if (data?.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
                     if (data?.cartCount !== undefined) {
                         updateCartCount(data.cartCount);
                     }
@@ -81,7 +88,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
                 .catch((err) => {
                     console.error(err);
-                    // Fallback to normal submit if error
                     form.submit();
                 });
         });

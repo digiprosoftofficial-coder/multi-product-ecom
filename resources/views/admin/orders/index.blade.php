@@ -6,13 +6,14 @@
 @section('content')
 <div class="card mb-3">
     <div class="card-body">
-        <form method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
-            <div class="col-md-4">
-                <input type="text" name="search" class="form-control" 
-                       placeholder="Search by order number or email..." value="{{ request('search') }}">
+        <form id="orderFilterForm" method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="search" id="orderSearch" class="form-control"
+                       placeholder="Search order number, customer, email..." value="{{ request('search') }}"
+                       autocomplete="off">
             </div>
             <div class="col-md-4">
-                <select name="status" class="form-select">
+                <select name="status" id="orderStatus" class="form-select">
                     <option value="">All Status</option>
                     <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                     <option value="processing" {{ request('status') == 'processing' ? 'selected' : '' }}>Processing</option>
@@ -21,79 +22,103 @@
                     <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                 </select>
             </div>
-            <div class="col-md-4">
-                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-outline-secondary w-100" id="orderFilterClear" title="Clear filters">
+                    <i class="fas fa-times me-1"></i> Clear
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Order Number</th>
-                        <th>Customer</th>
-                        <th>Product</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                        <th>Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($orders as $order)
-                        <tr>
-                            <td>{{ $order->order_number }}</td>
-                            <td>
-                                <div>{{ $order->customer_name }}</div>
-                                <small class="text-muted">{{ $order->customer_email }}</small>
-                            </td>
-                            <td>
-                                @forelse($order->items as $item)
-                                    <div>
-                                        {{ $item->product_name }}
-                                        @if($item->quantity > 1)
-                                            <small class="text-muted">× {{ $item->quantity }}</small>
-                                        @endif
-                                    </div>
-                                @empty
-                                    <span class="text-muted">—</span>
-                                @endforelse
-                            </td>
-                            <td>{{ money($order->total) }}</td>
-                            <td>
-                                <span class="badge bg-{{ $order->status_badge }}">
-                                    {{ ucfirst($order->order_status) }}
-                                </span>
-                            </td>
-                            <td>{{ $order->created_at->format('M d, Y H:i') }}</td>
-                            <td>
-                                <div class="d-flex flex-wrap gap-2">
-                                    <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-primary">
-                                        View
-                                    </a>
-                                    <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-sm btn-outline-secondary">
-                                        Invoice
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="7" class="text-center">No orders found.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-
-        <div class="mt-3">
-            {{ $orders->links() }}
-        </div>
+    <div class="card-body" id="orderResults">
+        @include('admin.orders.partials.results')
     </div>
 </div>
 @endsection
 
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var form = document.getElementById('orderFilterForm');
+    var searchInput = document.getElementById('orderSearch');
+    var statusSelect = document.getElementById('orderStatus');
+    var clearBtn = document.getElementById('orderFilterClear');
+    var results = document.getElementById('orderResults');
+    var indexUrl = @json(route('admin.orders.index'));
+    var debounceTimer = null;
+    var abortController = null;
+
+    function currentParams(page) {
+        var params = new URLSearchParams();
+        var search = searchInput.value.trim();
+        if (search) params.set('search', search);
+        if (statusSelect.value) params.set('status', statusSelect.value);
+        if (page) params.set('page', page);
+        return params;
+    }
+
+    function loadOrders(page) {
+        var params = currentParams(page);
+        var url = indexUrl + (params.toString() ? '?' + params.toString() : '');
+
+        if (abortController) {
+            abortController.abort();
+        }
+        abortController = new AbortController();
+        results.style.opacity = '0.55';
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'text/html'
+            },
+            signal: abortController.signal
+        }).then(function (response) {
+            if (!response.ok) throw new Error('Failed to load orders');
+            return response.text();
+        }).then(function (html) {
+            results.innerHTML = html;
+            results.style.opacity = '1';
+            history.replaceState(null, '', url);
+        }).catch(function (error) {
+            if (error.name === 'AbortError') return;
+            results.style.opacity = '1';
+        });
+    }
+
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        loadOrders();
+    });
+
+    searchInput.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+            loadOrders();
+        }, 300);
+    });
+
+    statusSelect.addEventListener('change', function () {
+        loadOrders();
+    });
+
+    clearBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        statusSelect.value = '';
+        loadOrders();
+    });
+
+    results.addEventListener('click', function (event) {
+        var link = event.target.closest('#orderPagination a');
+        if (!link) return;
+        event.preventDefault();
+        var href = link.getAttribute('href');
+        if (!href || href === '#') return;
+        var page = new URL(href, window.location.origin).searchParams.get('page');
+        loadOrders(page);
+    });
+});
+</script>
+@endpush

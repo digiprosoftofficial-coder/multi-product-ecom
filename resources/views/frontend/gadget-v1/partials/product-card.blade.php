@@ -27,6 +27,15 @@
     </div>
   </a>
   <div class="card-footer border-secondary bg-transparent">
-    <a href="{{ $url }}" class="btn btn-sm btn-primary w-100">View</a>
+    @if($product->stock > 0)
+      <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex gap-1 js-add-to-cart">
+        @csrf
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="btn btn-sm btn-primary flex-fill">Add to Cart</button>
+        <button type="submit" name="buy_now" value="1" class="btn btn-sm btn-outline-light flex-fill">Order Now</button>
+      </form>
+    @else
+      <button class="btn btn-sm btn-secondary w-100" disabled>Out of Stock</button>
+    @endif
   </div>
 </div>

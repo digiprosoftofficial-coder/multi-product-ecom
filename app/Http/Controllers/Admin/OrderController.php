@@ -22,11 +22,18 @@ class OrderController extends Controller
             $query->where(function ($q) use ($term) {
                 $q->where('order_number', 'like', $term)
                     ->orWhere('customer_email', 'like', $term)
-                    ->orWhere('customer_name', 'like', $term);
+                    ->orWhere('customer_name', 'like', $term)
+                    ->orWhereHas('items', function ($items) use ($term) {
+                        $items->where('product_name', 'like', $term);
+                    });
             });
         }
 
         $orders = $query->latest()->paginate(15)->withQueryString();
+
+        if ($request->ajax()) {
+            return response()->view('admin.orders.partials.results', compact('orders'));
+        }
 
         return view('admin.orders.index', compact('orders'));
     }

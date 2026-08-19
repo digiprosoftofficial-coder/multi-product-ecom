@@ -35,18 +35,7 @@
 
         <div class="button-area p-3 pt-0">
             @if($product->isInStock())
-                <form action="{{ route('cart.add', $product) }}" method="POST"
-                      class="w-100 js-add-to-cart"
-                      data-product-id="{{ $product->id }}"
-                      data-product-name="{{ $product->name }}"
-                      data-product-image="{{ $product->thumbnail_url }}">
-                    @csrf
-                    <input type="hidden" name="quantity" value="1">
-                    <button type="submit" class="btn btn-primary rounded-1 p-2 fs-7 btn-cart w-100 mt-2">
-                        <i class="fa-solid fa-cart-shopping me-1"></i>
-                        Add to Cart
-                    </button>
-                </form>
+                @include('frontend.partials.add-to-cart-actions', ['product' => $product, 'compact' => true])
             @else
                 <button class="btn btn-outline-secondary rounded-1 p-2 fs-7 w-100 mt-2" disabled>Out of Stock</button>
             @endif
