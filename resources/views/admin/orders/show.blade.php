@@ -4,11 +4,47 @@
 @section('page-title', 'Order #' . $order->order_number)
 
 @section('content')
-<div class="d-flex flex-wrap gap-2 mb-3">
-    <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-primary">
-        <i class="fas fa-print me-1"></i> Print invoice
-    </a>
-    <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Back to Orders</a>
+<div class="order-action-bar card mb-3">
+    <div class="card-body py-3">
+        <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-primary">
+                    <i class="fas fa-print me-1"></i> Print invoice
+                </a>
+                <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Back to Orders</a>
+            </div>
+            <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="order-status-form d-flex flex-wrap align-items-end gap-2">
+                @csrf
+                @method('PATCH')
+                <div>
+                    <label for="order_status" class="form-label small mb-1">Order status</label>
+                    <select name="order_status" id="order_status" class="form-select form-select-sm @error('order_status') is-invalid @enderror" required>
+                        <option value="pending" {{ $order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="processing" {{ $order->order_status == 'processing' ? 'selected' : '' }}>Processing</option>
+                        <option value="shipped" {{ $order->order_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
+                        <option value="delivered" {{ $order->order_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                        <option value="cancelled" {{ $order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                    @error('order_status')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div>
+                    <label for="payment_status" class="form-label small mb-1">Payment status</label>
+                    <select name="payment_status" id="payment_status" class="form-select form-select-sm @error('payment_status') is-invalid @enderror" required>
+                        <option value="pending" {{ $order->payment_status == 'pending' ? 'selected' : '' }}>Pending</option>
+                        <option value="paid" {{ $order->payment_status == 'paid' ? 'selected' : '' }}>Paid</option>
+                        <option value="cancelled" {{ $order->payment_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        <option value="refunded" {{ $order->payment_status == 'refunded' ? 'selected' : '' }}>Refunded</option>
+                    </select>
+                    @error('payment_status')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm">Update Status</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <div class="row">
@@ -68,8 +104,12 @@
 
     <div class="col-md-4">
         <div class="card mb-3">
-            <div class="card-header">
-                <h5>Order Summary</h5>
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h5 class="mb-0">Order Summary</h5>
+                <div class="d-flex flex-wrap gap-1">
+                    <span class="badge bg-{{ $order->status_badge }}">{{ ucfirst($order->order_status) }}</span>
+                    <span class="badge bg-{{ $order->payment_badge }}">{{ ucfirst($order->payment_status) }}</span>
+                </div>
             </div>
             <div class="card-body">
                 <div class="d-flex justify-content-between mb-2">
@@ -105,44 +145,6 @@
             </div>
         </div>
 
-        <div class="card mb-3">
-            <div class="card-header">
-                <h5>Update Status</h5>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('admin.orders.update-status', $order) }}" method="POST">
-                    @csrf
-                    @method('PATCH')
-                    <div class="mb-3">
-                        <label for="order_status" class="form-label">Order status</label>
-                        <select name="order_status" id="order_status" class="form-select @error('order_status') is-invalid @enderror" required>
-                            <option value="pending" {{ $order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="processing" {{ $order->order_status == 'processing' ? 'selected' : '' }}>Processing</option>
-                            <option value="shipped" {{ $order->order_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
-                            <option value="delivered" {{ $order->order_status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                            <option value="cancelled" {{ $order->order_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                        </select>
-                        @error('order_status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="payment_status" class="form-label">Payment status</label>
-                        <select name="payment_status" id="payment_status" class="form-select @error('payment_status') is-invalid @enderror" required>
-                            <option value="pending" {{ $order->payment_status == 'pending' ? 'selected' : '' }}>Pending</option>
-                            <option value="paid" {{ $order->payment_status == 'paid' ? 'selected' : '' }}>Paid</option>
-                            <option value="cancelled" {{ $order->payment_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                            <option value="refunded" {{ $order->payment_status == 'refunded' ? 'selected' : '' }}>Refunded</option>
-                        </select>
-                        @error('payment_status')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Update Status</button>
-                </form>
-            </div>
-        </div>
-
         <div class="card">
             <div class="card-header">
                 <h5>Customer Information</h5>
@@ -159,4 +161,18 @@
 </div>
 
 @endsection
+
+@push('styles')
+<style>
+    .order-action-bar {
+        border-color: #e8eee9;
+    }
+    .order-status-form select {
+        min-width: 140px;
+    }
+    .order-status-form .btn {
+        height: 31px;
+    }
+</style>
+@endpush
 

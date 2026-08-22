@@ -89,8 +89,8 @@
 <style>
     #categoryTreeTable {
         --tree-header: #334155;
-        --tree-hover: #eef2ff;
-        --tree-line: #6366f1;
+        --tree-hover: #ecfdf5;
+        --tree-line: #16a34a;
     }
     #categoryTreeTable thead th {
         background: var(--tree-header);

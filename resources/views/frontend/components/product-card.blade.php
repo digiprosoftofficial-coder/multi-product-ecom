@@ -33,7 +33,7 @@
             @endif
         </div>
 
-        <div class="button-area p-3 pt-0">
+        <div class="button-area px-2 pb-2 pt-1">
             @if($product->isInStock())
                 @include('frontend.partials.add-to-cart-actions', ['product' => $product, 'compact' => true])
             @else

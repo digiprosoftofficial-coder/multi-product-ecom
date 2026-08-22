@@ -27,16 +27,10 @@ class DashboardController extends Controller
             'out_of_stock' => Product::where('stock', '<=', 0)->count(),
             'low_stock' => Product::where('stock', '>', 0)->where('stock', '<=', $lowStockLimit)->count(),
             'low_stock_limit' => $lowStockLimit,
-            'low_stock_products' => Product::where('stock', '>', 0)
-                ->where('stock', '<=', $lowStockLimit)
+            'stock_alerts' => Product::where('stock', '<=', $lowStockLimit)
                 ->with('category')
                 ->orderBy('stock')
-                ->take(10)
-                ->get(),
-            'out_of_stock_products' => Product::where('stock', '<=', 0)
-                ->with('category')
-                ->latest()
-                ->take(10)
+                ->take(15)
                 ->get(),
             'total_products' => Product::count(),
             'active_products' => Product::where('status', 1)->count(),

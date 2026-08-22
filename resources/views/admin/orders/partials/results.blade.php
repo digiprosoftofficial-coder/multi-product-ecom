@@ -19,12 +19,18 @@
                         <div>{{ $order->customer_name }}</div>
                         <small class="text-muted">{{ $order->customer_email }}</small>
                     </td>
-                    <td>
-                        @forelse($order->items as $item)
-                            <div>
-                                {{ $item->product_name }}
-                                @if($item->quantity > 1)
-                                    <small class="text-muted">× {{ $item->quantity }}</small>
+                    <td class="order-products">
+                        @php
+                            $productLines = $order->items->map(function ($item) {
+                                $name = $item->product_name ?: $item->product?->name;
+                                return $name ? ['name' => $name, 'qty' => $item->quantity] : null;
+                            })->filter()->values();
+                        @endphp
+                        @forelse($productLines as $line)
+                            <div class="order-product-line">
+                                <span class="fw-semibold">{{ $line['name'] }}</span>
+                                @if($line['qty'] > 1)
+                                    <small class="text-muted">× {{ $line['qty'] }}</small>
                                 @endif
                             </div>
                         @empty

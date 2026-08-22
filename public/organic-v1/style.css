@@ -371,9 +371,14 @@ h1,h2,h3,h4,h5,h6 {
 /* products-carousel */
 .products-carousel {
   overflow: hidden;
+  background-color: #fff;
 }
-.products-carousel .swiper, .products-carousel .swiper-container {
+.products-carousel .swiper,
+.products-carousel .swiper-container,
+.products-carousel .swiper-wrapper,
+.products-carousel .swiper-slide {
   overflow: hidden;
+  background: transparent;
 }
 
 /* product-grid */
@@ -383,36 +388,46 @@ input[type=number]::-webkit-outer-spin-button {
 }
 .product-item .button-area .quantity {
   padding: 0.5rem;
+  max-width: 70px;
+  height: 40px;
 }
 .product-item .button-area {
-  display: none;
-  position: absolute;
+  position: static;
+  display: block;
   text-align: center;
-  background: #fff;
+  background: transparent;
   width: 100%;
-  left: 0;
-  bottom: -55px;
-  z-index: 1;
-  box-shadow: 0px 20px 44px rgba(0, 0, 0, 0.08);
-  /* transition: box-shadow 0.3s ease-out; */
+  box-shadow: none;
+  margin-top: .5rem;
+  max-width: 100%;
+  overflow: hidden;
+}
+.product-item .button-area .row {
+  align-items: center;
+}
+.product-item .button-area .btn-cart {
+  width: 100%;
+  height: 40px;
+  border-radius: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 .product-item {
   position: relative;
   padding: 16px;
   background: #FFFFFF;
-  border-radius: 16px;
-  margin-bottom: 30px;
-  box-shadow: 0px 0px 22px rgba(0, 0, 0, 0);
-  /* transition: box-shadow 0.3s ease-out, margin 0.3s ease-out; */
-}
-.product-item:hover .button-area {
-  display: block;
+  border-radius: 1rem;
+  margin-bottom: 0;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.06);
+  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
+  container-type: inline-size;
+  overflow: hidden;
+  height: 100%;
 }
 .product-item:hover {
-  /* z-index: 1; */
-  /* margin-bottom: -50px; */
-  /* max-height: 500px; */
-  box-shadow: 0px 0px 44px rgba(0, 0, 0, 0.08);
+  transform: translateY(-4px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
 }
 .product-item figure {
   text-align: center;
@@ -435,79 +450,21 @@ input[type=number]::-webkit-outer-spin-button {
   margin-inline: 1px;
 }
 
-/* Best selling products grid tweaks */
-#best-selling-products .product-item {
-  border-radius: 1rem;
-  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.06);
-  transition: transform 0.18s ease-out, box-shadow 0.18s ease-out;
-  margin-bottom: 0;
-}
-
-#best-selling-products .product-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
-}
-
-#best-selling-products .product-grid .col {
+/* Product cards — shared grid + carousel layout */
+.product-grid .col {
   display: flex;
   min-width: 0;
 }
 
-#best-selling-products .product-grid .col .product-item {
+.product-grid .col .product-item {
   flex: 1 1 0;
   width: 100%;
   max-width: 100%;
-  height: 100%;
+}
+
+.products-carousel .swiper {
   overflow: hidden;
-}
-
-#best-selling-products .product-item .button-area,
-.products-carousel .product-item .button-area,
-.shop-page .product-item .button-area {
-  position: static;
-  display: block;
-  box-shadow: none;
-  margin-top: .5rem;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-#best-selling-products .product-item .button-area .row,
-.products-carousel .product-item .button-area .row,
-.shop-page .product-item .button-area .row {
-  align-items: center;
-}
-
-#best-selling-products .product-item .button-area .quantity,
-.products-carousel .product-item .button-area .quantity,
-.shop-page .product-item .button-area .quantity {
-  max-width: 70px;
-  height: 40px;
-}
-
-#best-selling-products .product-item .button-area .btn-cart,
-.products-carousel .product-item .button-area .btn-cart,
-.shop-page .product-item .button-area .btn-cart {
-  width: 100%;
-  height: 40px;
-  border-radius: 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-#best-selling-products .product-item .button-area .btn-outline-dark,
-.products-carousel .product-item .button-area .btn-outline-dark,
-.shop-page .product-item .button-area .btn-outline-dark {
-  height: 40px;
-  border-radius: 0 .5rem .5rem 0;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.products-carousel .product-item {
-  margin-bottom: 0;
+  padding: 6px 2px 14px;
 }
 
 .products-carousel .swiper-slide {
@@ -621,6 +578,91 @@ input[type=number]::-webkit-outer-spin-button {
   height: 3.3em;
   line-height: 2em;
   width: 100%;
+}
+
+.product-card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+  margin-top: 0.65rem;
+}
+
+.product-card-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 6px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  white-space: nowrap;
+  transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.product-card-actions .btn i {
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.product-card-actions .btn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-card-actions .btn-cart-action {
+  background: #6BB252;
+  color: #fff;
+}
+
+.product-card-actions .btn-cart-action:hover,
+.product-card-actions .btn-cart-action:focus {
+  background: #57a03e;
+  color: #fff;
+}
+
+.product-card-actions .btn-order-action {
+  background: #F95F09;
+  color: #fff;
+}
+
+.product-card-actions .btn-order-action:hover,
+.product-card-actions .btn-order-action:focus {
+  background: #e05308;
+  color: #fff;
+}
+
+.product-card-actions--lg {
+  gap: 10px;
+  margin-top: 0;
+}
+
+.product-card-actions--lg .btn {
+  min-height: 46px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  border-radius: 10px;
+}
+
+.product-card-actions--lg .btn i {
+  font-size: 0.9rem;
+}
+
+@container (max-width: 210px) {
+  .product-card-actions {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .product-card-actions .btn {
+    min-height: 36px;
+  }
 }
 .fs-7 {
   font-size: 0.8rem!important;
@@ -857,7 +899,6 @@ a.btn-link.text-light:after {
 .shop-page .product-grid .col .product-item {
   flex: 1 1 0;
   width: 100%;
-  margin-bottom: 0;
 }
 .shop-page .shop-empty {
   background: #f8f9f6;

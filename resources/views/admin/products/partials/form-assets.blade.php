@@ -32,8 +32,8 @@
     }
     .product-dropzone:hover,
     .product-dropzone.is-dragover {
-        border-color: #6366f1;
-        background: #eef2ff;
+        border-color: #16a34a;
+        background: #ecfdf5;
     }
     .product-dropzone-image {
         width: 100%;

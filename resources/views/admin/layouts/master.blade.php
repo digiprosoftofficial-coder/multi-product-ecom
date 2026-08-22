@@ -29,17 +29,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     @endif
-    @php
-        $activeTheme = setting('active_frontend_theme', 'organic-v1');
-        $adminThemeCss = 'css/admin-themes/' . $activeTheme . '.css';
-        $adminThemeCssPath = public_path($adminThemeCss);
-        $adminThemeCssToLoad = file_exists($adminThemeCssPath) ? $adminThemeCss : 'css/admin-themes/default.css';
-    @endphp
-    @if(file_exists(public_path($adminThemeCssToLoad)))
-    <link rel="stylesheet" href="{{ asset($adminThemeCssToLoad) }}">
-    @endif
+    <link rel="stylesheet" href="{{ asset('css/admin-themes/default.css') }}">
 </head>
-<body class="admin-theme-{{ setting('active_frontend_theme', 'organic-v1') }}">
+<body class="admin-panel admin-theme-{{ setting('active_frontend_theme', 'organic-v1') }}">
     <div class="wrapper d-flex">
         @include('admin.partials.sidebar')
         

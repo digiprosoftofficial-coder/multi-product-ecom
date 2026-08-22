@@ -9,7 +9,7 @@
         <form id="orderFilterForm" method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
             <div class="col-md-6">
                 <input type="text" name="search" id="orderSearch" class="form-control"
-                       placeholder="Search order number, customer, email..." value="{{ request('search') }}"
+                       placeholder="Search order, customer, email, or product..." value="{{ request('search') }}"
                        autocomplete="off">
             </div>
             <div class="col-md-4">
@@ -37,6 +37,18 @@
     </div>
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .order-products {
+        min-width: 180px;
+        max-width: 280px;
+    }
+    .order-product-line + .order-product-line {
+        margin-top: .25rem;
+    }
+</style>
+@endpush
 
 @push('scripts')
 <script>

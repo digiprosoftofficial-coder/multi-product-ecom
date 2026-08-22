@@ -48,7 +48,7 @@
                 </ul>
             </div>
             <span class="text-muted">{{ Auth::user()->name }}</span>
-            <a href="{{ route('home') }}" class="btn btn-sm btn-outline-primary" target="_blank">
+            <a href="{{ route('home') }}" class="btn btn-sm btn-outline-success" target="_blank">
                 <i class="fas fa-external-link-alt"></i> View Site
             </a>
         </div>

@@ -3,52 +3,14 @@
 @section('title', site_name())
 
 @section('content')
-@php
-    $heroTitle = \App\Support\Homepage::get('home_hero_title');
-    $highlight = \App\Support\Homepage::get('home_hero_highlight');
-    $heroHtml = e($heroTitle);
-    if ($highlight !== '' && str_contains($heroTitle, $highlight)) {
-        $heroHtml = str_replace(e($highlight), '<span class="fw-bold text-primary">'.e($highlight).'</span>', $heroHtml);
-    }
-@endphp
-
-<section style="background-image: url('{{ \App\Support\Homepage::heroImageUrl() }}');background-repeat: no-repeat;background-size: cover;">
-  <div class="container-lg">
-    <div class="row">
-      <div class="col-lg-6 pt-5 mt-5">
-        <h2 class="display-1 ls-1">{!! $heroHtml !!}</h2>
-        @if(\App\Support\Homepage::get('home_hero_subtitle'))
-          <p class="fs-4">{{ \App\Support\Homepage::get('home_hero_subtitle') }}</p>
-        @endif
-        <div class="d-flex gap-3">
-          @if(\App\Support\Homepage::get('home_hero_btn1_text'))
-            <a href="{{ \App\Support\Homepage::get('home_hero_btn1_url') ?: route('products.index') }}" class="btn btn-primary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">{{ \App\Support\Homepage::get('home_hero_btn1_text') }}</a>
-          @endif
-          @if(\App\Support\Homepage::get('home_hero_btn2_text'))
-            <a href="{{ \App\Support\Homepage::get('home_hero_btn2_url') ?: route('register') }}" class="btn btn-dark text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">{{ \App\Support\Homepage::get('home_hero_btn2_text') }}</a>
-          @endif
-        </div>
-        <div class="row my-5">
-          @foreach([1,2,3] as $i)
-            <div class="col">
-              <div class="row text-dark">
-                <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_value') }}</p></div>
-                <div class="col"><p class="text-uppercase lh-sm mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_label') }}</p></div>
-              </div>
-            </div>
-          @endforeach
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+@include('frontend.organic-v1.partials.hero-carousel')
 
 @if(\App\Support\Homepage::enabled('home_show_categories'))
-    <section class="py-5 overflow-hidden">
+    <section class="py-4 overflow-hidden">
       <div class="container-lg">
-        <div class="section-header d-flex flex-wrap justify-content-between mb-5">
-          <h2 class="section-title">{{ \App\Support\Homepage::get('home_categories_title') }}</h2>
-          <a href="{{ route('products.index') }}" class="btn btn-primary me-2">View All</a>
+        <div class="section-header d-flex flex-wrap align-items-center justify-content-between mb-3">
+          <h2 class="section-title mb-0">{{ \App\Support\Homepage::get('home_categories_title') }}</h2>
+          <a href="{{ route('products.index') }}" class="btn btn-primary">View All</a>
         </div>
         <div class="category-list d-flex flex-wrap justify-content-center">
           @foreach($categories as $category)
@@ -65,8 +27,8 @@
 @if(\App\Support\Homepage::enabled('home_show_best_selling') && $bestSellingProducts->isNotEmpty())
     <section class="pb-5" id="best-selling-products">
       <div class="container-lg">
-        <div class="section-header d-flex flex-wrap justify-content-between my-4">
-          <h2 class="section-title">{{ \App\Support\Homepage::get('home_best_selling_title') }}</h2>
+        <div class="section-header d-flex flex-wrap align-items-center justify-content-between mb-3">
+          <h2 class="section-title mb-0">{{ \App\Support\Homepage::get('home_best_selling_title') }}</h2>
           <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1">View All</a>
         </div>
         <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4">

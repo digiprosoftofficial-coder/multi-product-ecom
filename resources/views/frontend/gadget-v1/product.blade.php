@@ -69,8 +69,16 @@
         <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex align-items-center gap-2 flex-wrap js-add-to-cart">
           @csrf
           <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="form-control" style="width: 80px;">
-          <button type="submit" class="btn btn-primary">Add to cart</button>
-          <button type="submit" name="buy_now" value="1" class="btn btn-outline-light">Order Now</button>
+          <div class="product-card-actions product-card-actions--lg flex-grow-1">
+            <button type="submit" class="btn btn-cart-action">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span>Add to Cart</span>
+            </button>
+            <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
+              <i class="fa-solid fa-bolt"></i>
+              <span>Order Now</span>
+            </button>
+          </div>
         </form>
         @else
         <button class="btn btn-secondary" disabled>Out of Stock</button>

@@ -22,21 +22,36 @@ class HomepageController extends Controller
             $settings[$key] = Homepage::get($key);
         }
 
-        return view('admin.homepage.index', compact('settings'));
+        $heroSlides = Homepage::slidesForAdmin();
+
+        return view('admin.homepage.index', compact('settings', 'heroSlides'));
     }
 
     public function update(Request $request)
     {
         $validated = $request->validate([
-            'home_hero_title' => 'required|string|max:255',
-            'home_hero_highlight' => 'nullable|string|max:80',
-            'home_hero_subtitle' => 'nullable|string|max:500',
-            'home_hero_btn1_text' => 'nullable|string|max:80',
-            'home_hero_btn1_url' => 'nullable|string|max:255',
-            'home_hero_btn2_text' => 'nullable|string|max:80',
-            'home_hero_btn2_url' => 'nullable|string|max:255',
-            'home_hero_image' => image_upload_rules(),
-            'remove_home_hero_image' => 'nullable|boolean',
+            'home_hero_autoplay' => 'nullable|boolean',
+            'home_hero_show_dots' => 'nullable|boolean',
+            'home_hero_show_arrows' => 'nullable|boolean',
+            'home_hero_show_overlay' => 'nullable|boolean',
+            'home_hero_overlay_color' => 'nullable|string|max:7',
+            'home_hero_overlay_opacity' => 'nullable|integer|min:0|max:100',
+            'home_hero_interval' => 'required|integer|min:2|max:15',
+            'slides' => 'required|array|min:1|max:5',
+            'slides.*.enabled' => 'nullable|boolean',
+            'slides.*.show_content' => 'nullable|boolean',
+            'slides.*.title' => 'nullable|string|max:255',
+            'slides.*.highlight' => 'nullable|string|max:80',
+            'slides.*.subtitle' => 'nullable|string|max:500',
+            'slides.*.title_color' => 'nullable|string|max:7',
+            'slides.*.subtitle_color' => 'nullable|string|max:7',
+            'slides.*.highlight_color' => 'nullable|string|max:7',
+            'slides.*.btn1_text' => 'nullable|string|max:80',
+            'slides.*.btn1_url' => 'nullable|string|max:255',
+            'slides.*.btn2_text' => 'nullable|string|max:80',
+            'slides.*.btn2_url' => 'nullable|string|max:255',
+            'slides.*.image' => image_upload_rules(),
+            'slides.*.remove_image' => 'nullable|boolean',
             'home_stat1_value' => 'nullable|string|max:40',
             'home_stat1_label' => 'nullable|string|max:80',
             'home_stat2_value' => 'nullable|string|max:40',
@@ -88,42 +103,94 @@ class HomepageController extends Controller
             Setting::set($toggle, $request->boolean($toggle) ? '1' : '0');
         }
 
-        unset($validated['home_hero_image'], $validated['remove_home_hero_image']);
+        Setting::set('home_hero_autoplay', $request->boolean('home_hero_autoplay') ? '1' : '0');
+        Setting::set('home_hero_show_dots', $request->boolean('home_hero_show_dots') ? '1' : '0');
+        Setting::set('home_hero_show_arrows', $request->boolean('home_hero_show_arrows') ? '1' : '0');
+        Setting::set('home_hero_show_overlay', $request->boolean('home_hero_show_overlay') ? '1' : '0');
+        Setting::set('home_hero_overlay_color', Homepage::normalizeColor($validated['home_hero_overlay_color'] ?? '#ffffff'));
+        Setting::set('home_hero_overlay_opacity', (string) ($validated['home_hero_overlay_opacity'] ?? 45));
+        Setting::set('home_hero_interval', (string) $validated['home_hero_interval']);
+
+        unset(
+            $validated['home_hero_autoplay'],
+            $validated['home_hero_show_dots'],
+            $validated['home_hero_show_arrows'],
+            $validated['home_hero_show_overlay'],
+            $validated['home_hero_overlay_color'],
+            $validated['home_hero_overlay_opacity'],
+            $validated['home_hero_interval'],
+            $validated['slides']
+        );
 
         foreach ($validated as $key => $value) {
             Setting::set($key, (string) ($value ?? ''));
         }
 
-        $this->storeHeroImage($request);
+        $this->storeHeroSlides($request);
 
         return redirect()->route('admin.homepage.index')
             ->with('success', 'Homepage updated successfully.');
     }
 
-    protected function storeHeroImage(Request $request): void
+    protected function storeHeroSlides(Request $request): void
     {
-        if ($request->boolean('remove_home_hero_image') && ! $request->hasFile('home_hero_image')) {
-            $this->deleteFile(Setting::get('home_hero_image'));
-            Setting::set('home_hero_image', '');
+        $existing = Homepage::slidesForAdmin();
+        $submitted = $request->input('slides', []);
+        $slides = [];
 
-            return;
+        foreach ($submitted as $index => $data) {
+            $existingSlide = $existing[$index] ?? [];
+            $image = (string) ($existingSlide['image'] ?? '');
+
+            if ($request->boolean("slides.{$index}.remove_image") && ! $request->hasFile("slides.{$index}.image")) {
+                $this->deleteFile($image);
+                $image = '';
+            }
+
+            if ($request->hasFile("slides.{$index}.image")) {
+                if ($image) {
+                    $this->deleteFile($image);
+                }
+                $image = $this->storeSlideImage($request->file("slides.{$index}.image"));
+            }
+
+            $slides[] = Homepage::normalizeSlide([
+                'enabled' => $request->boolean("slides.{$index}.enabled"),
+                'image' => $image,
+                'show_content' => $request->boolean("slides.{$index}.show_content"),
+                'title' => $data['title'] ?? '',
+                'highlight' => $data['highlight'] ?? '',
+                'subtitle' => $data['subtitle'] ?? '',
+                'title_color' => $data['title_color'] ?? '#ffffff',
+                'subtitle_color' => $data['subtitle_color'] ?? '#ffffff',
+                'highlight_color' => $data['highlight_color'] ?? '#22c55e',
+                'btn1_text' => $data['btn1_text'] ?? '',
+                'btn1_url' => $data['btn1_url'] ?? '',
+                'btn2_text' => $data['btn2_text'] ?? '',
+                'btn2_url' => $data['btn2_url'] ?? '',
+            ]);
         }
 
-        if (! $request->hasFile('home_hero_image')) {
-            return;
+        foreach (array_slice($existing, count($slides)) as $removedSlide) {
+            if (! empty($removedSlide['image'])) {
+                $this->deleteFile($removedSlide['image']);
+            }
         }
 
-        $this->deleteFile(Setting::get('home_hero_image'));
+        Setting::set('home_hero_slides', json_encode(array_values($slides)));
+    }
 
-        $file = $request->file('home_hero_image');
-        $filename = 'hero_'.time().'.'.$file->getClientOriginalExtension();
+    protected function storeSlideImage($file): string
+    {
+        $filename = 'hero_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
         Storage::disk('public')->makeDirectory('uploads/settings');
 
         $manager = new ImageManager(new Driver());
         $img = $manager->read($file->getRealPath());
         $img->scaleDown(1600, 900);
         Storage::disk('public')->put('uploads/settings/'.$filename, $img->encode());
-        Setting::set('home_hero_image', $filename);
+
+        return $filename;
     }
 
     protected function deleteFile(?string $filename): void

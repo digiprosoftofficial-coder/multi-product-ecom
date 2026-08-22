@@ -28,11 +28,19 @@
   </a>
   <div class="card-footer border-secondary bg-transparent">
     @if($product->stock > 0)
-      <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex gap-1 js-add-to-cart">
+      <form action="{{ route('cart.add', $product) }}" method="POST" class="js-add-to-cart">
         @csrf
         <input type="hidden" name="quantity" value="1">
-        <button type="submit" class="btn btn-sm btn-primary flex-fill">Add to Cart</button>
-        <button type="submit" name="buy_now" value="1" class="btn btn-sm btn-outline-light flex-fill">Order Now</button>
+        <div class="product-card-actions">
+          <button type="submit" class="btn btn-sm btn-cart-action">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span>Add to Cart</span>
+          </button>
+          <button type="submit" name="buy_now" value="1" class="btn btn-sm btn-order-action">
+            <i class="fa-solid fa-bolt"></i>
+            <span>Order Now</span>
+          </button>
+        </div>
       </form>
     @else
       <button class="btn btn-sm btn-secondary w-100" disabled>Out of Stock</button>

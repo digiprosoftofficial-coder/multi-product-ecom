@@ -9,48 +9,62 @@
     @method('PUT')
 
     <div class="card mb-4">
-        <div class="card-header"><h5 class="mb-0">Hero banner</h5></div>
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0">Hero carousel</h5>
+            <button type="button" class="btn btn-sm btn-outline-primary" id="addHeroSlide" {{ count($heroSlides) >= 5 ? 'disabled' : '' }}>
+                <i class="fas fa-plus me-1"></i> Add slide
+            </button>
+        </div>
         <div class="card-body">
-            <div class="row g-3">
-                <div class="col-md-8">
-                    <label class="form-label">Title</label>
-                    <input type="text" name="home_hero_title" class="form-control" value="{{ old('home_hero_title', $settings['home_hero_title']) }}" required>
+            <p class="text-muted small">Upload a background image for each slide. Turn off "Show text & buttons" for image-only slides. Up to 5 slides.</p>
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="home_hero_autoplay" value="0">
+                        <input class="form-check-input" type="checkbox" name="home_hero_autoplay" value="1" id="home_hero_autoplay" {{ old('home_hero_autoplay', $settings['home_hero_autoplay'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="home_hero_autoplay">Auto-play carousel</label>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <label class="form-label">Highlight word</label>
-                    <input type="text" name="home_hero_highlight" class="form-control" value="{{ old('home_hero_highlight', $settings['home_hero_highlight']) }}">
-                    <div class="form-text">This word is shown in green inside the title.</div>
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="home_hero_show_dots" value="0">
+                        <input class="form-check-input" type="checkbox" name="home_hero_show_dots" value="1" id="home_hero_show_dots" {{ old('home_hero_show_dots', $settings['home_hero_show_dots'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="home_hero_show_dots">Show dots</label>
+                    </div>
                 </div>
-                <div class="col-12">
-                    <label class="form-label">Subtitle</label>
-                    <input type="text" name="home_hero_subtitle" class="form-control" value="{{ old('home_hero_subtitle', $settings['home_hero_subtitle']) }}">
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="home_hero_show_arrows" value="0">
+                        <input class="form-check-input" type="checkbox" name="home_hero_show_arrows" value="1" id="home_hero_show_arrows" {{ old('home_hero_show_arrows', $settings['home_hero_show_arrows'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="home_hero_show_arrows">Show arrows</label>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Primary button text</label>
-                    <input type="text" name="home_hero_btn1_text" class="form-control" value="{{ old('home_hero_btn1_text', $settings['home_hero_btn1_text']) }}">
+                <div class="col-md-3">
+                    <label class="form-label" for="home_hero_interval">Slide interval (seconds)</label>
+                    <input type="number" min="2" max="15" name="home_hero_interval" id="home_hero_interval" class="form-control" value="{{ old('home_hero_interval', $settings['home_hero_interval'] ?? '5') }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Primary button URL</label>
-                    <input type="text" name="home_hero_btn1_url" class="form-control" value="{{ old('home_hero_btn1_url', $settings['home_hero_btn1_url']) }}">
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="home_hero_show_overlay" value="0">
+                        <input class="form-check-input" type="checkbox" name="home_hero_show_overlay" value="1" id="home_hero_show_overlay" {{ old('home_hero_show_overlay', $settings['home_hero_show_overlay'] ?? '1') === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="home_hero_show_overlay">Show overlay color</label>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Secondary button text</label>
-                    <input type="text" name="home_hero_btn2_text" class="form-control" value="{{ old('home_hero_btn2_text', $settings['home_hero_btn2_text']) }}">
+                <div class="col-md-3 hero-overlay-fields {{ old('home_hero_show_overlay', $settings['home_hero_show_overlay'] ?? '1') === '1' ? '' : 'd-none' }}">
+                    <label class="form-label" for="home_hero_overlay_color">Overlay color</label>
+                    <input type="color" name="home_hero_overlay_color" id="home_hero_overlay_color" class="form-control form-control-color w-100" value="{{ old('home_hero_overlay_color', $settings['home_hero_overlay_color'] ?? '#ffffff') }}">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Secondary button URL</label>
-                    <input type="text" name="home_hero_btn2_url" class="form-control" value="{{ old('home_hero_btn2_url', $settings['home_hero_btn2_url']) }}">
+                <div class="col-md-6 hero-overlay-fields {{ old('home_hero_show_overlay', $settings['home_hero_show_overlay'] ?? '1') === '1' ? '' : 'd-none' }}">
+                    <label class="form-label" for="home_hero_overlay_opacity">Overlay opacity ({{ old('home_hero_overlay_opacity', $settings['home_hero_overlay_opacity'] ?? '45') }}%)</label>
+                    <input type="range" name="home_hero_overlay_opacity" id="home_hero_overlay_opacity" class="form-range js-hero-overlay-opacity" min="0" max="100" value="{{ old('home_hero_overlay_opacity', $settings['home_hero_overlay_opacity'] ?? '45') }}">
                 </div>
-                <div class="col-12">
-                    <label class="form-label">Background image</label>
-                    @include('admin.settings.partials.image-preview', [
-                        'url' => setting_image_url($settings['home_hero_image'] ?? null),
-                        'alt' => 'Hero',
-                        'removeName' => 'remove_home_hero_image',
-                        'imgStyle' => 'max-height: 90px; max-width: 220px;',
-                    ])
-                    <input type="file" name="home_hero_image" class="form-control" accept="image/*">
-                </div>
+            </div>
+            <div id="heroSlidesWrap">
+                @foreach($heroSlides as $index => $slide)
+                    @include('admin.homepage.partials.slide-fields', ['index' => $index, 'slide' => $slide])
+                @endforeach
             </div>
             <hr>
             <div class="row g-3">
@@ -189,6 +203,9 @@
 @endpush
 
 @push('scripts')
+<script type="text/template" id="heroSlideTemplate">
+@include('admin.homepage.partials.slide-fields', ['index' => '__INDEX__', 'slide' => \App\Support\Homepage::normalizeSlide([])])
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.js-remove-brand-image').forEach(function (btn) {
@@ -200,6 +217,109 @@ document.addEventListener('DOMContentLoaded', function () {
             wrap.classList.add('d-none');
         });
     });
+
+    function bindSlideCard(card) {
+        var contentToggle = card.querySelector('.js-slide-show-content');
+        var contentFields = card.querySelector('.slide-content-fields');
+        if (contentToggle && contentFields) {
+            contentToggle.addEventListener('change', function () {
+                contentFields.classList.toggle('d-none', !contentToggle.checked);
+            });
+        }
+
+        var removeBtn = card.querySelector('.js-remove-slide');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function () {
+                card.remove();
+                renumberSlides();
+            });
+        }
+    }
+
+    function renumberSlides() {
+        var wrap = document.getElementById('heroSlidesWrap');
+        if (!wrap) return;
+
+        wrap.querySelectorAll('.hero-slide-card').forEach(function (card, index) {
+            card.dataset.slideIndex = index;
+            var heading = card.querySelector('.card-header h6');
+            if (heading) heading.textContent = 'Slide ' + (index + 1);
+
+            card.querySelectorAll('[name]').forEach(function (input) {
+                input.name = input.name.replace(/slides\[\d+\]/, 'slides[' + index + ']');
+            });
+
+            card.querySelectorAll('[id]').forEach(function (input) {
+                input.id = input.id.replace(/_\d+$/, '_' + index);
+            });
+
+            card.querySelectorAll('label[for]').forEach(function (label) {
+                label.htmlFor = label.htmlFor.replace(/_\d+$/, '_' + index);
+            });
+
+            if (index === 0) {
+                var removeBtn = card.querySelector('.js-remove-slide');
+                if (removeBtn) removeBtn.remove();
+            } else if (!card.querySelector('.js-remove-slide')) {
+                var actions = card.querySelector('.card-header .d-flex.gap-3');
+                if (actions) {
+                    var btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn-sm btn-outline-danger js-remove-slide';
+                    btn.textContent = 'Remove';
+                    btn.addEventListener('click', function () {
+                        card.remove();
+                        renumberSlides();
+                    });
+                    actions.appendChild(btn);
+                }
+            }
+        });
+
+        var addBtn = document.getElementById('addHeroSlide');
+        if (addBtn) {
+            addBtn.disabled = wrap.querySelectorAll('.hero-slide-card').length >= 5;
+        }
+    }
+
+    document.querySelectorAll('.hero-slide-card').forEach(bindSlideCard);
+
+    var overlayToggle = document.getElementById('home_hero_show_overlay');
+    if (overlayToggle) {
+        overlayToggle.addEventListener('change', function () {
+            document.querySelectorAll('.hero-overlay-fields').forEach(function (el) {
+                el.classList.toggle('d-none', !overlayToggle.checked);
+            });
+        });
+    }
+
+    var overlayOpacity = document.getElementById('home_hero_overlay_opacity');
+    if (overlayOpacity) {
+        overlayOpacity.addEventListener('input', function () {
+            var label = document.querySelector('label[for="home_hero_overlay_opacity"]');
+            if (label) {
+                label.textContent = 'Overlay opacity (' + overlayOpacity.value + '%)';
+            }
+        });
+    }
+
+    var addBtn = document.getElementById('addHeroSlide');
+    var template = document.getElementById('heroSlideTemplate');
+    if (addBtn && template) {
+        addBtn.addEventListener('click', function () {
+            var wrap = document.getElementById('heroSlidesWrap');
+            if (!wrap || wrap.querySelectorAll('.hero-slide-card').length >= 5) return;
+
+            var index = wrap.querySelectorAll('.hero-slide-card').length;
+            var html = template.innerHTML.replace(/__INDEX__/g, index);
+            var temp = document.createElement('div');
+            temp.innerHTML = html.trim();
+            var card = temp.firstElementChild;
+            wrap.appendChild(card);
+            bindSlideCard(card);
+            renumberSlides();
+        });
+    }
 });
 </script>
 @endpush

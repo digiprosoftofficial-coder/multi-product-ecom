@@ -18,6 +18,14 @@ class Homepage
             'home_hero_btn2_text' => 'Join Now',
             'home_hero_btn2_url' => '/register',
             'home_hero_image' => '',
+            'home_hero_slides' => '',
+            'home_hero_autoplay' => '1',
+            'home_hero_interval' => '5',
+            'home_hero_show_dots' => '1',
+            'home_hero_show_arrows' => '1',
+            'home_hero_show_overlay' => '1',
+            'home_hero_overlay_color' => '#ffffff',
+            'home_hero_overlay_opacity' => '45',
             'home_stat1_value' => '14k+',
             'home_stat1_label' => 'Product Varieties',
             'home_stat2_value' => '50k+',
@@ -85,8 +93,173 @@ class Homepage
 
     public static function heroImageUrl(): string
     {
+        $slides = self::slides();
+
+        if (! empty($slides[0]['image'])) {
+            return self::slideImageUrl($slides[0]['image']);
+        }
+
         return setting_image_url(self::get('home_hero_image'))
             ?: asset('organic-v1/images/banner-1.jpg');
+    }
+
+    public static function slideImageUrl(?string $filename): string
+    {
+        return setting_image_url($filename)
+            ?: asset('organic-v1/images/banner-1.jpg');
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public static function slidesForAdmin(): array
+    {
+        $slides = self::decodeSlides();
+
+        return count($slides) > 0 ? $slides : [self::legacySlide()];
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    public static function slides(): array
+    {
+        $slides = array_values(array_filter(
+            self::decodeSlides(),
+            fn (array $slide) => ($slide['enabled'] ?? true) && ! empty($slide['image'])
+        ));
+
+        return count($slides) > 0 ? $slides : [self::legacySlide()];
+    }
+
+    public static function heroAutoplay(): bool
+    {
+        return self::get('home_hero_autoplay', '1') === '1';
+    }
+
+    public static function heroIntervalMs(): int
+    {
+        $seconds = max(2, min(15, (int) self::get('home_hero_interval', '5')));
+
+        return $seconds * 1000;
+    }
+
+    /** @return array<string, mixed> */
+    protected static function legacySlide(): array
+    {
+        return self::normalizeSlide([
+            'enabled' => true,
+            'image' => self::get('home_hero_image'),
+            'show_content' => true,
+            'title' => self::get('home_hero_title'),
+            'highlight' => self::get('home_hero_highlight'),
+            'subtitle' => self::get('home_hero_subtitle'),
+            'title_color' => '#212529',
+            'subtitle_color' => '#212529',
+            'highlight_color' => '#6BB252',
+            'btn1_text' => self::get('home_hero_btn1_text'),
+            'btn1_url' => self::get('home_hero_btn1_url'),
+            'btn2_text' => self::get('home_hero_btn2_text'),
+            'btn2_url' => self::get('home_hero_btn2_url'),
+        ]);
+    }
+
+    /** @return array<int, array<string, mixed>> */
+    protected static function decodeSlides(): array
+    {
+        $raw = setting('home_hero_slides');
+
+        if (! $raw) {
+            return [];
+        }
+
+        $decoded = json_decode($raw, true);
+
+        if (! is_array($decoded)) {
+            return [];
+        }
+
+        return array_values(array_map(fn ($slide) => self::normalizeSlide(is_array($slide) ? $slide : []), $decoded));
+    }
+
+    /** @param  array<string, mixed>  $slide */
+    public static function normalizeSlide(array $slide): array
+    {
+        return [
+            'enabled' => filter_var($slide['enabled'] ?? true, FILTER_VALIDATE_BOOLEAN),
+            'image' => (string) ($slide['image'] ?? ''),
+            'show_content' => filter_var($slide['show_content'] ?? false, FILTER_VALIDATE_BOOLEAN),
+            'title' => (string) ($slide['title'] ?? ''),
+            'highlight' => (string) ($slide['highlight'] ?? ''),
+            'subtitle' => (string) ($slide['subtitle'] ?? ''),
+            'title_color' => self::normalizeColor($slide['title_color'] ?? '#ffffff', '#ffffff'),
+            'subtitle_color' => self::normalizeColor($slide['subtitle_color'] ?? '#ffffff', '#ffffff'),
+            'highlight_color' => self::normalizeColor($slide['highlight_color'] ?? '#22c55e', '#22c55e'),
+            'btn1_text' => (string) ($slide['btn1_text'] ?? ''),
+            'btn1_url' => (string) ($slide['btn1_url'] ?? ''),
+            'btn2_text' => (string) ($slide['btn2_text'] ?? ''),
+            'btn2_url' => (string) ($slide['btn2_url'] ?? ''),
+        ];
+    }
+
+    public static function normalizeColor(?string $color, string $fallback = '#ffffff'): string
+    {
+        $color = trim((string) $color);
+
+        if (preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $color)) {
+            return strtolower($color);
+        }
+
+        return $fallback;
+    }
+
+    public static function colorToRgba(string $hex, float $alpha): string
+    {
+        $hex = ltrim(self::normalizeColor($hex), '#');
+
+        if (strlen($hex) === 3) {
+            $hex = $hex[0].$hex[0].$hex[1].$hex[1].$hex[2].$hex[2];
+        }
+
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+        $alpha = max(0, min(1, $alpha));
+
+        return "rgba({$r}, {$g}, {$b}, {$alpha})";
+    }
+
+    public static function heroOverlayBackground(): string
+    {
+        $opacity = max(0, min(100, (int) self::get('home_hero_overlay_opacity', '45'))) / 100;
+        $color = self::normalizeColor(self::get('home_hero_overlay_color', '#ffffff'), '#ffffff');
+
+        return self::colorToRgba($color, $opacity);
+    }
+
+    public static function renderHeroTitle(array $slide): string
+    {
+        $title = e($slide['title'] ?? '');
+        $highlight = (string) ($slide['highlight'] ?? '');
+
+        if ($highlight !== '' && str_contains($slide['title'] ?? '', $highlight)) {
+            $highlightHtml = '<span class="fw-bold" style="color:'.e($slide['highlight_color']).'">'.e($highlight).'</span>';
+
+            return str_replace(e($highlight), $highlightHtml, $title);
+        }
+
+        return $title;
+    }
+
+    public static function heroButtonUrl(?string $url, string $fallback): string
+    {
+        $url = trim((string) $url);
+
+        if ($url === '') {
+            return $fallback;
+        }
+
+        if (str_starts_with($url, 'http://') || str_starts_with($url, 'https://') || str_starts_with($url, '/')) {
+            return $url;
+        }
+
+        return '/'.ltrim($url, '/');
     }
 
     public static function products(string $flag, int $limit): Collection

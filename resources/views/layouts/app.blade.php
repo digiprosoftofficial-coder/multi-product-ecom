@@ -24,8 +24,8 @@
     @stack('styles')
     <style>
         html { height: auto; }
-        body { min-height: 100vh; display: flex; flex-direction: column; }
-        main { flex: 1 0 auto; }
+        body { min-height: 100vh; display: flex; flex-direction: column; background-color: #fff; }
+        main { flex: 1 0 auto; background-color: #fff; }
         .site-header {
             position: sticky;
             top: 0;
@@ -58,6 +58,20 @@
             min-width: 0;
         }
         .page-content img { max-width: 100%; height: auto; }
+        .section-header {
+            align-items: center !important;
+            gap: .75rem;
+            margin-top: 0 !important;
+            margin-bottom: 1rem !important;
+        }
+        .section-header .section-title {
+            margin-bottom: 0;
+            line-height: 1.25;
+        }
+        .section-header .btn {
+            align-self: center;
+            line-height: 1.2;
+        }
     </style>
 </head>
 <body>

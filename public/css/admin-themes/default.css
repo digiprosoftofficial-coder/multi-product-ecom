@@ -1,5 +1,169 @@
-/* Admin theme fallback – minimal overrides when theme-specific CSS is missing */
-.admin-theme-organic-v1 .main-content,
-.admin-theme-gadget-v1 .main-content {
-  background: #f8f9fa;
+/* Admin panel — green theme (replaces default Bootstrap blue) */
+:root {
+    --admin-green: #16a34a;
+    --admin-green-dark: #15803d;
+    --admin-green-darker: #14532d;
+    --admin-green-light: #dcfce7;
+    --admin-green-soft: #f0fdf4;
+    --admin-green-border: #bbf7d0;
+    --bs-primary: #16a34a;
+    --bs-primary-rgb: 22, 163, 74;
+    --bs-info: #059669;
+    --bs-info-rgb: 5, 150, 105;
+    --bs-link-color: #15803d;
+    --bs-link-hover-color: #14532d;
+}
+
+body.admin-panel {
+    --bs-primary: #16a34a;
+    --bs-primary-rgb: 22, 163, 74;
+    --bs-info: #059669;
+    --bs-info-rgb: 5, 150, 105;
+    --bs-link-color: #15803d;
+    --bs-link-hover-color: #14532d;
+}
+
+/* Buttons */
+body.admin-panel .btn-primary {
+    background-color: var(--admin-green);
+    border-color: var(--admin-green);
+    color: #fff;
+}
+body.admin-panel .btn-primary:hover,
+body.admin-panel .btn-primary:focus,
+body.admin-panel .btn-primary:active {
+    background-color: var(--admin-green-dark);
+    border-color: var(--admin-green-dark);
+    color: #fff;
+}
+body.admin-panel .btn-outline-primary {
+    color: var(--admin-green);
+    border-color: var(--admin-green);
+}
+body.admin-panel .btn-outline-primary:hover,
+body.admin-panel .btn-outline-primary:focus,
+body.admin-panel .btn-outline-primary:active {
+    background-color: var(--admin-green);
+    border-color: var(--admin-green);
+    color: #fff;
+}
+body.admin-panel .btn-info {
+    background-color: #059669;
+    border-color: #059669;
+    color: #fff;
+}
+body.admin-panel .btn-info:hover,
+body.admin-panel .btn-info:focus,
+body.admin-panel .btn-info:active {
+    background-color: #047857;
+    border-color: #047857;
+    color: #fff;
+}
+
+/* Badges */
+body.admin-panel .badge.bg-primary,
+body.admin-panel .bg-primary {
+    background-color: var(--admin-green) !important;
+}
+body.admin-panel .badge.bg-info,
+body.admin-panel .bg-info {
+    background-color: #059669 !important;
+}
+
+/* Text & borders */
+body.admin-panel .text-primary {
+    color: var(--admin-green) !important;
+}
+body.admin-panel .border-primary {
+    border-color: var(--admin-green) !important;
+}
+
+/* Forms */
+body.admin-panel .form-control:focus,
+body.admin-panel .form-select:focus {
+    border-color: var(--admin-green);
+    box-shadow: 0 0 0 .2rem rgba(22, 163, 74, .2);
+}
+body.admin-panel .form-check-input:checked {
+    background-color: var(--admin-green);
+    border-color: var(--admin-green);
+}
+
+/* Pagination */
+body.admin-panel .page-link {
+    color: var(--admin-green);
+}
+body.admin-panel .page-item.active .page-link {
+    background-color: var(--admin-green);
+    border-color: var(--admin-green);
+}
+body.admin-panel .page-link:hover {
+    color: var(--admin-green-dark);
+}
+
+/* Alerts */
+body.admin-panel .alert-info {
+    background-color: var(--admin-green-soft);
+    border-color: var(--admin-green-border);
+    color: var(--admin-green-darker);
+}
+
+/* Links in content */
+body.admin-panel main a:not(.btn):not(.nav-link) {
+    color: var(--admin-green-dark);
+}
+body.admin-panel main a:not(.btn):not(.nav-link):hover {
+    color: var(--admin-green-darker);
+}
+
+/* Cards & tables */
+body.admin-panel .card {
+    border-color: #e8eee9;
+}
+body.admin-panel .table thead th {
+    background-color: #f8faf9;
+}
+
+/* Dropdown active */
+body.admin-panel .dropdown-item.active,
+body.admin-panel .dropdown-item:active {
+    background-color: var(--admin-green);
+}
+
+/* Nav tabs / pills if used */
+body.admin-panel .nav-pills .nav-link.active,
+body.admin-panel .nav-pills .show > .nav-link {
+    background-color: var(--admin-green);
+}
+
+/* Progress bars */
+body.admin-panel .progress-bar {
+    background-color: var(--admin-green);
+}
+
+/* Spinner & utilities */
+body.admin-panel .spinner-border.text-primary {
+    color: var(--admin-green) !important;
+}
+body.admin-panel .list-group-item.active {
+    background-color: var(--admin-green);
+    border-color: var(--admin-green);
+}
+
+/* Order status badges — green palette instead of blue */
+body.admin-panel .badge.bg-primary {
+    background-color: var(--admin-green) !important;
+}
+body.admin-panel .badge.bg-info {
+    background-color: #059669 !important;
+}
+
+/* Modal & offcanvas focus */
+body.admin-panel .btn-close:focus {
+    box-shadow: 0 0 0 .2rem rgba(22, 163, 74, .2);
+}
+
+/* Layout */
+body.admin-panel .main-content {
+    background-color: #f8faf9;
 }
