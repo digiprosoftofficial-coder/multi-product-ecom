@@ -147,6 +147,7 @@ if (!function_exists('sanitize_rich_text')) {
             'em' => [],
             'i' => [],
             'u' => [],
+            'h1' => [],
             'h2' => [],
             'h3' => [],
             'ul' => [],

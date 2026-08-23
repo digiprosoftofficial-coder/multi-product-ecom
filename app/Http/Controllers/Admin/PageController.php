@@ -19,6 +19,20 @@ class PageController extends Controller
         $pages = [
             'privacy_content' => Setting::get('privacy_content', ''),
             'terms_content' => Setting::get('terms_content', ''),
+            'delivery_content' => Setting::get('delivery_content', ''),
+            'returns_content' => Setting::get('returns_content', ''),
+            'privacy_banner_title' => PageBanner::get('privacy_banner_title'),
+            'privacy_banner_subtitle' => PageBanner::get('privacy_banner_subtitle'),
+            'privacy_banner_image' => PageBanner::get('privacy_banner_image'),
+            'terms_banner_title' => PageBanner::get('terms_banner_title'),
+            'terms_banner_subtitle' => PageBanner::get('terms_banner_subtitle'),
+            'terms_banner_image' => PageBanner::get('terms_banner_image'),
+            'delivery_banner_title' => PageBanner::get('delivery_banner_title'),
+            'delivery_banner_subtitle' => PageBanner::get('delivery_banner_subtitle'),
+            'delivery_banner_image' => PageBanner::get('delivery_banner_image'),
+            'returns_banner_title' => PageBanner::get('returns_banner_title'),
+            'returns_banner_subtitle' => PageBanner::get('returns_banner_subtitle'),
+            'returns_banner_image' => PageBanner::get('returns_banner_image'),
         ];
 
         return view('admin.pages.index', compact('pages'));
@@ -64,13 +78,35 @@ class PageController extends Controller
         $validated = $request->validate([
             'privacy_content' => 'nullable|string',
             'terms_content' => 'nullable|string',
+            'delivery_content' => 'nullable|string',
+            'returns_content' => 'nullable|string',
+            'privacy_banner_title' => 'nullable|string|max:120',
+            'privacy_banner_subtitle' => 'nullable|string|max:255',
+            'privacy_banner_image' => image_upload_rules(),
+            'remove_privacy_banner_image' => 'nullable|boolean',
+            'terms_banner_title' => 'nullable|string|max:120',
+            'terms_banner_subtitle' => 'nullable|string|max:255',
+            'terms_banner_image' => image_upload_rules(),
+            'remove_terms_banner_image' => 'nullable|boolean',
+            'delivery_banner_title' => 'nullable|string|max:120',
+            'delivery_banner_subtitle' => 'nullable|string|max:255',
+            'delivery_banner_image' => image_upload_rules(),
+            'remove_delivery_banner_image' => 'nullable|boolean',
+            'returns_banner_title' => 'nullable|string|max:120',
+            'returns_banner_subtitle' => 'nullable|string|max:255',
+            'returns_banner_image' => image_upload_rules(),
+            'remove_returns_banner_image' => 'nullable|boolean',
         ]);
 
-        Setting::set('privacy_content', sanitize_rich_text($validated['privacy_content'] ?? null) ?? '');
-        Setting::set('terms_content', sanitize_rich_text($validated['terms_content'] ?? null) ?? '');
+        foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
+            Setting::set("{$page}_content", sanitize_rich_text($validated["{$page}_content"] ?? null) ?? '');
+            Setting::set("{$page}_banner_title", $validated["{$page}_banner_title"] ?? '');
+            Setting::set("{$page}_banner_subtitle", $validated["{$page}_banner_subtitle"] ?? '');
+            $this->storeBannerImage($request, "{$page}_banner_image", "{$page}-banner");
+        }
 
         return redirect()->route('admin.pages.index')
-            ->with('success', 'Legal pages updated successfully.');
+            ->with('success', 'Pages updated successfully.');
     }
 
     public function updateAbout(Request $request)

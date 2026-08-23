@@ -41,6 +41,16 @@ class SitemapController extends Controller
                 'changefreq' => 'yearly',
                 'priority' => '0.2',
             ],
+            [
+                'loc' => route('delivery'),
+                'changefreq' => 'yearly',
+                'priority' => '0.2',
+            ],
+            [
+                'loc' => route('returns'),
+                'changefreq' => 'yearly',
+                'priority' => '0.2',
+            ],
         ];
 
         $categories = Category::query()

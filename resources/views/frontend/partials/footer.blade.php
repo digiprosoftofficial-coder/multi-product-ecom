@@ -20,6 +20,8 @@
                 <div class="mb-2">
                     <a href="{{ route('about') }}" class="link-light link-underline-opacity-0 me-3">About</a>
                     <a href="{{ route('contact') }}" class="link-light link-underline-opacity-0 me-3">Contact</a>
+                    <a href="{{ route('delivery') }}" class="link-light link-underline-opacity-0 me-3">Delivery</a>
+                    <a href="{{ route('returns') }}" class="link-light link-underline-opacity-0 me-3">Returns</a>
                     <a href="{{ route('privacy') }}" class="link-light link-underline-opacity-0 me-3">Privacy</a>
                     <a href="{{ route('terms') }}" class="link-light link-underline-opacity-0">Terms</a>
                 </div>

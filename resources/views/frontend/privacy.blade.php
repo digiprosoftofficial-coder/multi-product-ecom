@@ -3,8 +3,12 @@
 @section('title', 'Privacy policy – '.site_name())
 
 @section('content')
+@include('frontend.components.page-banner', [
+    'page' => 'privacy',
+    'fallbackTitle' => 'Privacy Policy',
+])
+
 <div class="container-lg py-5">
-    <h1 class="h3 mb-4 text-start">Privacy policy</h1>
     @if(filled($content))
         <div class="page-content text-start">
             {!! $content !!}

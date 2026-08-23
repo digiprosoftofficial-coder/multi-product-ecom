@@ -62,7 +62,7 @@
                             <i class="fas fa-envelope"></i> Contact
                         </a>
                         <a class="nav-link {{ request()->routeIs('admin.pages.*') ? 'is-active' : '' }}" href="{{ route('admin.pages.index') }}">
-                            <i class="fas fa-file-alt"></i> Legal pages
+                            <i class="fas fa-file-alt"></i> Info pages
                         </a>
                     </nav>
                 </div>

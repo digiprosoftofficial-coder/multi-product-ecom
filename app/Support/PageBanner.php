@@ -16,6 +16,18 @@ class PageBanner
             'contact_banner_title' => 'Contact Us',
             'contact_banner_subtitle' => 'We would love to hear from you.',
             'contact_banner_image' => '',
+            'privacy_banner_title' => 'Privacy Policy',
+            'privacy_banner_subtitle' => 'How we collect, use, and protect your information.',
+            'privacy_banner_image' => '',
+            'terms_banner_title' => 'Terms & Conditions',
+            'terms_banner_subtitle' => 'Please read these terms carefully before using our store.',
+            'terms_banner_image' => '',
+            'delivery_banner_title' => 'Delivery Information',
+            'delivery_banner_subtitle' => 'Shipping times, areas, and delivery options.',
+            'delivery_banner_image' => '',
+            'returns_banner_title' => 'Product Returns',
+            'returns_banner_subtitle' => 'How to return or exchange items easily.',
+            'returns_banner_image' => '',
         ];
     }
 

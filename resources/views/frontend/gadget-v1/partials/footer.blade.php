@@ -18,6 +18,8 @@
         <h6 class="text-white mb-3">Support</h6>
         <ul class="list-unstyled small">
           <li><a href="{{ route('contact') }}" class="link-accent text-decoration-none">Contact us</a></li>
+          <li><a href="{{ route('delivery') }}" class="link-accent text-decoration-none">Delivery</a></li>
+          <li><a href="{{ route('returns') }}" class="link-accent text-decoration-none">Returns</a></li>
           <li><a href="{{ route('cart.index') }}" class="link-accent text-decoration-none">Cart</a></li>
         </ul>
       </div>

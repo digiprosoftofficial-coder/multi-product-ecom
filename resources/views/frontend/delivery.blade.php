@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Terms & conditions – '.site_name())
+@section('title', 'Delivery information – '.site_name())
 
 @section('content')
 @include('frontend.components.page-banner', [
-    'page' => 'terms',
-    'fallbackTitle' => 'Terms & Conditions',
+    'page' => 'delivery',
+    'fallbackTitle' => 'Delivery Information',
 ])
 
 <div class="container-lg py-5">

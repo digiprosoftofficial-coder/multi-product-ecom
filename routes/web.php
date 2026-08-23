@@ -19,6 +19,8 @@ Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'submitContact'])->middleware('throttle:6,1')->name('contact.submit');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::get('/delivery-information', [PageController::class, 'delivery'])->name('delivery');
+Route::get('/product-returns', [PageController::class, 'returns'])->name('returns');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product:slug}', [ProductController::class, 'show'])->name('products.show');

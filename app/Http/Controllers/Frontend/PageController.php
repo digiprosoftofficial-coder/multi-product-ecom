@@ -82,4 +82,18 @@ class PageController extends Controller
             'content' => setting('terms_content'),
         ]);
     }
+
+    public function delivery()
+    {
+        return view('frontend.delivery', [
+            'content' => setting('delivery_content'),
+        ]);
+    }
+
+    public function returns()
+    {
+        return view('frontend.returns', [
+            'content' => setting('returns_content'),
+        ]);
+    }
 }
