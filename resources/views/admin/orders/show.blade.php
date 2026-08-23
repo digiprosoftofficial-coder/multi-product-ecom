@@ -157,16 +157,36 @@
             </div>
         </div>
 
-        <div class="card">
+        <div class="card order-customer-card">
             <div class="card-header">
-                <h5>Customer Information</h5>
+                <h5 class="mb-0">Customer Information</h5>
             </div>
             <div class="card-body">
-                <p><strong>Name:</strong> {{ $order->customer_name }}</p>
-                <p><strong>Email:</strong> {{ $order->customer_email }}</p>
-                @if($order->customer_phone)
-                    <p><strong>Phone:</strong> {{ $order->customer_phone }}</p>
-                @endif
+                <ul class="order-customer-list list-unstyled mb-0">
+                    <li class="order-customer-item">
+                        <span class="order-customer-icon order-customer-icon--name"><i class="fas fa-user"></i></span>
+                        <div class="order-customer-body">
+                            <span class="order-customer-label">Name</span>
+                            <span class="order-customer-value">{{ $order->customer_name }}</span>
+                        </div>
+                    </li>
+                    <li class="order-customer-item">
+                        <span class="order-customer-icon order-customer-icon--email"><i class="fas fa-envelope"></i></span>
+                        <div class="order-customer-body">
+                            <span class="order-customer-label">Email</span>
+                            <a href="mailto:{{ $order->customer_email }}" class="order-customer-value order-customer-link">{{ $order->customer_email }}</a>
+                        </div>
+                    </li>
+                    @if($order->customer_phone)
+                        <li class="order-customer-item">
+                            <span class="order-customer-icon order-customer-icon--phone"><i class="fas fa-phone"></i></span>
+                            <div class="order-customer-body">
+                                <span class="order-customer-label">Phone</span>
+                                <a href="tel:{{ preg_replace('/\s+/', '', $order->customer_phone) }}" class="order-customer-value order-customer-link">{{ $order->customer_phone }}</a>
+                            </div>
+                        </li>
+                    @endif
+                </ul>
             </div>
         </div>
     </div>
@@ -184,6 +204,69 @@
     }
     .order-status-form .btn {
         height: 31px;
+    }
+    .order-customer-card {
+        border-color: #dbeafe;
+        box-shadow: 0 8px 22px rgba(37, 99, 235, 0.08);
+    }
+    .order-customer-card .card-header {
+        background: linear-gradient(180deg, #eff6ff 0%, #f8fbff 100%);
+        border-bottom-color: #dbeafe;
+    }
+    .order-customer-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    .order-customer-item {
+        display: flex;
+        align-items: center;
+        gap: .85rem;
+        padding: .85rem .95rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #fff;
+    }
+    .order-customer-icon {
+        flex-shrink: 0;
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: .95rem;
+    }
+    .order-customer-icon--name { background: #16a34a; }
+    .order-customer-icon--email { background: #2563eb; }
+    .order-customer-icon--phone { background: #ea580c; }
+    .order-customer-body {
+        min-width: 0;
+    }
+    .order-customer-label {
+        display: block;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .05em;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: .15rem;
+    }
+    .order-customer-value {
+        display: block;
+        font-size: 1rem;
+        font-weight: 700;
+        line-height: 1.4;
+        color: #0f172a;
+        word-break: break-word;
+    }
+    .order-customer-link {
+        text-decoration: none;
+    }
+    .order-customer-link:hover {
+        color: #16a34a;
+        text-decoration: underline;
     }
 </style>
 @endpush
