@@ -73,9 +73,32 @@ class PageController extends Controller
         return view('admin.pages.contact', compact('pages'));
     }
 
+    public function cart()
+    {
+        $pages = [
+            'cart_banner_title' => PageBanner::get('cart_banner_title'),
+            'cart_banner_subtitle' => PageBanner::get('cart_banner_subtitle'),
+            'cart_banner_image' => PageBanner::get('cart_banner_image'),
+        ];
+
+        return view('admin.pages.cart', compact('pages'));
+    }
+
+    public function checkout()
+    {
+        $pages = [
+            'checkout_banner_title' => PageBanner::get('checkout_banner_title'),
+            'checkout_banner_subtitle' => PageBanner::get('checkout_banner_subtitle'),
+            'checkout_banner_image' => PageBanner::get('checkout_banner_image'),
+        ];
+
+        return view('admin.pages.checkout', compact('pages'));
+    }
+
     public function update(Request $request)
     {
         $validated = $request->validate([
+            'active_tab' => 'nullable|string|in:privacy,terms,delivery,returns',
             'privacy_content' => 'nullable|string',
             'terms_content' => 'nullable|string',
             'delivery_content' => 'nullable|string',
@@ -105,7 +128,7 @@ class PageController extends Controller
             $this->storeBannerImage($request, "{$page}_banner_image", "{$page}-banner");
         }
 
-        return redirect()->route('admin.pages.index')
+        return redirect()->route('admin.pages.index', ['tab' => $request->input('active_tab', 'privacy')])
             ->with('success', 'Pages updated successfully.');
     }
 
@@ -162,6 +185,40 @@ class PageController extends Controller
 
         return redirect()->route('admin.contact-page.index')
             ->with('success', 'Contact page updated successfully.');
+    }
+
+    public function updateCart(Request $request)
+    {
+        $validated = $request->validate([
+            'cart_banner_title' => 'nullable|string|max:120',
+            'cart_banner_subtitle' => 'nullable|string|max:255',
+            'cart_banner_image' => image_upload_rules(),
+            'remove_cart_banner_image' => 'nullable|boolean',
+        ]);
+
+        Setting::set('cart_banner_title', $validated['cart_banner_title'] ?? '');
+        Setting::set('cart_banner_subtitle', $validated['cart_banner_subtitle'] ?? '');
+        $this->storeBannerImage($request, 'cart_banner_image', 'cart-banner');
+
+        return redirect()->route('admin.cart-page.index')
+            ->with('success', 'Cart page updated successfully.');
+    }
+
+    public function updateCheckout(Request $request)
+    {
+        $validated = $request->validate([
+            'checkout_banner_title' => 'nullable|string|max:120',
+            'checkout_banner_subtitle' => 'nullable|string|max:255',
+            'checkout_banner_image' => image_upload_rules(),
+            'remove_checkout_banner_image' => 'nullable|boolean',
+        ]);
+
+        Setting::set('checkout_banner_title', $validated['checkout_banner_title'] ?? '');
+        Setting::set('checkout_banner_subtitle', $validated['checkout_banner_subtitle'] ?? '');
+        $this->storeBannerImage($request, 'checkout_banner_image', 'checkout-banner');
+
+        return redirect()->route('admin.checkout-page.index')
+            ->with('success', 'Checkout page updated successfully.');
     }
 
     protected function storeBannerImage(Request $request, string $field, string $prefix): void

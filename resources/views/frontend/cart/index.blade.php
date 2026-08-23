@@ -3,9 +3,12 @@
 @section('title', 'Shopping Cart')
 
 @section('content')
-<div class="container-lg py-5">
-    <h2 class="mb-4">Shopping Cart</h2>
+@include('frontend.components.page-banner', [
+    'page' => 'cart',
+    'fallbackTitle' => 'Shopping Cart',
+])
 
+<div class="container-lg py-5">
     @if(count($cartItems) > 0)
         <div class="table-responsive">
             <table class="table">

@@ -28,6 +28,12 @@ class PageBanner
             'returns_banner_title' => 'Product Returns',
             'returns_banner_subtitle' => 'How to return or exchange items easily.',
             'returns_banner_image' => '',
+            'cart_banner_title' => 'Shopping Cart',
+            'cart_banner_subtitle' => 'Review your items before checkout.',
+            'cart_banner_image' => '',
+            'checkout_banner_title' => 'Checkout',
+            'checkout_banner_subtitle' => 'Complete your order securely.',
+            'checkout_banner_image' => '',
         ];
     }
 

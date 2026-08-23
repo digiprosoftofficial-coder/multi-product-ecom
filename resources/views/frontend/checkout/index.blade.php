@@ -3,9 +3,12 @@
 @section('title', 'Checkout')
 
 @section('content')
-<div class="container-lg py-5">
-    <h2 class="mb-4">Checkout</h2>
+@include('frontend.components.page-banner', [
+    'page' => 'checkout',
+    'fallbackTitle' => 'Checkout',
+])
 
+<div class="container-lg py-5">
     <div class="row">
         <div class="col-md-8">
             <div class="card">

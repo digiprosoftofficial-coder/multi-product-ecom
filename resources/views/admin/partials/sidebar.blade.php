@@ -36,6 +36,8 @@
                         || request()->routeIs('admin.about.*')
                         || request()->routeIs('admin.shop-page.*')
                         || request()->routeIs('admin.contact-page.*')
+                        || request()->routeIs('admin.cart-page.*')
+                        || request()->routeIs('admin.checkout-page.*')
                         || request()->routeIs('admin.pages.*');
                 @endphp
                 <a class="nav-link nav-parent d-flex justify-content-between align-items-center {{ $siteSettingOpen ? 'is-open' : '' }}"
@@ -60,6 +62,12 @@
                         </a>
                         <a class="nav-link {{ request()->routeIs('admin.contact-page.*') ? 'is-active' : '' }}" href="{{ route('admin.contact-page.index') }}">
                             <i class="fas fa-envelope"></i> Contact
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('admin.cart-page.*') ? 'is-active' : '' }}" href="{{ route('admin.cart-page.index') }}">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('admin.checkout-page.*') ? 'is-active' : '' }}" href="{{ route('admin.checkout-page.index') }}">
+                            <i class="fas fa-credit-card"></i> Checkout
                         </a>
                         <a class="nav-link {{ request()->routeIs('admin.pages.*') ? 'is-active' : '' }}" href="{{ route('admin.pages.index') }}">
                             <i class="fas fa-file-alt"></i> Info pages
