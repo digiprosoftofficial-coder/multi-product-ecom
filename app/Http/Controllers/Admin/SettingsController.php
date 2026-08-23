@@ -33,6 +33,20 @@ class SettingsController extends Controller
             'vat_rate' => Setting::get('vat_rate', '0'),
             'category_max_depth' => Setting::get('category_max_depth', '3'),
             'enable_compare_price' => Setting::get('enable_compare_price', '1'),
+            'social_facebook' => Setting::get('social_facebook', ''),
+            'social_instagram' => Setting::get('social_instagram', ''),
+            'social_youtube' => Setting::get('social_youtube', ''),
+            'social_whatsapp' => Setting::get('social_whatsapp', ''),
+            'social_tiktok' => Setting::get('social_tiktok', ''),
+            'header_bg_color' => Setting::get('header_bg_color', '#1f3b2c'),
+            'header_text_color' => Setting::get('header_text_color', '#ffffff'),
+            'footer_bg_color' => Setting::get('footer_bg_color', '#1f3b2c'),
+            'footer_text_color' => Setting::get('footer_text_color', '#ffffff'),
+            'footer_bottom_bg_color' => Setting::get('footer_bottom_bg_color', '#6bb252'),
+            'footer_bottom_text_color' => Setting::get('footer_bottom_text_color', '#ffffff'),
+            'payment_bkash_number' => Setting::get('payment_bkash_number', ''),
+            'payment_nagad_number' => Setting::get('payment_nagad_number', ''),
+            'payment_rocket_number' => Setting::get('payment_rocket_number', ''),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -61,6 +75,20 @@ class SettingsController extends Controller
             'vat_rate' => 'nullable|numeric|min:0|max:100',
             'category_max_depth' => 'required|integer|in:0,2,3,4,5,6',
             'enable_compare_price' => 'nullable|in:0,1',
+            'social_facebook' => 'nullable|url|max:500',
+            'social_instagram' => 'nullable|url|max:500',
+            'social_youtube' => 'nullable|url|max:500',
+            'social_whatsapp' => 'nullable|string|max:30',
+            'social_tiktok' => 'nullable|url|max:500',
+            'header_bg_color' => 'nullable|string|max:7',
+            'header_text_color' => 'nullable|string|max:7',
+            'footer_bg_color' => 'nullable|string|max:7',
+            'footer_text_color' => 'nullable|string|max:7',
+            'footer_bottom_bg_color' => 'nullable|string|max:7',
+            'footer_bottom_text_color' => 'nullable|string|max:7',
+            'payment_bkash_number' => 'nullable|string|max:30',
+            'payment_nagad_number' => 'nullable|string|max:30',
+            'payment_rocket_number' => 'nullable|string|max:30',
         ]);
 
         $newMax = (int) $validated['category_max_depth'];
@@ -87,6 +115,20 @@ class SettingsController extends Controller
         Setting::set('vat_rate', $validated['vat_rate'] ?? '0');
         Setting::set('enable_compare_price', $request->boolean('enable_compare_price') ? '1' : '0');
         Setting::set('category_max_depth', (string) $newMax);
+        Setting::set('social_facebook', $validated['social_facebook'] ?? '');
+        Setting::set('social_instagram', $validated['social_instagram'] ?? '');
+        Setting::set('social_youtube', $validated['social_youtube'] ?? '');
+        Setting::set('social_whatsapp', preg_replace('/\D+/', '', $validated['social_whatsapp'] ?? '') ?: '');
+        Setting::set('social_tiktok', $validated['social_tiktok'] ?? '');
+        Setting::set('header_bg_color', \App\Support\Homepage::normalizeColor($validated['header_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
+        Setting::set('header_text_color', \App\Support\Homepage::normalizeColor($validated['header_text_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('footer_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
+        Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($validated['footer_text_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));
+        Setting::set('footer_bottom_text_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_text_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('payment_bkash_number', preg_replace('/\D+/', '', $validated['payment_bkash_number'] ?? '') ?: '');
+        Setting::set('payment_nagad_number', preg_replace('/\D+/', '', $validated['payment_nagad_number'] ?? '') ?: '');
+        Setting::set('payment_rocket_number', preg_replace('/\D+/', '', $validated['payment_rocket_number'] ?? '') ?: '');
 
         $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);
         $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);

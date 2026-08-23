@@ -19,6 +19,8 @@ class Order extends Model
         'customer_phone',
         'shipping_address',
         'payment_method',
+        'payment_reference',
+        'payment_sender_phone',
         'payment_status',
         'order_status',
         'subtotal',
@@ -83,7 +85,7 @@ class Order extends Model
 
     public function paymentMethodLabel(): string
     {
-        return ucwords(str_replace('_', ' ', $this->payment_method));
+        return \App\Support\PaymentMethod::label($this->payment_method);
     }
 
     public function isAccessibleToCurrentRequest(): bool

@@ -21,7 +21,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     @stack('head')
-    @stack('styles')
+    @include('frontend.partials.theme-colors')
+    @include('frontend.partials.form-styles')
     <style>
         html { height: auto; }
         body { min-height: 100vh; display: flex; flex-direction: column; background-color: #fff; }
@@ -30,12 +31,10 @@
             position: sticky;
             top: 0;
             z-index: 1020;
-            background: #fff;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
         }
         .preloader-wrapper { z-index: 2000; }
-        #footer-bottom { margin-top: auto; background: #6BB252; color: #fff; text-align: center; padding: 14px 0; }
-        #footer-bottom p { margin: 0; color: #fff; }
+        #footer-bottom { margin-top: auto; text-align: center; padding: 14px 0; }
+        #footer-bottom p { margin: 0; }
         .product-item { width: 100%; max-width: 100%; overflow: hidden; }
         .product-item .d-flex.flex-column { min-width: 0; max-width: 100%; }
         .product-item .tab-image { width: 100%; height: 180px; object-fit: contain; }
@@ -112,6 +111,7 @@
     </main>
 
     @include('frontend.organic-v1.partials.footer')
+    @stack('styles')
     @include('frontend.organic-v1.partials.scripts')
     @stack('scripts')
 </body>

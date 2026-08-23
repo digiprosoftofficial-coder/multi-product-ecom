@@ -54,6 +54,48 @@ if (!function_exists('footer_logo_url')) {
     }
 }
 
+if (!function_exists('social_links')) {
+    /**
+     * @return array<string, array{url: string, label: string, icon: string}>
+     */
+    function social_links(): array
+    {
+        $links = [];
+
+        if ($url = trim((string) setting('social_facebook', ''))) {
+            $links['facebook'] = ['url' => $url, 'label' => 'Facebook', 'icon' => 'fa-brands fa-facebook-f'];
+        }
+        if ($url = trim((string) setting('social_instagram', ''))) {
+            $links['instagram'] = ['url' => $url, 'label' => 'Instagram', 'icon' => 'fa-brands fa-instagram'];
+        }
+        if ($url = trim((string) setting('social_youtube', ''))) {
+            $links['youtube'] = ['url' => $url, 'label' => 'YouTube', 'icon' => 'fa-brands fa-youtube'];
+        }
+        if ($phone = preg_replace('/\D+/', '', (string) setting('social_whatsapp', ''))) {
+            $links['whatsapp'] = ['url' => 'https://wa.me/'.$phone, 'label' => 'WhatsApp', 'icon' => 'fa-brands fa-whatsapp'];
+        }
+        if ($url = trim((string) setting('social_tiktok', ''))) {
+            $links['tiktok'] = ['url' => $url, 'label' => 'TikTok', 'icon' => 'fa-brands fa-tiktok'];
+        }
+
+        return $links;
+    }
+}
+
+if (!function_exists('has_social_links')) {
+    function has_social_links(): bool
+    {
+        return social_links() !== [];
+    }
+}
+
+if (!function_exists('theme_color')) {
+    function theme_color(string $key, string $default): string
+    {
+        return \App\Support\Homepage::normalizeColor(setting($key, $default), $default);
+    }
+}
+
 if (!function_exists('favicon_url')) {
     function favicon_url(): ?string
     {

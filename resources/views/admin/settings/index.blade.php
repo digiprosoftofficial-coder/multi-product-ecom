@@ -239,6 +239,146 @@
         About, Privacy, and Terms are now edited under <a href="{{ route('admin.pages.index') }}">Pages</a>.
     </div>
 
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Payment methods</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Mobile wallet numbers shown on checkout when customers choose bKash, Nagad, or Rocket.</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="payment_bkash_number" class="form-label">bKash number</label>
+                    <input type="text" class="form-control @error('payment_bkash_number') is-invalid @enderror"
+                           id="payment_bkash_number" name="payment_bkash_number"
+                           value="{{ old('payment_bkash_number', $settings['payment_bkash_number']) }}"
+                           placeholder="01XXXXXXXXX">
+                    @error('payment_bkash_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="payment_nagad_number" class="form-label">Nagad number</label>
+                    <input type="text" class="form-control @error('payment_nagad_number') is-invalid @enderror"
+                           id="payment_nagad_number" name="payment_nagad_number"
+                           value="{{ old('payment_nagad_number', $settings['payment_nagad_number']) }}"
+                           placeholder="01XXXXXXXXX">
+                    @error('payment_nagad_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="payment_rocket_number" class="form-label">Rocket number</label>
+                    <input type="text" class="form-control @error('payment_rocket_number') is-invalid @enderror"
+                           id="payment_rocket_number" name="payment_rocket_number"
+                           value="{{ old('payment_rocket_number', $settings['payment_rocket_number']) }}"
+                           placeholder="01XXXXXXXXX">
+                    @error('payment_rocket_number')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Header &amp; footer colors</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Customize the storefront header, footer, and copyright bar colors.</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="header_bg_color" class="form-label">Header background</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('header_bg_color') is-invalid @enderror"
+                           id="header_bg_color" name="header_bg_color"
+                           value="{{ old('header_bg_color', $settings['header_bg_color']) }}">
+                    @error('header_bg_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="header_text_color" class="form-label">Header text &amp; icons</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('header_text_color') is-invalid @enderror"
+                           id="header_text_color" name="header_text_color"
+                           value="{{ old('header_text_color', $settings['header_text_color']) }}">
+                    @error('header_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="footer_bg_color" class="form-label">Footer background</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('footer_bg_color') is-invalid @enderror"
+                           id="footer_bg_color" name="footer_bg_color"
+                           value="{{ old('footer_bg_color', $settings['footer_bg_color']) }}">
+                    @error('footer_bg_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="footer_text_color" class="form-label">Footer text &amp; links</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('footer_text_color') is-invalid @enderror"
+                           id="footer_text_color" name="footer_text_color"
+                           value="{{ old('footer_text_color', $settings['footer_text_color']) }}">
+                    @error('footer_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="footer_bottom_bg_color" class="form-label">Copyright bar background</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('footer_bottom_bg_color') is-invalid @enderror"
+                           id="footer_bottom_bg_color" name="footer_bottom_bg_color"
+                           value="{{ old('footer_bottom_bg_color', $settings['footer_bottom_bg_color']) }}">
+                    @error('footer_bottom_bg_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="footer_bottom_text_color" class="form-label">Copyright bar text</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('footer_bottom_text_color') is-invalid @enderror"
+                           id="footer_bottom_text_color" name="footer_bottom_text_color"
+                           value="{{ old('footer_bottom_text_color', $settings['footer_bottom_text_color']) }}">
+                    @error('footer_bottom_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Social media</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Add profile links to show social icons in the footer. Leave a field empty to hide that icon.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="social_facebook" class="form-label">Facebook URL</label>
+                    <input type="url" class="form-control @error('social_facebook') is-invalid @enderror"
+                           id="social_facebook" name="social_facebook"
+                           value="{{ old('social_facebook', $settings['social_facebook']) }}"
+                           placeholder="https://facebook.com/yourpage">
+                    @error('social_facebook')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6">
+                    <label for="social_instagram" class="form-label">Instagram URL</label>
+                    <input type="url" class="form-control @error('social_instagram') is-invalid @enderror"
+                           id="social_instagram" name="social_instagram"
+                           value="{{ old('social_instagram', $settings['social_instagram']) }}"
+                           placeholder="https://instagram.com/yourpage">
+                    @error('social_instagram')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6">
+                    <label for="social_youtube" class="form-label">YouTube URL</label>
+                    <input type="url" class="form-control @error('social_youtube') is-invalid @enderror"
+                           id="social_youtube" name="social_youtube"
+                           value="{{ old('social_youtube', $settings['social_youtube']) }}"
+                           placeholder="https://youtube.com/@channel">
+                    @error('social_youtube')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6">
+                    <label for="social_tiktok" class="form-label">TikTok URL</label>
+                    <input type="url" class="form-control @error('social_tiktok') is-invalid @enderror"
+                           id="social_tiktok" name="social_tiktok"
+                           value="{{ old('social_tiktok', $settings['social_tiktok']) }}"
+                           placeholder="https://tiktok.com/@username">
+                    @error('social_tiktok')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6">
+                    <label for="social_whatsapp" class="form-label">WhatsApp number</label>
+                    <input type="text" class="form-control @error('social_whatsapp') is-invalid @enderror"
+                           id="social_whatsapp" name="social_whatsapp"
+                           value="{{ old('social_whatsapp', $settings['social_whatsapp']) }}"
+                           placeholder="8801XXXXXXXXX">
+                    <div class="form-text">Country code included, digits only. Opens WhatsApp chat.</div>
+                    @error('social_whatsapp')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="d-flex gap-2 sticky-bottom bg-body py-3 border-top" style="z-index: 10;">
         <button type="submit" class="btn btn-primary">Save settings</button>
     </div>

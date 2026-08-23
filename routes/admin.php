@@ -46,6 +46,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('shop-page', [\App\Http\Controllers\Admin\PageController::class, 'shop'])->name('shop-page.index');
     Route::put('shop-page', [\App\Http\Controllers\Admin\PageController::class, 'updateShop'])->name('shop-page.update');
 
+    Route::get('product-page', [\App\Http\Controllers\Admin\PageController::class, 'product'])->name('product-page.index');
+    Route::put('product-page', [\App\Http\Controllers\Admin\PageController::class, 'updateProduct'])->name('product-page.update');
+
     Route::get('contact-page', [\App\Http\Controllers\Admin\PageController::class, 'contact'])->name('contact-page.index');
     Route::put('contact-page', [\App\Http\Controllers\Admin\PageController::class, 'updateContact'])->name('contact-page.update');
 

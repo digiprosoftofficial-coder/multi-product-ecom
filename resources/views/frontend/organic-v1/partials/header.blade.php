@@ -7,7 +7,7 @@
             @if(site_logo_url())
               <img src="{{ site_logo_url() }}" alt="{{ site_name() }}" class="img-fluid" style="max-height: 48px; width: auto;">
             @else
-              <span class="fw-bold fs-5 text-dark">{{ site_name() }}</span>
+              <span class="fw-bold fs-5 site-brand-text">{{ site_name() }}</span>
             @endif
           </a>
         </div>
@@ -41,7 +41,7 @@
       </div>
 
       <div class="col-lg-4">
-        <ul class="navbar-nav list-unstyled d-flex flex-row gap-3 gap-lg-4 justify-content-center flex-wrap align-items-center mb-0 fw-bold text-uppercase text-dark">
+        <ul class="navbar-nav list-unstyled d-flex flex-row gap-3 gap-lg-4 justify-content-center flex-wrap align-items-center mb-0 fw-bold text-uppercase">
           <li class="nav-item">
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
           </li>

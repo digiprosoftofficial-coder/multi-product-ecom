@@ -34,6 +34,8 @@ class PageBanner
             'checkout_banner_title' => 'Checkout',
             'checkout_banner_subtitle' => 'Complete your order securely.',
             'checkout_banner_image' => '',
+            'product_banner_subtitle' => 'Quality products, carefully selected for you.',
+            'product_banner_image' => '',
         ];
     }
 
@@ -82,6 +84,33 @@ class PageBanner
             'title' => $title,
             'subtitle' => $subtitle,
             'image' => self::imageUrl($imageKey),
+        ];
+    }
+
+    /**
+     * @return array{title: string, subtitle: string, image: ?string}
+     */
+    public static function forProduct(\App\Models\Product $product): array
+    {
+        $banner = self::for('product');
+
+        $subtitle = $product->category?->pathName() ?: $banner['subtitle'];
+
+        $image = $banner['image'];
+        $firstImage = $product->relationLoaded('images')
+            ? $product->images->first()
+            : $product->images()->orderBy('sort_order')->first();
+
+        if ($firstImage) {
+            $image = asset('uploads/products/'.$firstImage->filename);
+        } elseif ($product->thumbnail_url) {
+            $image = $product->thumbnail_url;
+        }
+
+        return [
+            'title' => $product->name,
+            'subtitle' => $subtitle,
+            'image' => $image,
         ];
     }
 }

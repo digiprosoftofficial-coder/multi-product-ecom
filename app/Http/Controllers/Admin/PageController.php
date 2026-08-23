@@ -62,6 +62,16 @@ class PageController extends Controller
         return view('admin.pages.shop', compact('pages'));
     }
 
+    public function product()
+    {
+        $pages = [
+            'product_banner_subtitle' => PageBanner::get('product_banner_subtitle'),
+            'product_banner_image' => PageBanner::get('product_banner_image'),
+        ];
+
+        return view('admin.pages.product', compact('pages'));
+    }
+
     public function contact()
     {
         $pages = [
@@ -168,6 +178,21 @@ class PageController extends Controller
 
         return redirect()->route('admin.shop-page.index')
             ->with('success', 'Shop page updated successfully.');
+    }
+
+    public function updateProduct(Request $request)
+    {
+        $validated = $request->validate([
+            'product_banner_subtitle' => 'nullable|string|max:255',
+            'product_banner_image' => image_upload_rules(),
+            'remove_product_banner_image' => 'nullable|boolean',
+        ]);
+
+        Setting::set('product_banner_subtitle', $validated['product_banner_subtitle'] ?? '');
+        $this->storeBannerImage($request, 'product_banner_image', 'product-banner');
+
+        return redirect()->route('admin.product-page.index')
+            ->with('success', 'Product page updated successfully.');
     }
 
     public function updateContact(Request $request)

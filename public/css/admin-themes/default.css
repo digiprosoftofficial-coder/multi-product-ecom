@@ -79,10 +79,42 @@ body.admin-panel .border-primary {
 }
 
 /* Forms */
+body.admin-panel .form-control,
+body.admin-panel .form-select,
+body.admin-panel textarea.form-control {
+    background-color: #fff;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 8px;
+    min-height: 42px;
+    padding: 0.5rem 0.85rem;
+    color: #1e293b;
+    box-shadow: none;
+    transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+body.admin-panel textarea.form-control {
+    min-height: 110px;
+    resize: vertical;
+}
 body.admin-panel .form-control:focus,
-body.admin-panel .form-select:focus {
-    border-color: var(--admin-green);
-    box-shadow: 0 0 0 .2rem rgba(22, 163, 74, .2);
+body.admin-panel .form-select:focus,
+body.admin-panel textarea.form-control:focus {
+    background-color: #f0fdf4;
+    border-color: var(--admin-green) !important;
+    box-shadow: 0 0 0 .22rem rgba(22, 163, 74, .2) !important;
+    outline: none;
+}
+body.admin-panel .form-control::placeholder {
+    color: #94a3b8;
+    opacity: 1;
+}
+body.admin-panel .form-label {
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.35rem;
+}
+body.admin-panel .form-control.is-invalid,
+body.admin-panel .form-select.is-invalid {
+    border-color: #dc3545 !important;
 }
 body.admin-panel .form-check-input:checked {
     background-color: var(--admin-green);

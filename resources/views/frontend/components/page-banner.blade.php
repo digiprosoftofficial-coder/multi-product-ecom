@@ -3,10 +3,11 @@
     $title = $banner['title'] ?: ($fallbackTitle ?? '');
     $subtitle = $banner['subtitle'] ?? '';
     $image = $banner['image'] ?? null;
+    $height = $height ?? null;
 @endphp
 
-<section class="page-top-banner @if($image) has-image @endif"
-         @if($image) style="background-image: url('{{ $image }}');" @endif>
+<section class="page-top-banner @if($image) has-image @endif @if($height) has-custom-height @endif"
+         @if($image || $height) style="@if($image) background-image: url('{{ $image }}'); @endif @if($height) --page-banner-height: {{ $height }}px; @endif" @endif>
     <div class="page-top-banner-overlay"></div>
     <div class="container-lg page-top-banner-content">
         @if($title)
@@ -31,6 +32,9 @@
         background-position: center;
         background-repeat: no-repeat;
         overflow: hidden;
+    }
+    .page-top-banner.has-custom-height {
+        height: var(--page-banner-height);
     }
     .page-top-banner:not(.has-image) {
         background-image: linear-gradient(135deg, #1f3b2c 0%, #2f6b45 55%, #6BB252 100%);
@@ -63,8 +67,11 @@
         line-height: 1.55;
     }
     @media (max-width: 767px) {
-        .page-top-banner {
+        .page-top-banner:not(.has-custom-height) {
             height: 240px;
+        }
+        .page-top-banner.has-custom-height {
+            height: var(--page-banner-height);
         }
         .page-top-banner-subtitle {
             font-size: .98rem;

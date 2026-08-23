@@ -7,7 +7,7 @@
 @endpush
 
 @section('content')
-<section class="py-5">
+<section class="product-detail-page py-4 py-md-5">
     <div class="container-lg">
         @php
             $crumbs = [
@@ -15,47 +15,31 @@
                 ['name' => 'Shop', 'url' => route('products.index')],
             ];
             if ($product->category) {
-                $crumbs[] = ['name' => $product->category->name, 'url' => route('products.category', $product->category)];
+                $nodes = [];
+                $node = $product->category;
+                while ($node) {
+                    array_unshift($nodes, $node);
+                    $node = $node->parent;
+                }
+                foreach ($nodes as $node) {
+                    $crumbs[] = [
+                        'name' => $node->name,
+                        'url' => route('products.category', $node),
+                    ];
+                }
             }
             $crumbs[] = ['name' => $product->name, 'url' => null];
         @endphp
-        @include('frontend.components.breadcrumb', ['items' => $crumbs])
+        @include('frontend.components.breadcrumb', ['items' => $crumbs, 'variant' => 'modern'])
 
         <div class="row g-5">
             <div class="col-md-6">
-                @if($product->images->count() > 0)
-                    <div id="productCarousel" class="carousel slide" data-bs-ride="carousel">
-                        <div class="carousel-inner border rounded-3 overflow-hidden">
-                            @foreach($product->images as $index => $image)
-                                <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-                                    <img src="{{ asset('uploads/products/' . $image->filename) }}"
-                                         class="d-block w-100"
-                                         alt="{{ $product->name }}"
-                                         style="height: 480px; object-fit: contain; background: #f8f9fa;">
-                                </div>
-                            @endforeach
-                        </div>
-                        @if($product->images->count() > 1)
-                            <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
-                                <span class="carousel-control-prev-icon"></span>
-                            </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#productCarousel" data-bs-slide="next">
-                                <span class="carousel-control-next-icon"></span>
-                            </button>
-                        @endif
-                    </div>
-                @elseif($product->thumbnail)
-                    <img src="{{ $product->thumbnail_url }}" class="img-fluid border rounded-3" alt="{{ $product->name }}">
-                @else
-                    <div class="bg-light border rounded-3 d-flex align-items-center justify-content-center" style="height: 420px;">
-                        <span class="text-muted">No Image Available</span>
-                    </div>
-                @endif
+                @include('frontend.products.partials.product-gallery', ['product' => $product])
             </div>
 
             <div class="col-md-6">
-                <h1 class="display-6">{{ $product->name }}</h1>
-                <p class="text-muted">SKU: {{ $product->sku }}</p>
+                <h1 class="product-detail-title mb-2">{{ $product->name }}</h1>
+                <p class="text-muted mb-2">SKU: {{ $product->sku }}</p>
 
                 <div class="d-flex align-items-center gap-2 mb-4">
                     @if($product->discount_price)
@@ -76,22 +60,6 @@
                         {!! $product->description_html !!}
                     </div>
                 @endif
-
-                <p class="mb-1"><strong>Category:</strong>
-                    @if($product->category)
-                        <a href="{{ route('products.category', $product->category) }}">{{ $product->category->pathName() }}</a>
-                    @else
-                        -
-                    @endif
-                </p>
-                <p class="mb-4">
-                    <strong>Stock:</strong>
-                    @if($product->isInStock())
-                        <span class="text-success">{{ $product->stock }} available</span>
-                    @else
-                        <span class="text-danger">Out of Stock</span>
-                    @endif
-                </p>
 
                 @if($product->isInStock())
                     @include('frontend.partials.add-to-cart-actions', ['product' => $product, 'showQty' => true])
@@ -118,3 +86,14 @@
     </div>
 </section>
 @endsection
+
+@push('styles')
+<style>
+    .product-detail-title {
+        font-size: clamp(1.6rem, 2.8vw, 2.15rem);
+        font-weight: 700;
+        line-height: 1.25;
+        color: #0f172a;
+    }
+</style>
+@endpush

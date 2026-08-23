@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
+use App\Support\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,8 @@ class CheckoutController extends Controller
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = View::exists("frontend.{$theme}.checkout") ? "frontend.{$theme}.checkout" : 'frontend.checkout.index';
 
-        return view($view, compact('cartItems', 'subtotal', 'tax', 'vat', 'total'));
+        return view($view, compact('cartItems', 'subtotal', 'tax', 'vat', 'total'))
+            ->with('paymentMethods', PaymentMethod::options());
     }
 
     public function store(Request $request)
@@ -62,8 +64,11 @@ class CheckoutController extends Controller
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
             'customer_email' => 'required|email|max:255',
-            'customer_phone' => 'nullable|string|max:20',
+            'customer_phone' => 'required|string|max:20',
             'shipping_address' => 'required|string',
+            'payment_method' => 'required|in:'.implode(',', PaymentMethod::values()),
+            'payment_reference' => 'nullable|required_if:payment_method,bkash,nagad,rocket|string|max:100',
+            'payment_sender_phone' => 'nullable|string|max:20',
             'notes' => 'nullable|string',
         ]);
 
@@ -111,9 +116,15 @@ class CheckoutController extends Controller
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'],
-                'customer_phone' => $validated['customer_phone'] ?? null,
+                'customer_phone' => $validated['customer_phone'],
                 'shipping_address' => $validated['shipping_address'],
-                'payment_method' => 'cash_on_delivery',
+                'payment_method' => $validated['payment_method'],
+                'payment_reference' => PaymentMethod::isMobileWallet($validated['payment_method'])
+                    ? ($validated['payment_reference'] ?? null)
+                    : null,
+                'payment_sender_phone' => PaymentMethod::isMobileWallet($validated['payment_method'])
+                    ? ($validated['payment_sender_phone'] ?? null)
+                    : null,
                 'payment_status' => 'pending',
                 'order_status' => 'pending',
                 'subtotal' => $subtotal,

@@ -23,6 +23,9 @@
                 </div>
                 <div class="col-md-6">
                     <p><strong>Payment Method:</strong> {{ $order->paymentMethodLabel() }}</p>
+                    @if($order->payment_reference)
+                        <p><strong>Transaction ID:</strong> {{ $order->payment_reference }}</p>
+                    @endif
                     <p><strong>Payment Status:</strong>
                         <span class="badge bg-{{ $order->payment_badge }}">{{ ucfirst($order->payment_status) }}</span>
                     </p>

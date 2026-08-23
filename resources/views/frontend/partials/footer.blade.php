@@ -9,6 +9,7 @@
                 @endif
                 <h5>{{ site_name() }}</h5>
                 <p class="text-muted mb-2">{{ setting('footer_text', 'Your trusted online shopping destination.') }}</p>
+                @include('frontend.components.social-links', ['variant' => 'dark', 'class' => 'mb-3'])
                 @if(setting('contact_phone'))
                     <div class="text-muted small">{{ setting('contact_phone') }}</div>
                 @endif

@@ -35,6 +35,7 @@
                     $siteSettingOpen = request()->routeIs('admin.homepage.*')
                         || request()->routeIs('admin.about.*')
                         || request()->routeIs('admin.shop-page.*')
+                        || request()->routeIs('admin.product-page.*')
                         || request()->routeIs('admin.contact-page.*')
                         || request()->routeIs('admin.cart-page.*')
                         || request()->routeIs('admin.checkout-page.*')
@@ -59,6 +60,9 @@
                         </a>
                         <a class="nav-link {{ request()->routeIs('admin.shop-page.*') ? 'is-active' : '' }}" href="{{ route('admin.shop-page.index') }}">
                             <i class="fas fa-store"></i> Shop
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('admin.product-page.*') ? 'is-active' : '' }}" href="{{ route('admin.product-page.index') }}">
+                            <i class="fas fa-box-open"></i> Product
                         </a>
                         <a class="nav-link {{ request()->routeIs('admin.contact-page.*') ? 'is-active' : '' }}" href="{{ route('admin.contact-page.index') }}">
                             <i class="fas fa-envelope"></i> Contact

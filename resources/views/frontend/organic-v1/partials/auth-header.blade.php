@@ -5,7 +5,7 @@
                 @if(site_logo_url())
                     <img src="{{ site_logo_url() }}" alt="{{ site_name() }}" class="img-fluid" style="max-height: 42px; width: auto;">
                 @else
-                    <span class="fw-bold fs-5 text-dark">{{ site_name() }}</span>
+                    <span class="fw-bold fs-5 site-brand-text">{{ site_name() }}</span>
                 @endif
             </a>
             <a href="{{ route('products.index') }}" class="btn btn-outline-primary btn-sm rounded-1 text-nowrap">

@@ -194,6 +194,9 @@
             <div>
                 <p class="label">Payment</p>
                 {{ $order->paymentMethodLabel() }} — {{ ucfirst($order->payment_status) }}
+                @if($order->payment_reference)
+                    <br><span class="label">Txn: {{ $order->payment_reference }}</span>
+                @endif
             </div>
         </div>
 

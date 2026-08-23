@@ -12,7 +12,23 @@
                         <i class="fas fa-check-circle fa-4x"></i>
                     </div>
                     <h1 class="h3 mb-2">Thank you for your order</h1>
-                    <p class="text-muted mb-4">We received your order and will contact you shortly for cash-on-delivery.</p>
+                    <p class="text-muted mb-4">
+                        @if($order->payment_method === 'cash_on_delivery')
+                            We received your order and will contact you shortly for cash on delivery.
+                        @elseif(\App\Support\PaymentMethod::isMobileWallet($order->payment_method))
+                            We received your order. We will verify your {{ $order->paymentMethodLabel() }} payment and contact you soon.
+                        @else
+                            We received your order and will contact you shortly.
+                        @endif
+                    </p>
+
+                    <div class="bg-light rounded p-3 mb-3 text-start">
+                        <div class="small text-muted text-uppercase">Payment method</div>
+                        <div class="fw-semibold">{{ $order->paymentMethodLabel() }}</div>
+                        @if($order->payment_reference)
+                            <div class="small text-muted mt-2">Transaction ID: {{ $order->payment_reference }}</div>
+                        @endif
+                    </div>
 
                     <div class="bg-light rounded p-3 mb-4">
                         <div class="text-muted small text-uppercase">Order number</div>

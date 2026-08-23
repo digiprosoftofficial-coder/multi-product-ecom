@@ -138,6 +138,18 @@
                     <span>Payment method:</span>
                     <span>{{ $order->paymentMethodLabel() }}</span>
                 </div>
+                @if($order->payment_reference)
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Transaction ID:</span>
+                        <span>{{ $order->payment_reference }}</span>
+                    </div>
+                @endif
+                @if($order->payment_sender_phone)
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sender number:</span>
+                        <span>{{ $order->payment_sender_phone }}</span>
+                    </div>
+                @endif
                 <div class="d-flex justify-content-between">
                     <span>Payment status:</span>
                     <span class="badge bg-{{ $order->payment_badge }}">{{ ucfirst($order->payment_status) }}</span>
