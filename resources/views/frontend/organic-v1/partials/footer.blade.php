@@ -1,4 +1,4 @@
-@unless(request()->routeIs('login'))
+@unless(request()->routeIs('login', 'register'))
 <footer class="py-5">
   <div class="container-lg">
     <div class="row">

@@ -26,6 +26,7 @@ class SettingsController extends Controller
             'contact_address' => Setting::get('contact_address', ''),
             'contact_hours' => Setting::get('contact_hours', ''),
             'contact_intro' => Setting::get('contact_intro', ''),
+            'contact_map_url' => Setting::get('contact_map_url', ''),
             'currency_symbol' => Setting::get('currency_symbol', '$'),
             'currency_code' => Setting::get('currency_code', 'USD'),
             'tax_rate' => Setting::get('tax_rate', '0'),
@@ -53,6 +54,7 @@ class SettingsController extends Controller
             'contact_address' => 'nullable|string|max:2000',
             'contact_hours' => 'nullable|string|max:255',
             'contact_intro' => 'nullable|string|max:2000',
+            'contact_map_url' => 'nullable|url|max:2000',
             'currency_symbol' => 'required|string|max:8',
             'currency_code' => 'nullable|string|max:8',
             'tax_rate' => 'nullable|numeric|min:0|max:100',
@@ -78,6 +80,7 @@ class SettingsController extends Controller
         Setting::set('contact_address', $validated['contact_address'] ?? '');
         Setting::set('contact_hours', $validated['contact_hours'] ?? '');
         Setting::set('contact_intro', $validated['contact_intro'] ?? '');
+        Setting::set('contact_map_url', $validated['contact_map_url'] ?? '');
         Setting::set('currency_symbol', $validated['currency_symbol']);
         Setting::set('currency_code', strtoupper($validated['currency_code'] ?? 'USD'));
         Setting::set('tax_rate', $validated['tax_rate'] ?? '0');

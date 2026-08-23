@@ -30,6 +30,15 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('homepage', [\App\Http\Controllers\Admin\HomepageController::class, 'index'])->name('homepage.index');
     Route::put('homepage', [\App\Http\Controllers\Admin\HomepageController::class, 'update'])->name('homepage.update');
 
+    Route::get('about', [\App\Http\Controllers\Admin\PageController::class, 'about'])->name('about.index');
+    Route::put('about', [\App\Http\Controllers\Admin\PageController::class, 'updateAbout'])->name('about.update');
+
+    Route::get('shop-page', [\App\Http\Controllers\Admin\PageController::class, 'shop'])->name('shop-page.index');
+    Route::put('shop-page', [\App\Http\Controllers\Admin\PageController::class, 'updateShop'])->name('shop-page.update');
+
+    Route::get('contact-page', [\App\Http\Controllers\Admin\PageController::class, 'contact'])->name('contact-page.index');
+    Route::put('contact-page', [\App\Http\Controllers\Admin\PageController::class, 'updateContact'])->name('contact-page.update');
+
     Route::get('pages', [\App\Http\Controllers\Admin\PageController::class, 'index'])->name('pages.index');
     Route::put('pages', [\App\Http\Controllers\Admin\PageController::class, 'update'])->name('pages.update');
 

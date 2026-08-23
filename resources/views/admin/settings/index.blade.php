@@ -96,7 +96,7 @@
             <h5 class="mb-0">Contact information</h5>
         </div>
         <div class="card-body">
-            <p class="text-muted small">Shown on the Contact page, footer, and invoices. The contact form can be added later.</p>
+            <p class="text-muted small">Shown on the Contact page, footer, and invoices. Contact form messages are sent to the email below.</p>
             <div class="mb-3">
                 <label for="contact_phone" class="form-label">Phone</label>
                 <input type="text" class="form-control @error('contact_phone') is-invalid @enderror"
@@ -130,11 +130,21 @@
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>
-            <div class="mb-0">
+            <div class="mb-3">
                 <label for="contact_intro" class="form-label">Contact page intro</label>
                 <textarea class="form-control @error('contact_intro') is-invalid @enderror"
                           id="contact_intro" name="contact_intro" rows="2">{{ old('contact_intro', $settings['contact_intro']) }}</textarea>
                 @error('contact_intro')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+            <div class="mb-0">
+                <label for="contact_map_url" class="form-label">Google Maps embed URL</label>
+                <input type="url" class="form-control @error('contact_map_url') is-invalid @enderror"
+                       id="contact_map_url" name="contact_map_url" value="{{ old('contact_map_url', $settings['contact_map_url']) }}"
+                       placeholder="https://www.google.com/maps/embed?pb=...">
+                <div class="form-text">Optional. Leave empty to auto-generate from the address above.</div>
+                @error('contact_map_url')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>

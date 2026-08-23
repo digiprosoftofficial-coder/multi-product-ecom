@@ -22,7 +22,11 @@
                     <i class="fas fa-chart-bar"></i> Reports
                 </a>
                 @php
-                    $siteSettingOpen = request()->routeIs('admin.homepage.*') || request()->routeIs('admin.pages.*');
+                    $siteSettingOpen = request()->routeIs('admin.homepage.*')
+                        || request()->routeIs('admin.about.*')
+                        || request()->routeIs('admin.shop-page.*')
+                        || request()->routeIs('admin.contact-page.*')
+                        || request()->routeIs('admin.pages.*');
                 @endphp
                 <a class="nav-link nav-parent d-flex justify-content-between align-items-center {{ $siteSettingOpen ? 'is-open' : '' }}"
                    data-bs-toggle="collapse"
@@ -38,8 +42,17 @@
                         <a class="nav-link {{ request()->routeIs('admin.homepage.*') ? 'is-active' : '' }}" href="{{ route('admin.homepage.index') }}">
                             <i class="fas fa-home"></i> Homepage
                         </a>
+                        <a class="nav-link {{ request()->routeIs('admin.about.*') ? 'is-active' : '' }}" href="{{ route('admin.about.index') }}">
+                            <i class="fas fa-info-circle"></i> About
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('admin.shop-page.*') ? 'is-active' : '' }}" href="{{ route('admin.shop-page.index') }}">
+                            <i class="fas fa-store"></i> Shop
+                        </a>
+                        <a class="nav-link {{ request()->routeIs('admin.contact-page.*') ? 'is-active' : '' }}" href="{{ route('admin.contact-page.index') }}">
+                            <i class="fas fa-envelope"></i> Contact
+                        </a>
                         <a class="nav-link {{ request()->routeIs('admin.pages.*') ? 'is-active' : '' }}" href="{{ route('admin.pages.index') }}">
-                            <i class="fas fa-file-alt"></i> Pages
+                            <i class="fas fa-file-alt"></i> Legal pages
                         </a>
                     </nav>
                 </div>

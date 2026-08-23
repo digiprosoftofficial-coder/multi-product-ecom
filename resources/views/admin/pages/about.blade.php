@@ -1,32 +1,35 @@
 @extends('admin.layouts.master')
 
-@section('title', 'Legal pages')
-@section('page-title', 'Legal pages')
+@section('title', 'About')
+@section('page-title', 'About')
 
 @section('content')
-<form action="{{ route('admin.pages.update') }}" method="POST">
+<form action="{{ route('admin.about.update') }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
-    <div class="card mb-4">
-        <div class="card-header"><h5 class="mb-0">Privacy policy</h5></div>
-        <div class="card-body">
-            <textarea class="form-control js-page-editor" name="privacy_content" id="privacy_content" rows="10">{{ old('privacy_content', $pages['privacy_content']) }}</textarea>
-        </div>
-    </div>
+    @include('admin.pages.partials.banner-fields', ['pageKey' => 'about', 'label' => 'About', 'pages' => $pages])
 
     <div class="card mb-4">
-        <div class="card-header"><h5 class="mb-0">Terms &amp; conditions</h5></div>
+        <div class="card-header"><h5 class="mb-0">About content</h5></div>
         <div class="card-body">
-            <textarea class="form-control js-page-editor" name="terms_content" id="terms_content" rows="10">{{ old('terms_content', $pages['terms_content']) }}</textarea>
+            <div class="mb-3">
+                <label class="form-label">Page title</label>
+                <input type="text" name="about_title" class="form-control" value="{{ old('about_title', $pages['about_title']) }}">
+                <div class="form-text">Used as fallback when banner title is empty.</div>
+            </div>
+            <label class="form-label">Content</label>
+            <textarea class="form-control js-page-editor" name="about_content" id="about_content" rows="10">{{ old('about_content', $pages['about_content']) }}</textarea>
         </div>
     </div>
 
     <div class="d-flex gap-2 sticky-bottom bg-body py-3 border-top">
-        <button type="submit" class="btn btn-primary">Save legal pages</button>
+        <button type="submit" class="btn btn-primary">Save About page</button>
     </div>
 </form>
 @endsection
+
+@include('admin.pages.partials.banner-assets')
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/tinymce@7.6.0/tinymce.min.js" referrerpolicy="origin"></script>

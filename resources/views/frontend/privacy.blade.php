@@ -4,17 +4,13 @@
 
 @section('content')
 <div class="container-lg py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <h1 class="h3 mb-4">Privacy policy</h1>
-            @if(filled($content))
-                <div class="page-content">
-                    {!! $content !!}
-                </div>
-            @else
-                <p class="text-muted">This page has not been published yet.</p>
-            @endif
+    <h1 class="h3 mb-4 text-start">Privacy policy</h1>
+    @if(filled($content))
+        <div class="page-content text-start">
+            {!! $content !!}
         </div>
-    </div>
+    @else
+        <p class="text-muted text-start mb-0">This page has not been published yet.</p>
+    @endif
 </div>
 @endsection

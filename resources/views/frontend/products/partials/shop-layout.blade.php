@@ -11,6 +11,11 @@
     $sortQuery = $sort !== 'latest' ? $sort : null;
 @endphp
 
+@include('frontend.components.page-banner', [
+    'page' => 'shop',
+    'fallbackTitle' => $title ?? 'Shop',
+])
+
 <section class="shop-page py-5">
     <div class="container-lg">
         @include('frontend.components.breadcrumb', ['items' => $breadcrumb])
