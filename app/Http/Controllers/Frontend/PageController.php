@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Mail\ContactMessage;
+use App\Mail\ContactMessage as ContactMessageMail;
+use App\Models\ContactMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -37,9 +38,11 @@ class PageController extends Controller
 
         $recipient = setting('contact_email') ?: config('mail.from.address');
 
+        ContactMessage::create($validated);
+
         if ($recipient) {
             try {
-                Mail::to($recipient)->send(new ContactMessage($validated));
+                Mail::to($recipient)->send(new ContactMessageMail($validated));
             } catch (\Throwable $e) {
                 Log::warning('Contact form mail failed: '.$e->getMessage());
             }

@@ -38,9 +38,9 @@
 
                         <div class="mb-3">
                             <label for="customer_phone" class="form-label">Phone</label>
-                            <input type="text" class="form-control @error('customer_phone') is-invalid @enderror" 
-                                   id="customer_phone" name="customer_phone" 
-                                   value="{{ old('customer_phone') }}">
+                            <input type="text" class="form-control @error('customer_phone') is-invalid @enderror"
+                                   id="customer_phone" name="customer_phone"
+                                   value="{{ old('customer_phone', Auth::check() ? Auth::user()->phone : '') }}">
                             @error('customer_phone')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror

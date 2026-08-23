@@ -34,6 +34,15 @@
                         </div>
 
                         <div class="mb-3">
+                            <label for="phone" class="form-label">Phone</label>
+                            <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                                   id="phone" name="phone" value="{{ old('phone', Auth::user()->phone) }}" placeholder="01XXXXXXXXX">
+                            @error('phone')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="mb-3">
                             <label for="password" class="form-label">New Password (leave blank to keep current)</label>
                             <input type="password" class="form-control @error('password') is-invalid @enderror" 
                                    id="password" name="password">
