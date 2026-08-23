@@ -2,6 +2,10 @@
 
 @section('title', 'Dashboard')
 
+@section('seo')
+@include('frontend.partials.seo-meta', ['robots' => 'noindex, nofollow'])
+@endsection
+
 @section('content')
 <div class="container-lg py-5">
     <h2 class="mb-4">My Dashboard</h2>

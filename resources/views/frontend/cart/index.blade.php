@@ -2,6 +2,10 @@
 
 @section('title', 'Shopping Cart')
 
+@section('seo')
+@include('frontend.partials.seo-meta', ['robots' => 'noindex, nofollow'])
+@endsection
+
 @section('content')
 @include('frontend.components.page-banner', [
     'page' => 'cart',

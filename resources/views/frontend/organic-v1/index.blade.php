@@ -2,6 +2,18 @@
 
 @section('title', site_name())
 
+@section('seo')
+@include('frontend.partials.seo-meta', [
+    'title' => site_name(),
+    'description' => \App\Support\Seo::defaultDescription(),
+    'url' => route('home'),
+    'jsonLd' => [
+        \App\Support\Seo::organizationJsonLd(),
+        \App\Support\Seo::webSiteJsonLd(),
+    ],
+])
+@endsection
+
 @section('content')
 @include('frontend.organic-v1.partials.hero-carousel')
 

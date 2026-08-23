@@ -47,6 +47,8 @@ class SettingsController extends Controller
             'payment_bkash_number' => Setting::get('payment_bkash_number', ''),
             'payment_nagad_number' => Setting::get('payment_nagad_number', ''),
             'payment_rocket_number' => Setting::get('payment_rocket_number', ''),
+            'seo_meta_description' => Setting::get('seo_meta_description', ''),
+            'seo_og_image' => Setting::get('seo_og_image'),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -89,6 +91,9 @@ class SettingsController extends Controller
             'payment_bkash_number' => 'nullable|string|max:30',
             'payment_nagad_number' => 'nullable|string|max:30',
             'payment_rocket_number' => 'nullable|string|max:30',
+            'seo_meta_description' => 'nullable|string|max:320',
+            'seo_og_image' => image_upload_rules(),
+            'remove_seo_og_image' => 'nullable|boolean',
         ]);
 
         $newMax = (int) $validated['category_max_depth'];
@@ -129,10 +134,12 @@ class SettingsController extends Controller
         Setting::set('payment_bkash_number', preg_replace('/\D+/', '', $validated['payment_bkash_number'] ?? '') ?: '');
         Setting::set('payment_nagad_number', preg_replace('/\D+/', '', $validated['payment_nagad_number'] ?? '') ?: '');
         Setting::set('payment_rocket_number', preg_replace('/\D+/', '', $validated['payment_rocket_number'] ?? '') ?: '');
+        Setting::set('seo_meta_description', $validated['seo_meta_description'] ?? '');
 
         $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);
         $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);
         $this->storeBrandImage($request, 'favicon', 'favicon', 64, 64);
+        $this->storeBrandImage($request, 'seo_og_image', 'seo-og', 1200, 630);
 
         return redirect()->route('admin.settings.index')
             ->with('success', 'Settings updated successfully.');

@@ -2,6 +2,10 @@
 
 @section('title', 'Login')
 
+@section('seo')
+@include('frontend.partials.seo-meta', ['robots' => 'noindex, nofollow'])
+@endsection
+
 @push('styles')
 @include('auth.partials.layout-styles')
 @endpush

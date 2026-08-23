@@ -241,6 +241,37 @@
 
     <div class="card mb-4">
         <div class="card-header">
+            <h5 class="mb-0">SEO</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Default meta description and social sharing image for pages that do not have their own SEO fields.</p>
+            <div class="mb-3">
+                <label for="seo_meta_description" class="form-label">Default meta description</label>
+                <textarea class="form-control @error('seo_meta_description') is-invalid @enderror"
+                          id="seo_meta_description" name="seo_meta_description" rows="3"
+                          maxlength="320">{{ old('seo_meta_description', $settings['seo_meta_description']) }}</textarea>
+                <div class="form-text">Recommended 150–160 characters. Used on the homepage, shop, and other pages without a custom description.</div>
+                @error('seo_meta_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+            <div class="mb-0">
+                <label class="form-label">Default social share image (Open Graph)</label>
+                @php $seoOgUrl = setting_image_url($settings['seo_og_image'] ?? null); @endphp
+                @include('admin.settings.partials.image-preview', [
+                    'url' => $seoOgUrl,
+                    'alt' => 'SEO share image',
+                    'removeName' => 'remove_seo_og_image',
+                    'imgStyle' => 'max-height: 80px; max-width: 200px; object-fit: cover;',
+                ])
+                <input type="file" class="form-control @error('seo_og_image') is-invalid @enderror"
+                       id="seo_og_image" name="seo_og_image" accept="image/*">
+                <div class="form-text">1200×630 recommended. If empty, the header logo is used.</div>
+                @error('seo_og_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
             <h5 class="mb-0">Payment methods</h5>
         </div>
         <div class="card-body">

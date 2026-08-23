@@ -2,6 +2,18 @@
 
 @section('title', 'About – '.site_name())
 
+@section('seo')
+@include('frontend.partials.seo-meta', [
+    'title' => $title ?? 'About',
+    'description' => \App\Support\Seo::excerpt($content ?? '', 'Learn more about '.site_name().'.'),
+    'url' => route('about'),
+    'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'About', 'url' => route('about')],
+    ]),
+])
+@endsection
+
 @section('content')
 @include('frontend.components.page-banner', [
     'page' => 'about',

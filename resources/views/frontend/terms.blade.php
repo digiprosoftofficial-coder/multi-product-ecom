@@ -2,6 +2,18 @@
 
 @section('title', 'Terms & conditions – '.site_name())
 
+@section('seo')
+@include('frontend.partials.seo-meta', [
+    'title' => 'Terms & Conditions',
+    'description' => \App\Support\Seo::excerpt($content ?? '', 'Terms and conditions for shopping at '.site_name().'.'),
+    'url' => route('terms'),
+    'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Terms & Conditions', 'url' => route('terms')],
+    ]),
+])
+@endsection
+
 @section('content')
 @include('frontend.components.page-banner', [
     'page' => 'terms',

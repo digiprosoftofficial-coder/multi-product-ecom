@@ -177,7 +177,7 @@ class Product extends Model
             'offers' => [
                 '@type' => 'Offer',
                 'url' => $url,
-                'priceCurrency' => 'USD',
+                'priceCurrency' => \App\Support\Seo::currencyCode(),
                 'price' => number_format((float) $this->final_price, 2, '.', ''),
                 'availability' => $this->isInStock()
                     ? 'https://schema.org/InStock'

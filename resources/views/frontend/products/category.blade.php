@@ -2,7 +2,6 @@
 
 @section('title', $category->name.' – '.site_name())
 
-@section('content')
 @php
     $crumbs = [
         ['name' => 'Home', 'url' => route('home')],
@@ -21,6 +20,17 @@
         ];
     }
 @endphp
+
+@section('seo')
+@include('frontend.partials.seo-meta', [
+    'title' => $category->name,
+    'description' => \App\Support\Seo::excerpt($category->description, 'Shop '.$category->name.' at '.site_name().'.'),
+    'url' => route('products.category', $category),
+    'jsonLd' => \App\Support\Seo::breadcrumbJsonLd($crumbs),
+])
+@endsection
+
+@section('content')
 @include('frontend.products.partials.shop-layout', [
     'title' => $category->name,
     'breadcrumb' => $crumbs,

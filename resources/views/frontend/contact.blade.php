@@ -2,6 +2,18 @@
 
 @section('title', 'Contact – '.site_name())
 
+@section('seo')
+@include('frontend.partials.seo-meta', [
+    'title' => 'Contact',
+    'description' => \App\Support\Seo::excerpt(setting('contact_intro'), 'Contact '.site_name().'. Reach us by phone, email, or send a message.'),
+    'url' => route('contact'),
+    'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Contact', 'url' => route('contact')],
+    ]),
+])
+@endsection
+
 @push('styles')
 <style>
     .contact-page {

@@ -2,34 +2,46 @@
 
 @section('title', $product->seoTitle().' – '.site_name())
 
-@push('head')
-    @include('frontend.partials.product-seo')
-@endpush
+@php
+    $crumbs = [
+        ['name' => 'Home', 'url' => route('home')],
+        ['name' => 'Shop', 'url' => route('products.index')],
+    ];
+    if ($product->category) {
+        $nodes = [];
+        $node = $product->category;
+        while ($node) {
+            array_unshift($nodes, $node);
+            $node = $node->parent;
+        }
+        foreach ($nodes as $node) {
+            $crumbs[] = [
+                'name' => $node->name,
+                'url' => route('products.category', $node),
+            ];
+        }
+    }
+    $crumbs[] = ['name' => $product->name, 'url' => null];
+@endphp
+
+@section('seo')
+@include('frontend.partials.seo-meta', [
+    'title' => $product->seoTitle(),
+    'description' => $product->seoDescription(),
+    'url' => route('products.show', $product),
+    'type' => 'product',
+    'image' => $product->seoImageUrl(),
+    'price' => $product->final_price,
+    'jsonLd' => array_filter([
+        $product->jsonLd(),
+        \App\Support\Seo::breadcrumbJsonLd($crumbs),
+    ]),
+])
+@endsection
 
 @section('content')
 <section class="product-detail-page py-4 py-md-5">
     <div class="container-lg">
-        @php
-            $crumbs = [
-                ['name' => 'Home', 'url' => route('home')],
-                ['name' => 'Shop', 'url' => route('products.index')],
-            ];
-            if ($product->category) {
-                $nodes = [];
-                $node = $product->category;
-                while ($node) {
-                    array_unshift($nodes, $node);
-                    $node = $node->parent;
-                }
-                foreach ($nodes as $node) {
-                    $crumbs[] = [
-                        'name' => $node->name,
-                        'url' => route('products.category', $node),
-                    ];
-                }
-            }
-            $crumbs[] = ['name' => $product->name, 'url' => null];
-        @endphp
         @include('frontend.components.breadcrumb', ['items' => $crumbs, 'variant' => 'modern'])
 
         <div class="row g-5">
