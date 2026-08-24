@@ -100,7 +100,8 @@
             <div class="mb-3">
                 <label for="contact_phone" class="form-label">Phone</label>
                 <input type="text" class="form-control @error('contact_phone') is-invalid @enderror"
-                       id="contact_phone" name="contact_phone" value="{{ old('contact_phone', $settings['contact_phone']) }}">
+                       id="contact_phone" name="contact_phone" value="{{ old('contact_phone', $settings['contact_phone']) }}"
+                       placeholder="01XXXXXXXXX">
                 @error('contact_phone')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

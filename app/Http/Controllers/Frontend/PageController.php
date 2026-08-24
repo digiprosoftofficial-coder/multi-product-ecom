@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Mail\ContactMessage as ContactMessageMail;
 use App\Models\ContactMessage;
+use App\Rules\BangladeshPhone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -31,12 +32,14 @@ class PageController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:120',
             'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:30',
+            'phone' => ['required', 'string', 'max:30', new BangladeshPhone],
             'subject' => 'nullable|string|max:160',
             'message' => 'required|string|max:5000',
         ]);
 
         $recipient = setting('contact_email') ?: config('mail.from.address');
+
+        $validated['phone'] = BangladeshPhone::normalize($validated['phone']);
 
         ContactMessage::create($validated);
 

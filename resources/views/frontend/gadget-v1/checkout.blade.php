@@ -35,8 +35,8 @@
                 @error('customer_email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
               <div class="mb-3">
-                <label for="customer_phone" class="form-label">Phone</label>
-                <input type="text" class="form-control bg-dark border-secondary text-white" id="customer_phone" name="customer_phone" value="{{ old('customer_phone') }}">
+                <label for="customer_phone" class="form-label">Phone <span class="text-danger">*</span></label>
+                <input type="text" class="form-control bg-dark border-secondary text-white" id="customer_phone" name="customer_phone" value="{{ old('customer_phone', Auth::check() ? Auth::user()->phone : '') }}" placeholder="01XXXXXXXXX" required>
                 @error('customer_phone')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
               <div class="mb-3">
@@ -80,5 +80,6 @@
   @include('frontend.gadget-v1.partials.footer')
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="{{ asset('js/bangladesh-phone.js') }}"></script>
 </body>
 </html>

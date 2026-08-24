@@ -205,9 +205,10 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="contact_phone" class="form-label">Phone <span class="text-muted">(optional)</span></label>
+                                    <label for="contact_phone" class="form-label">Phone <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                           id="contact_phone" name="phone" value="{{ old('phone') }}">
+                                           id="contact_phone" name="phone" value="{{ old('phone') }}"
+                                           placeholder="01XXXXXXXXX" required>
                                     @error('phone')
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror

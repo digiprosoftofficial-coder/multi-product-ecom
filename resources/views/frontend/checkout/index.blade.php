@@ -131,11 +131,11 @@
                                     @error('payment_reference')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="payment_sender_phone" class="form-label">Sender number</label>
+                                    <label for="payment_sender_phone" class="form-label">Sender number <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('payment_sender_phone') is-invalid @enderror"
                                            id="payment_sender_phone" name="payment_sender_phone"
                                            value="{{ old('payment_sender_phone') }}"
-                                           placeholder="Your mobile wallet number">
+                                           placeholder="01XXXXXXXXX">
                                     @error('payment_sender_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                             </div>
@@ -467,6 +467,7 @@
     const fields = document.getElementById('wallet-payment-fields');
     const note = document.getElementById('wallet-payment-note');
     const referenceInput = document.getElementById('payment_reference');
+    const senderPhoneInput = document.getElementById('payment_sender_phone');
     const radios = document.querySelectorAll('.payment-option-input');
 
     function updatePaymentUI() {
@@ -479,6 +480,12 @@
         const isWallet = selected.dataset.wallet === '1';
         fields.classList.toggle('d-none', !isWallet);
         referenceInput.required = isWallet;
+        if (senderPhoneInput) {
+            senderPhoneInput.required = isWallet;
+            if (!isWallet) {
+                senderPhoneInput.classList.remove('is-invalid');
+            }
+        }
 
         if (isWallet) {
             const method = selected.value;

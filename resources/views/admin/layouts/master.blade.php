@@ -134,6 +134,7 @@
     </script>
 
     @stack('scripts')
+    <script src="{{ asset('js/bangladesh-phone.js') }}"></script>
 </body>
 </html>
 

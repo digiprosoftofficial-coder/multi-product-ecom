@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Setting;
+use App\Rules\BangladeshPhone;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Intervention\Image\ImageManager;
@@ -65,7 +66,7 @@ class SettingsController extends Controller
             'remove_footer_logo' => 'nullable|boolean',
             'remove_favicon' => 'nullable|boolean',
             'footer_text' => 'nullable|string|max:2000',
-            'contact_phone' => 'nullable|string|max:50',
+            'contact_phone' => ['nullable', 'string', 'max:50', new BangladeshPhone],
             'contact_email' => 'nullable|email|max:255',
             'contact_address' => 'nullable|string|max:2000',
             'contact_hours' => 'nullable|string|max:255',
@@ -80,7 +81,7 @@ class SettingsController extends Controller
             'social_facebook' => 'nullable|url|max:500',
             'social_instagram' => 'nullable|url|max:500',
             'social_youtube' => 'nullable|url|max:500',
-            'social_whatsapp' => 'nullable|string|max:30',
+            'social_whatsapp' => ['nullable', 'string', 'max:30', new BangladeshPhone],
             'social_tiktok' => 'nullable|url|max:500',
             'header_bg_color' => 'nullable|string|max:7',
             'header_text_color' => 'nullable|string|max:7',
@@ -88,9 +89,9 @@ class SettingsController extends Controller
             'footer_text_color' => 'nullable|string|max:7',
             'footer_bottom_bg_color' => 'nullable|string|max:7',
             'footer_bottom_text_color' => 'nullable|string|max:7',
-            'payment_bkash_number' => 'nullable|string|max:30',
-            'payment_nagad_number' => 'nullable|string|max:30',
-            'payment_rocket_number' => 'nullable|string|max:30',
+            'payment_bkash_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
+            'payment_nagad_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
+            'payment_rocket_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
             'seo_meta_description' => 'nullable|string|max:320',
             'seo_og_image' => image_upload_rules(),
             'remove_seo_og_image' => 'nullable|boolean',
@@ -108,7 +109,7 @@ class SettingsController extends Controller
 
         Setting::set('site_name', $validated['site_name']);
         Setting::set('footer_text', $validated['footer_text'] ?? '');
-        Setting::set('contact_phone', $validated['contact_phone'] ?? '');
+        Setting::set('contact_phone', BangladeshPhone::normalize($validated['contact_phone'] ?? null) ?? '');
         Setting::set('contact_email', $validated['contact_email'] ?? '');
         Setting::set('contact_address', $validated['contact_address'] ?? '');
         Setting::set('contact_hours', $validated['contact_hours'] ?? '');
@@ -123,7 +124,7 @@ class SettingsController extends Controller
         Setting::set('social_facebook', $validated['social_facebook'] ?? '');
         Setting::set('social_instagram', $validated['social_instagram'] ?? '');
         Setting::set('social_youtube', $validated['social_youtube'] ?? '');
-        Setting::set('social_whatsapp', preg_replace('/\D+/', '', $validated['social_whatsapp'] ?? '') ?: '');
+        Setting::set('social_whatsapp', BangladeshPhone::toWhatsAppDigits($validated['social_whatsapp'] ?? null) ?? '');
         Setting::set('social_tiktok', $validated['social_tiktok'] ?? '');
         Setting::set('header_bg_color', \App\Support\Homepage::normalizeColor($validated['header_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
         Setting::set('header_text_color', \App\Support\Homepage::normalizeColor($validated['header_text_color'] ?? '#ffffff', '#ffffff'));
@@ -131,9 +132,9 @@ class SettingsController extends Controller
         Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($validated['footer_text_color'] ?? '#ffffff', '#ffffff'));
         Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));
         Setting::set('footer_bottom_text_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_text_color'] ?? '#ffffff', '#ffffff'));
-        Setting::set('payment_bkash_number', preg_replace('/\D+/', '', $validated['payment_bkash_number'] ?? '') ?: '');
-        Setting::set('payment_nagad_number', preg_replace('/\D+/', '', $validated['payment_nagad_number'] ?? '') ?: '');
-        Setting::set('payment_rocket_number', preg_replace('/\D+/', '', $validated['payment_rocket_number'] ?? '') ?: '');
+        Setting::set('payment_bkash_number', BangladeshPhone::normalize($validated['payment_bkash_number'] ?? null) ?? '');
+        Setting::set('payment_nagad_number', BangladeshPhone::normalize($validated['payment_nagad_number'] ?? null) ?? '');
+        Setting::set('payment_rocket_number', BangladeshPhone::normalize($validated['payment_rocket_number'] ?? null) ?? '');
         Setting::set('seo_meta_description', $validated['seo_meta_description'] ?? '');
 
         $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);

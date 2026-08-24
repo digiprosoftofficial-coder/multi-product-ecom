@@ -39,9 +39,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="phone" class="form-label">Phone <span class="text-muted">(optional)</span></label>
+                    <label for="phone" class="form-label">Phone <span class="text-danger">*</span></label>
                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                           id="phone" name="phone" value="{{ old('phone') }}" placeholder="01XXXXXXXXX">
+                           id="phone" name="phone" value="{{ old('phone') }}" placeholder="01XXXXXXXXX" required>
                     @error('phone')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror

@@ -71,7 +71,12 @@ if (!function_exists('social_links')) {
         if ($url = trim((string) setting('social_youtube', ''))) {
             $links['youtube'] = ['url' => $url, 'label' => 'YouTube', 'icon' => 'fa-brands fa-youtube'];
         }
-        if ($phone = preg_replace('/\D+/', '', (string) setting('social_whatsapp', ''))) {
+        if ($phone = \App\Rules\BangladeshPhone::toWhatsAppDigits(setting('social_whatsapp', ''))) {
+            $links['whatsapp'] = ['url' => 'https://wa.me/'.$phone, 'label' => 'WhatsApp', 'icon' => 'fa-brands fa-whatsapp'];
+        } elseif ($phone = preg_replace('/\D+/', '', (string) setting('social_whatsapp', ''))) {
+            if (str_starts_with($phone, '0')) {
+                $phone = '88'.$phone;
+            }
             $links['whatsapp'] = ['url' => 'https://wa.me/'.$phone, 'label' => 'WhatsApp', 'icon' => 'fa-brands fa-whatsapp'];
         }
         if ($url = trim((string) setting('social_tiktok', ''))) {
