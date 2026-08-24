@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     return res.json();
                 })
                 .then((data) => {
+                    if (data?.tracking && window.StorefrontTracking) {
+                        window.StorefrontTracking.addToCart(data.tracking);
+                    }
                     if (data?.redirect) {
                         window.location.href = data.redirect;
                         return;

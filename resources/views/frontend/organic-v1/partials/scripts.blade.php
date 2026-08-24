@@ -45,6 +45,9 @@ document.addEventListener('DOMContentLoaded', function () {
           return res.json();
         })
         .then(function (data) {
+          if (data.tracking && window.StorefrontTracking) {
+            window.StorefrontTracking.addToCart(data.tracking);
+          }
           if (data.redirect) {
             window.location.href = data.redirect;
             return;

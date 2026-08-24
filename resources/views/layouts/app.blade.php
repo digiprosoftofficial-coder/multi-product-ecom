@@ -27,6 +27,7 @@
     @stack('head')
     @include('frontend.partials.theme-colors')
     @include('frontend.partials.form-styles')
+    @include('frontend.partials.tracking-scripts')
     <style>
         html { height: auto; }
         body { min-height: 100vh; display: flex; flex-direction: column; background-color: #fff; }

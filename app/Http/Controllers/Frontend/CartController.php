@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Support\Storefront;
+use App\Support\Tracking;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View;
 
@@ -80,6 +81,7 @@ class CartController extends Controller
                 'message' => 'Product added to cart successfully.',
                 'cartCount' => $cartCount,
                 'productId' => $product->id,
+                'tracking' => Tracking::productPayload($product, (int) $request->quantity),
             ];
 
             if ($buyNow) {

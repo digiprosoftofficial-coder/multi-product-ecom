@@ -459,6 +459,11 @@
 
 @push('scripts')
 <script>
+    if (window.StorefrontTracking) {
+        window.StorefrontTracking.beginCheckout(@json(\App\Support\Tracking::cartPayload($cartItems, (float) $total), JSON_HEX_TAG | JSON_HEX_APOS | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    }
+</script>
+<script>
 (function () {
     const walletNumbers = @json($walletNumbers);
     const orderTotal = @json(money($total));

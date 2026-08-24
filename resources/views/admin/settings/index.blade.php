@@ -273,6 +273,35 @@
 
     <div class="card mb-4">
         <div class="card-header">
+            <h5 class="mb-0">Analytics &amp; pixel</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Add your tracking IDs to enable Google Analytics 4 and Facebook Pixel site-wide.</p>
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="google_analytics_id" class="form-label">Google Analytics Measurement ID</label>
+                    <input type="text" class="form-control @error('google_analytics_id') is-invalid @enderror"
+                           id="google_analytics_id" name="google_analytics_id"
+                           value="{{ old('google_analytics_id', $settings['google_analytics_id']) }}"
+                           placeholder="G-XXXXXXXXXX">
+                    <div class="form-text">Format: <code>G-XXXXXXXXXX</code></div>
+                    @error('google_analytics_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-6">
+                    <label for="facebook_pixel_id" class="form-label">Facebook Pixel ID</label>
+                    <input type="text" class="form-control @error('facebook_pixel_id') is-invalid @enderror"
+                           id="facebook_pixel_id" name="facebook_pixel_id"
+                           value="{{ old('facebook_pixel_id', $settings['facebook_pixel_id']) }}"
+                           placeholder="123456789012345">
+                    <div class="form-text">Numbers only.</div>
+                    @error('facebook_pixel_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
             <h5 class="mb-0">Payment methods</h5>
         </div>
         <div class="card-body">

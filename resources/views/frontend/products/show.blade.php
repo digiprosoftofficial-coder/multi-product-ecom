@@ -109,3 +109,11 @@
     }
 </style>
 @endpush
+
+@push('scripts')
+<script>
+    if (window.StorefrontTracking) {
+        window.StorefrontTracking.viewContent(@json(\App\Support\Tracking::productPayload($product), JSON_HEX_TAG | JSON_HEX_APOS | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    }
+</script>
+@endpush

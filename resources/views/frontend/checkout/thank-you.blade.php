@@ -89,3 +89,11 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    if (window.StorefrontTracking) {
+        window.StorefrontTracking.purchase(@json(\App\Support\Tracking::orderPayload($order), JSON_HEX_TAG | JSON_HEX_APOS | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+    }
+</script>
+@endpush
