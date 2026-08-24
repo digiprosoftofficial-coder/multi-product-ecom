@@ -1,4 +1,4 @@
-# Multi Ecommerce
+# Digiprosoft Multi Ecommerce
 
 Laravel 12 multi-product ecommerce store with admin panel, nested categories, cart/checkout, and SEO-ready product pages.
 
