@@ -8,6 +8,8 @@
 
 @section('content')
 <div class="container-lg py-5">
+    @include('frontend.components.checkout-steps', ['active' => 'done'])
+
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">

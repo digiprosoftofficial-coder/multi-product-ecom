@@ -43,7 +43,7 @@
           <h2 class="section-title mb-0">{{ \App\Support\Homepage::get('home_best_selling_title') }}</h2>
           <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1">View All</a>
         </div>
-        <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-4">
+        <div class="product-grid row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-3 g-md-4">
           @foreach($bestSellingProducts as $product)
             <div class="col">
               @include('frontend.components.product-card', ['product' => $product])
@@ -61,10 +61,10 @@
           <div class="col-lg-8">
             <div class="banner-ad d-flex align-items-center rounded-4 shadow-sm w-100 h-100"
                  style="background: url('{{ asset('organic-v1/images/banner-ad-1.jpg') }}') center/cover no-repeat;">
-              <div class="banner-content p-4 p-md-5 w-100">
+              <div class="banner-content p-3 p-md-4 p-lg-5 w-100">
                 <div class="content-wrapper text-light">
                   <h3 class="banner-title text-light mb-2">{{ \App\Support\Homepage::get('home_banner1_title') }}</h3>
-                  <p class="mb-3">{{ \App\Support\Homepage::get('home_banner1_text') }}</p>
+                  <p class="mb-3 banner-text">{{ \App\Support\Homepage::get('home_banner1_text') }}</p>
                   <a href="{{ \App\Support\Homepage::get('home_banner1_url') ?: route('products.index') }}" class="btn btn-light btn-sm rounded-5 px-3">Shop Now</a>
                 </div>
               </div>
@@ -106,22 +106,20 @@
 @if(\App\Support\Homepage::enabled('home_show_newsletter'))
     <section>
       <div class="container-lg">
-        <div class="bg-secondary text-light py-5 my-5" style="background: url('{{ asset('organic-v1/images/banner-newsletter.jpg') }}') no-repeat; background-size: cover;">
-          <div class="container">
-            <div class="row justify-content-center">
-              <div class="col-md-5 p-3">
-                <h2 class="section-title display-5 text-light">{{ \App\Support\Homepage::get('home_newsletter_title') }}</h2>
-                <p>{{ \App\Support\Homepage::get('home_newsletter_text') }}</p>
+        <div class="newsletter-banner text-light py-4 py-md-5 my-4 my-md-5 overflow-hidden">
+          <div class="row justify-content-center g-3 px-3 px-md-4 mx-0">
+              <div class="col-md-5 p-2 p-md-3">
+                <h2 class="section-title newsletter-title text-light">{{ \App\Support\Homepage::get('home_newsletter_title') }}</h2>
+                <p class="mb-0">{{ \App\Support\Homepage::get('home_newsletter_text') }}</p>
               </div>
-              <div class="col-md-5 p-3">
-                <form action="{{ route('register') }}" method="GET">
+              <div class="col-md-5 p-2 p-md-3 d-flex align-items-center">
+                <form action="{{ route('register') }}" method="GET" class="w-100">
                   <div class="d-grid gap-2">
                     <a href="{{ route('register') }}" class="btn btn-dark btn-md rounded-0">Register now</a>
                   </div>
                 </form>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </section>
@@ -146,7 +144,7 @@
 @if(\App\Support\Homepage::enabled('home_show_features'))
     <section class="py-5 feature-highlights">
       <div class="container-lg">
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-5 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3 g-md-4">
           @foreach([1,2,3,4,5] as $i)
             <div class="col">
               <div class="feature-card h-100">

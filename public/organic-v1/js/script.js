@@ -69,8 +69,8 @@
       if (!$el_id) return;
 
       new Swiper("#"+$el_id+" .swiper", {
-        slidesPerView: 5,
-        spaceBetween: 30,
+        slidesPerView: 2,
+        spaceBetween: 12,
         speed: 500,
         watchOverflow: true,
         navigation: {
@@ -79,16 +79,28 @@
         },
         breakpoints: {
           0: {
-            slidesPerView: 1,
+            slidesPerView: 2,
+            spaceBetween: 12,
+          },
+          576: {
+            slidesPerView: 2,
+            spaceBetween: 14,
           },
           768: {
-            slidesPerView: 3,
+            slidesPerView: 2,
+            spaceBetween: 18,
           },
-          991: {
+          992: {
+            slidesPerView: 3,
+            spaceBetween: 22,
+          },
+          1200: {
             slidesPerView: 4,
+            spaceBetween: 24,
           },
           1500: {
             slidesPerView: 5,
+            spaceBetween: 28,
           },
         }
       });

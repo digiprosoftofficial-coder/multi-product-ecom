@@ -7,17 +7,25 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-  const cartCountEl = document.getElementById('cart-count');
-
   function updateCartCount(count) {
-    if (!cartCountEl) return;
     const value = Number(count) || 0;
-    cartCountEl.textContent = value;
-    cartCountEl.style.display = value > 0 ? 'inline-block' : 'none';
+    document.querySelectorAll('.js-cart-count').forEach(function (el) {
+      el.textContent = value;
+      el.style.display = value > 0 ? '' : 'none';
+    });
   }
 
+  const cartCountEl = document.getElementById('cart-count');
   if (cartCountEl) {
     updateCartCount(cartCountEl.textContent);
+  }
+
+  var mobileSearch = document.getElementById('mobileHeaderSearch');
+  if (mobileSearch) {
+    mobileSearch.addEventListener('shown.bs.collapse', function () {
+      var input = document.getElementById('mobile-search-input');
+      if (input) input.focus();
+    });
   }
 
   document.querySelectorAll('form.js-add-to-cart').forEach(function (form) {

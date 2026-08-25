@@ -23,8 +23,14 @@
                     $hasContent = $slide['show_content'] && (
                         $slide['title'] || $slide['subtitle'] || $slide['btn1_text'] || $slide['btn2_text']
                     );
+                    $desktopUrl = \App\Support\Homepage::slideImageUrl($slide['image'] ?? null);
+                    $mobileUrl = ! empty($slide['image_mobile'])
+                        ? \App\Support\Homepage::slideImageUrl($slide['image_mobile'])
+                        : $desktopUrl;
+                    $hasMobileImage = ! empty($slide['image_mobile']);
                 @endphp
-                <div class="carousel-item hero-carousel-item @if($index === 0) active @endif" style="background-image: url('{{ \App\Support\Homepage::slideImageUrl($slide['image']) }}');">
+                <div class="carousel-item hero-carousel-item @if($hasMobileImage) has-mobile-image @endif @if($index === 0) active @endif"
+                     style="--hero-bg-desktop: url('{{ $desktopUrl }}'); --hero-bg-mobile: url('{{ $mobileUrl }}'); background-image: var(--hero-bg-desktop);">
                     @if($showOverlay)
                         <div class="hero-carousel-overlay" style="background: {{ \App\Support\Homepage::heroOverlayBackground() }};"></div>
                     @endif
@@ -32,19 +38,19 @@
                         <div class="hero-carousel-content">
                             <div class="container-lg">
                                 <div class="row">
-                                    <div class="col-lg-7 col-xl-6 pt-5 pb-4 mt-4">
+                                    <div class="col-lg-7 col-xl-6 hero-copy-col">
                                         @if($slide['title'])
-                                            <h2 class="display-1 ls-1 mb-3" style="color: {{ $slide['title_color'] }}">{!! \App\Support\Homepage::renderHeroTitle($slide) !!}</h2>
+                                            <h2 class="hero-title ls-1 mb-2 mb-md-3" style="color: {{ $slide['title_color'] }}">{!! \App\Support\Homepage::renderHeroTitle($slide) !!}</h2>
                                         @endif
                                         @if($slide['subtitle'])
-                                            <p class="fs-4 mb-0" style="color: {{ $slide['subtitle_color'] }}">{{ $slide['subtitle'] }}</p>
+                                            <p class="hero-subtitle mb-0" style="color: {{ $slide['subtitle_color'] }}">{{ $slide['subtitle'] }}</p>
                                         @endif
-                                        <div class="d-flex flex-wrap gap-3">
+                                        <div class="d-flex flex-wrap gap-2 gap-md-3 hero-cta-row">
                                             @if($slide['btn1_text'])
-                                                <a href="{{ \App\Support\Homepage::heroButtonUrl($slide['btn1_url'], route('products.index')) }}" class="btn btn-primary text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">{{ $slide['btn1_text'] }}</a>
+                                                <a href="{{ \App\Support\Homepage::heroButtonUrl($slide['btn1_url'], route('products.index')) }}" class="btn btn-primary text-uppercase rounded-pill hero-cta-btn">{{ $slide['btn1_text'] }}</a>
                                             @endif
                                             @if($slide['btn2_text'])
-                                                <a href="{{ \App\Support\Homepage::heroButtonUrl($slide['btn2_url'], route('register')) }}" class="btn btn-dark text-uppercase fs-6 rounded-pill px-4 py-3 mt-3">{{ $slide['btn2_text'] }}</a>
+                                                <a href="{{ \App\Support\Homepage::heroButtonUrl($slide['btn2_url'], route('register')) }}" class="btn btn-dark text-uppercase rounded-pill hero-cta-btn">{{ $slide['btn2_text'] }}</a>
                                             @endif
                                         </div>
                                     </div>
@@ -73,12 +79,12 @@
     </div>
 
     <div class="container-lg">
-        <div class="row my-4 my-lg-5">
+        <div class="row my-3 my-md-4 my-lg-5 g-3 hero-stats-row">
             @foreach([1,2,3] as $i)
-                <div class="col-md-4">
-                    <div class="row text-dark">
-                        <div class="col-auto"><p class="fs-1 fw-bold lh-sm mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_value') }}</p></div>
-                        <div class="col"><p class="text-uppercase lh-sm mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_label') }}</p></div>
+                <div class="col-4 col-md-4">
+                    <div class="row text-dark g-1 g-md-2 align-items-center">
+                        <div class="col-12 col-sm-auto"><p class="hero-stat-value fw-bold lh-sm mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_value') }}</p></div>
+                        <div class="col"><p class="text-uppercase lh-sm mb-0 hero-stat-label">{{ \App\Support\Homepage::get('home_stat'.$i.'_label') }}</p></div>
                     </div>
                 </div>
             @endforeach
@@ -100,6 +106,12 @@
         background-position: center;
         touch-action: pan-y;
     }
+    @media (max-width: 767.98px) {
+        .hero-carousel-item.has-mobile-image {
+            background-image: var(--hero-bg-mobile) !important;
+            background-position: center top;
+        }
+    }
     .hero-carousel-overlay {
         position: absolute;
         inset: 0;
@@ -111,6 +123,32 @@
         min-height: 720px;
         display: flex;
         align-items: center;
+    }
+    .hero-copy-col {
+        padding-top: 3rem;
+        padding-bottom: 2rem;
+        margin-top: 1.5rem;
+    }
+    .hero-title {
+        font-size: clamp(1.75rem, 5vw, 4.5rem);
+        font-weight: 700;
+        line-height: 1.15;
+    }
+    .hero-subtitle {
+        font-size: clamp(0.95rem, 2.2vw, 1.35rem);
+        line-height: 1.45;
+        max-width: 36rem;
+    }
+    .hero-cta-btn {
+        font-size: 0.85rem;
+        padding: 0.7rem 1.35rem;
+        margin-top: 0.85rem;
+    }
+    .hero-stat-value {
+        font-size: clamp(1.35rem, 3vw, 2.5rem);
+    }
+    .hero-stat-label {
+        font-size: clamp(0.7rem, 1.5vw, 0.95rem);
     }
     .hero-carousel-indicators [data-bs-target] {
         width: 10px;
@@ -152,23 +190,45 @@
     .hero-carousel-control:focus {
         box-shadow: none;
     }
-    @media (max-width: 767px) {
-        .hero-carousel-control-prev {
-            left: 12px;
-        }
-        .hero-carousel-control-next {
-            right: 12px;
-        }
-        .hero-carousel-control-btn {
-            width: 44px;
-            height: 44px;
-            font-size: 1rem;
-        }
-    }
-    @media (max-width: 991px) {
+    @media (max-width: 991.98px) {
         .hero-carousel-item,
         .hero-carousel-content {
-            min-height: 600px;
+            min-height: min(520px, 70vh);
+        }
+        .hero-copy-col {
+            padding-top: 2rem;
+            padding-bottom: 1.5rem;
+            margin-top: 0.5rem;
+        }
+    }
+    @media (max-width: 767.98px) {
+        .hero-carousel-item,
+        .hero-carousel-content {
+            min-height: min(400px, 62vh);
+        }
+        .hero-copy-col {
+            padding-top: 1.25rem;
+            padding-bottom: 1.25rem;
+            margin-top: 0;
+        }
+        .hero-cta-btn {
+            font-size: 0.78rem;
+            padding: 0.55rem 1.1rem;
+            margin-top: 0.65rem;
+        }
+        .hero-carousel-control-prev {
+            left: 10px;
+        }
+        .hero-carousel-control-next {
+            right: 10px;
+        }
+        .hero-carousel-control-btn {
+            width: 40px;
+            height: 40px;
+            font-size: 0.9rem;
+        }
+        .hero-stats-row .col-4 {
+            text-align: center;
         }
     }
 </style>

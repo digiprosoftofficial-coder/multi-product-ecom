@@ -14,8 +14,10 @@
 <div class="auth-shell">
     <div class="card login-card border-0 shadow rounded-4">
         <div class="card-body">
-            <h1 class="h4 text-center mb-1">Login</h1>
-            <p class="text-muted text-center small mb-4">Sign in to your {{ site_name() }} account</p>
+            <div class="auth-title-wrap text-center mb-4">
+                <h1 class="auth-title">Welcome back</h1>
+                <p class="auth-subtitle mb-0">Sign in to your {{ site_name() }} account</p>
+            </div>
 
             <form method="POST" action="{{ route('login') }}">
                 @csrf

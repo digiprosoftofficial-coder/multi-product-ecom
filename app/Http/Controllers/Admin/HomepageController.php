@@ -52,6 +52,8 @@ class HomepageController extends Controller
             'slides.*.btn2_url' => 'nullable|string|max:255',
             'slides.*.image' => image_upload_rules(),
             'slides.*.remove_image' => 'nullable|boolean',
+            'slides.*.image_mobile' => image_upload_rules(),
+            'slides.*.remove_image_mobile' => 'nullable|boolean',
             'home_stat1_value' => 'nullable|string|max:40',
             'home_stat1_label' => 'nullable|string|max:80',
             'home_stat2_value' => 'nullable|string|max:40',
@@ -141,22 +143,36 @@ class HomepageController extends Controller
         foreach ($submitted as $index => $data) {
             $existingSlide = $existing[$index] ?? [];
             $image = (string) ($existingSlide['image'] ?? '');
+            $imageMobile = (string) ($existingSlide['image_mobile'] ?? '');
 
             if ($request->boolean("slides.{$index}.remove_image") && ! $request->hasFile("slides.{$index}.image")) {
                 $this->deleteFile($image);
                 $image = '';
             }
 
+            if ($request->boolean("slides.{$index}.remove_image_mobile") && ! $request->hasFile("slides.{$index}.image_mobile")) {
+                $this->deleteFile($imageMobile);
+                $imageMobile = '';
+            }
+
             if ($request->hasFile("slides.{$index}.image")) {
                 if ($image) {
                     $this->deleteFile($image);
                 }
-                $image = $this->storeSlideImage($request->file("slides.{$index}.image"));
+                $image = $this->storeSlideImage($request->file("slides.{$index}.image"), 'desktop');
+            }
+
+            if ($request->hasFile("slides.{$index}.image_mobile")) {
+                if ($imageMobile) {
+                    $this->deleteFile($imageMobile);
+                }
+                $imageMobile = $this->storeSlideImage($request->file("slides.{$index}.image_mobile"), 'mobile');
             }
 
             $slides[] = Homepage::normalizeSlide([
                 'enabled' => $request->boolean("slides.{$index}.enabled"),
                 'image' => $image,
+                'image_mobile' => $imageMobile,
                 'show_content' => $request->boolean("slides.{$index}.show_content"),
                 'title' => $data['title'] ?? '',
                 'highlight' => $data['highlight'] ?? '',
@@ -175,19 +191,29 @@ class HomepageController extends Controller
             if (! empty($removedSlide['image'])) {
                 $this->deleteFile($removedSlide['image']);
             }
+            if (! empty($removedSlide['image_mobile'])) {
+                $this->deleteFile($removedSlide['image_mobile']);
+            }
         }
 
         Setting::set('home_hero_slides', json_encode(array_values($slides)));
     }
 
-    protected function storeSlideImage($file): string
+    protected function storeSlideImage($file, string $variant = 'desktop'): string
     {
-        $filename = 'hero_'.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        $prefix = $variant === 'mobile' ? 'hero_m_' : 'hero_';
+        $filename = $prefix.time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
         Storage::disk('public')->makeDirectory('uploads/settings');
 
         $manager = new ImageManager(new Driver());
         $img = $manager->read($file->getRealPath());
-        $img->scaleDown(1600, 900);
+
+        if ($variant === 'mobile') {
+            $img->scaleDown(1080, 1350);
+        } else {
+            $img->scaleDown(1920, 900);
+        }
+
         Storage::disk('public')->put('uploads/settings/'.$filename, $img->encode());
 
         return $filename;

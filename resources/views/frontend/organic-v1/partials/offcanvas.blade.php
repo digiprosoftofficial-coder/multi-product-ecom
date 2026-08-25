@@ -19,6 +19,21 @@
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
+    <ul class="navbar-nav list-unstyled d-flex flex-column gap-1 mb-3 pb-3 border-bottom d-lg-none">
+      <li class="nav-item">
+        <a href="{{ route('home') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('products.index') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('products.*') ? 'active' : '' }}">Shop</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('about') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
+      </li>
+      <li class="nav-item">
+        <a href="{{ route('contact') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+      </li>
+    </ul>
+    <p class="text-uppercase text-muted small mb-2 px-2 d-lg-none">Categories</p>
     <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex flex-column gap-2 mb-0">
       @foreach($navCategories ?? collect() as $navCategory)
         @if($navCategory->children->count())

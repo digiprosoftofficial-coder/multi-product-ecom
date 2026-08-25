@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\Setting;
 use App\Support\Storefront;
 use App\Support\Tracking;
 use Illuminate\Http\Request;
@@ -105,17 +106,12 @@ class CartController extends Controller
         $cart = session('cart', []);
 
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] = $request->quantity;
+            $cart[$product->id]['quantity'] = (int) $request->quantity;
             session(['cart' => $cart]);
         }
 
-        $cartCount = count(session('cart', []));
-
         if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Cart updated successfully.',
-                'cartCount' => $cartCount,
-            ]);
+            return response()->json($this->cartJsonPayload($product->id));
         }
 
         return back()->with('success', 'Cart updated successfully.');
@@ -130,13 +126,8 @@ class CartController extends Controller
             session(['cart' => $cart]);
         }
 
-        $cartCount = count($cart);
-
         if ($request->expectsJson()) {
-            return response()->json([
-                'message' => 'Product removed from cart.',
-                'cartCount' => $cartCount,
-            ]);
+            return response()->json($this->cartJsonPayload($product->id));
         }
 
         return back()->with('success', 'Product removed from cart.');
@@ -146,6 +137,46 @@ class CartController extends Controller
     {
         session(['cart' => []]);
         return back()->with('success', 'Cart cleared successfully.');
+    }
+
+    /**
+     * Shared JSON payload for cart mutations (sidebar / checkout AJAX).
+     */
+    protected function cartJsonPayload(?int $productId = null): array
+    {
+        $data = $this->getCartData();
+        $subtotal = (float) $data['cartTotal'];
+        $taxRate = (float) Setting::get('tax_rate', 0);
+        $vatRate = (float) Setting::get('vat_rate', 0);
+        $tax = ($subtotal * $taxRate) / 100;
+        $vat = ($subtotal * $vatRate) / 100;
+        $total = $subtotal + $tax + $vat;
+
+        $lineTotal = null;
+        $quantity = null;
+        if ($productId) {
+            foreach ($data['cartItems'] as $item) {
+                if ((int) $item['product']->id === (int) $productId) {
+                    $lineTotal = (float) $item['subtotal'];
+                    $quantity = (int) $item['quantity'];
+                    break;
+                }
+            }
+        }
+
+        return [
+            'message' => 'Cart updated successfully.',
+            'cartCount' => count($data['cartItems']),
+            'productId' => $productId,
+            'quantity' => $quantity,
+            'lineTotal' => $lineTotal !== null ? money($lineTotal) : null,
+            'subtotal' => money($subtotal),
+            'tax' => money($tax),
+            'vat' => money($vat),
+            'total' => money($total),
+            'totalFormatted' => money($total),
+            'empty' => count($data['cartItems']) === 0,
+        ];
     }
 }
 

@@ -14,8 +14,10 @@
 <div class="auth-shell">
     <div class="card login-card border-0 shadow rounded-4">
         <div class="card-body">
-            <h1 class="h4 text-center mb-1">Create an Account</h1>
-            <p class="text-muted text-center small mb-4">Join {{ site_name() }} to start shopping</p>
+            <div class="auth-title-wrap text-center mb-4">
+                <h1 class="auth-title">Create account</h1>
+                <p class="auth-subtitle mb-0">Join {{ site_name() }} to start shopping</p>
+            </div>
 
             <form method="POST" action="{{ route('register') }}">
                 @csrf

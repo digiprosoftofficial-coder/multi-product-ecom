@@ -24,18 +24,12 @@
 @endphp
 
 <div class="container-lg py-4 py-lg-5 checkout-page">
-    <div class="checkout-steps mb-4">
-        <span class="checkout-step"><i class="fa-solid fa-cart-shopping"></i> Cart</span>
-        <span class="checkout-step-divider"></span>
-        <span class="checkout-step is-active"><i class="fa-solid fa-credit-card"></i> Checkout</span>
-        <span class="checkout-step-divider"></span>
-        <span class="checkout-step"><i class="fa-solid fa-circle-check"></i> Done</span>
-    </div>
+    @include('frontend.components.checkout-steps', ['active' => 'checkout'])
 
-    <form action="{{ route('checkout.store') }}" method="POST" id="checkout-form">
-        @csrf
-        <div class="row g-4">
+    <div class="row g-4">
             <div class="col-lg-8">
+                <form action="{{ route('checkout.store') }}" method="POST" id="checkout-form">
+                    @csrf
                 <div class="checkout-panel mb-4">
                     <div class="checkout-panel-head">
                         <span class="checkout-panel-icon"><i class="fa-solid fa-user"></i></span>
@@ -158,6 +152,7 @@
                         @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 </div>
+                </form>
             </div>
 
             <div class="col-lg-4">
@@ -165,43 +160,62 @@
                     <h3 class="checkout-summary-title">Order summary</h3>
                     <div class="checkout-summary-items">
                         @foreach($cartItems as $item)
-                            <div class="checkout-summary-item">
+                            @php
+                                $product = $item['product'];
+                                $qty = (int) $item['quantity'];
+                                $max = max(1, (int) $product->stock);
+                            @endphp
+                            <div class="checkout-summary-item" data-product-id="{{ $product->id }}">
                                 <div class="checkout-summary-item-main">
-                                    @if($item['product']->thumbnail_url)
-                                        <img src="{{ $item['product']->thumbnail_url }}" alt="" class="checkout-summary-thumb">
+                                    @if($product->thumbnail_url)
+                                        <img src="{{ $product->thumbnail_url }}" alt="" class="checkout-summary-thumb">
                                     @endif
-                                    <div>
-                                        <div class="checkout-summary-name">{{ $item['product']->name }}</div>
-                                        <div class="checkout-summary-qty">Qty: {{ $item['quantity'] }}</div>
+                                    <div class="min-w-0">
+                                        <div class="checkout-summary-name">{{ $product->name }}</div>
+                                        <form action="{{ route('cart.update', $product) }}" method="POST" class="checkout-qty-form mt-1" data-product-id="{{ $product->id }}">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="checkout-qty-control">
+                                                <button type="button" class="checkout-qty-btn js-checkout-qty-minus" aria-label="Decrease">−</button>
+                                                <input type="number"
+                                                       name="quantity"
+                                                       class="checkout-qty-input js-checkout-qty-input"
+                                                       value="{{ $qty }}"
+                                                       min="1"
+                                                       max="{{ $max }}"
+                                                       required>
+                                                <button type="button" class="checkout-qty-btn js-checkout-qty-plus" aria-label="Increase">+</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                                <div class="checkout-summary-price">{{ money($item['total']) }}</div>
+                                <div class="checkout-summary-price js-line-total">{{ money($item['total']) }}</div>
                             </div>
                         @endforeach
                     </div>
 
                     <div class="checkout-summary-row">
                         <span>Subtotal</span>
-                        <span>{{ money($subtotal) }}</span>
+                        <span class="js-checkout-subtotal">{{ money($subtotal) }}</span>
                     </div>
                     @if($tax > 0)
                         <div class="checkout-summary-row">
                             <span>Tax</span>
-                            <span>{{ money($tax) }}</span>
+                            <span class="js-checkout-tax">{{ money($tax) }}</span>
                         </div>
                     @endif
                     @if($vat > 0)
                         <div class="checkout-summary-row">
                             <span>VAT</span>
-                            <span>{{ money($vat) }}</span>
+                            <span class="js-checkout-vat">{{ money($vat) }}</span>
                         </div>
                     @endif
                     <div class="checkout-summary-total">
                         <span>Total</span>
-                        <strong>{{ money($total) }}</strong>
+                        <strong class="js-checkout-total">{{ money($total) }}</strong>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-lg w-100 checkout-submit-btn">
+                    <button type="submit" form="checkout-form" class="btn btn-primary btn-lg w-100 checkout-submit-btn">
                         <i class="fa-solid fa-bag-shopping me-2"></i> Place order
                     </button>
 
@@ -212,36 +226,11 @@
                 </div>
             </div>
         </div>
-    </form>
 </div>
 @endsection
 
 @push('styles')
 <style>
-    .checkout-steps {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: .75rem;
-        flex-wrap: wrap;
-    }
-    .checkout-step {
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        font-size: .92rem;
-        font-weight: 600;
-        color: #94a3b8;
-    }
-    .checkout-step.is-active {
-        color: #6BB252;
-    }
-    .checkout-step-divider {
-        width: 36px;
-        height: 2px;
-        background: #e2e8f0;
-        border-radius: 999px;
-    }
     .checkout-panel {
         background: #fff;
         border: 1px solid #e8efe9;
@@ -372,7 +361,7 @@
         flex-direction: column;
         gap: .85rem;
         margin-bottom: 1rem;
-        max-height: 280px;
+        max-height: 360px;
         overflow-y: auto;
         padding-right: .15rem;
     }
@@ -403,6 +392,52 @@
     .checkout-summary-qty {
         font-size: .84rem;
         color: #64748b;
+    }
+    .checkout-qty-control {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+    }
+    .checkout-qty-btn {
+        width: 32px;
+        height: 32px;
+        border: 0;
+        background: #f8fafc;
+        color: #334155;
+        font-size: 1rem;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        cursor: pointer;
+    }
+    .checkout-qty-btn:hover {
+        background: #eef2ea;
+        color: #6BB252;
+    }
+    .checkout-qty-input {
+        width: 42px;
+        height: 32px;
+        border: 0;
+        border-left: 1px solid #e2e8f0;
+        border-right: 1px solid #e2e8f0;
+        text-align: center;
+        font-size: .9rem;
+        font-weight: 600;
+        color: #1f2937;
+        padding: 0;
+        -moz-appearance: textfield;
+    }
+    .checkout-qty-form.is-updating {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+    .checkout-qty-form.is-updating .checkout-qty-control {
+        opacity: 0.85;
     }
     .checkout-summary-price {
         font-weight: 600;
@@ -466,8 +501,9 @@
 <script>
 (function () {
     const walletNumbers = @json($walletNumbers);
-    const orderTotal = @json(money($total));
+    let orderTotal = @json(money($total));
     const methodLabels = @json($methodLabels);
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
     const fields = document.getElementById('wallet-payment-fields');
     const note = document.getElementById('wallet-payment-note');
@@ -506,6 +542,109 @@
 
     radios.forEach(radio => radio.addEventListener('change', updatePaymentUI));
     updatePaymentUI();
+
+    function applyCheckoutTotals(data, form) {
+        if (data.lineTotal && form) {
+            const row = form.closest('.checkout-summary-item');
+            const lineEl = row && row.querySelector('.js-line-total');
+            if (lineEl) lineEl.textContent = data.lineTotal;
+            const input = form.querySelector('.js-checkout-qty-input');
+            if (input && data.quantity != null) input.value = data.quantity;
+        }
+        const subtotalEl = document.querySelector('.js-checkout-subtotal');
+        const taxEl = document.querySelector('.js-checkout-tax');
+        const vatEl = document.querySelector('.js-checkout-vat');
+        const totalEl = document.querySelector('.js-checkout-total');
+        if (subtotalEl && data.subtotal) subtotalEl.textContent = data.subtotal;
+        if (taxEl && data.tax) taxEl.textContent = data.tax;
+        if (vatEl && data.vat) vatEl.textContent = data.vat;
+        if (totalEl && data.total) totalEl.textContent = data.total;
+        if (data.totalFormatted || data.total) {
+            orderTotal = data.totalFormatted || data.total;
+            updatePaymentUI();
+        }
+        if (typeof data.cartCount !== 'undefined') {
+            document.querySelectorAll('.js-cart-count').forEach(function (el) {
+                el.textContent = data.cartCount;
+                el.style.display = data.cartCount > 0 ? '' : 'none';
+            });
+        }
+        if (data.empty) {
+            window.location.href = @json(route('cart.index'));
+        }
+    }
+
+    document.querySelectorAll('.checkout-qty-form').forEach(function (form) {
+        const input = form.querySelector('.js-checkout-qty-input');
+        const minus = form.querySelector('.js-checkout-qty-minus');
+        const plus = form.querySelector('.js-checkout-qty-plus');
+        if (!input) return;
+
+        let pending = false;
+        let lastSent = Number(input.value || 1);
+
+        function clamp(next) {
+            const min = Number(input.min || 1);
+            const max = Number(input.max || 99);
+            let value = Number(next);
+            if (Number.isNaN(value)) value = min;
+            return Math.max(min, Math.min(max, value));
+        }
+
+        function updateQty(next) {
+            const value = clamp(next);
+            if (value === lastSent && pending) return;
+            if (value === lastSent && document.activeElement !== input && !pending) {
+                input.value = value;
+                return;
+            }
+            input.value = value;
+            lastSent = value;
+            pending = true;
+            form.classList.add('is-updating');
+
+            const body = new FormData(form);
+            body.set('quantity', String(value));
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    ...(csrfToken ? { 'X-CSRF-TOKEN': csrfToken } : {}),
+                },
+                body: body,
+            })
+                .then(async function (res) {
+                    const data = await res.json().catch(function () { return {}; });
+                    if (!res.ok) {
+                        throw new Error(data.message || 'Unable to update quantity.');
+                    }
+                    applyCheckoutTotals(data, form);
+                })
+                .catch(function () {
+                    // Keep current UI; user can retry
+                })
+                .finally(function () {
+                    pending = false;
+                    form.classList.remove('is-updating');
+                });
+        }
+
+        if (minus) {
+            minus.addEventListener('click', function () {
+                updateQty(Number(input.value || 1) - 1);
+            });
+        }
+        if (plus) {
+            plus.addEventListener('click', function () {
+                updateQty(Number(input.value || 1) + 1);
+            });
+        }
+        input.addEventListener('change', function () {
+            updateQty(input.value);
+        });
+    });
 })();
 </script>
 @endpush

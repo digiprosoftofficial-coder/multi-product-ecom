@@ -77,22 +77,25 @@
             align-self: center;
             line-height: 1.2;
         }
+        @media (max-width: 767.98px) {
+            .product-item .tab-image { height: 140px; }
+            .site-header { box-shadow: 0 1px 0 rgba(0,0,0,.06); }
+        }
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .product-item .tab-image { height: 170px; }
+        }
     </style>
 </head>
-<body @class(['auth-page' => request()->routeIs('login', 'register')])>
+<body @class([
+    'auth-page' => request()->routeIs('login', 'register'),
+    'has-mobile-bottom-nav' => true,
+])>
     <div class="preloader-wrapper">
         <div class="preloader"></div>
     </div>
 
-    @unless(request()->routeIs('login', 'register'))
-        @include('frontend.organic-v1.partials.offcanvas')
-    @endunless
-
-    @if(request()->routeIs('login', 'register'))
-        @include('frontend.organic-v1.partials.auth-header')
-    @else
-        @include('frontend.organic-v1.partials.header')
-    @endif
+    @include('frontend.organic-v1.partials.offcanvas')
+    @include('frontend.organic-v1.partials.header')
 
     @if(session('success'))
         <div class="container-lg mt-3">
@@ -116,6 +119,7 @@
     </main>
 
     @include('frontend.organic-v1.partials.footer')
+    @include('frontend.organic-v1.partials.mobile-bottom-nav')
     @stack('styles')
     @include('frontend.organic-v1.partials.scripts')
     @stack('scripts')

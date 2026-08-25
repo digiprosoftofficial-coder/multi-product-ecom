@@ -16,7 +16,7 @@
             </button>
         </div>
         <div class="card-body">
-            <p class="text-muted small">Upload a background image for each slide. Turn off "Show text & buttons" for image-only slides. Up to 5 slides.</p>
+            <p class="text-muted small">Upload a desktop and optional mobile background for each slide. Mobile image shows under 768px. Turn off "Show text & buttons" for image-only slides. Up to 5 slides.</p>
             <div class="row g-3 mb-3">
                 <div class="col-md-3">
                     <div class="form-check form-switch">

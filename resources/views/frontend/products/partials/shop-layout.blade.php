@@ -91,7 +91,7 @@
                     </form>
                 </div>
 
-                <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-4">
+                <div class="product-grid row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 g-3 g-md-4">
                     @forelse($products as $product)
                         <div class="col">
                             @include('frontend.components.product-card', ['product' => $product])

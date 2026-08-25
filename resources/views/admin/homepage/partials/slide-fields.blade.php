@@ -22,15 +22,27 @@
     </div>
     <div class="card-body">
         <div class="row g-3">
-            <div class="col-12">
-                <label class="form-label">Background image</label>
+            <div class="col-md-6">
+                <label class="form-label">Desktop background image</label>
                 @include('admin.settings.partials.image-preview', [
                     'url' => setting_image_url($slide['image'] ?? null),
-                    'alt' => 'Slide '.((int) $index + 1),
+                    'alt' => 'Slide '.((int) $index + 1).' desktop',
                     'removeName' => 'slides['.$index.'][remove_image]',
                     'imgStyle' => 'max-height: 90px; max-width: 220px;',
                 ])
                 <input type="file" name="slides[{{ $index }}][image]" class="form-control" accept="image/*">
+                <div class="form-text">Recommended: 1920 × 720 px</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">Mobile background image <span class="text-muted fw-normal">(optional)</span></label>
+                @include('admin.settings.partials.image-preview', [
+                    'url' => setting_image_url($slide['image_mobile'] ?? null),
+                    'alt' => 'Slide '.((int) $index + 1).' mobile',
+                    'removeName' => 'slides['.$index.'][remove_image_mobile]',
+                    'imgStyle' => 'max-height: 90px; max-width: 140px;',
+                ])
+                <input type="file" name="slides[{{ $index }}][image_mobile]" class="form-control" accept="image/*">
+                <div class="form-text">Recommended: 1080 × 1350 px. Falls back to desktop if empty.</div>
             </div>
         </div>
 

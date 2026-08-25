@@ -184,6 +184,7 @@ class Homepage
         return [
             'enabled' => filter_var($slide['enabled'] ?? true, FILTER_VALIDATE_BOOLEAN),
             'image' => (string) ($slide['image'] ?? ''),
+            'image_mobile' => (string) ($slide['image_mobile'] ?? ''),
             'show_content' => filter_var($slide['show_content'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'title' => (string) ($slide['title'] ?? ''),
             'highlight' => (string) ($slide['highlight'] ?? ''),
@@ -196,6 +197,18 @@ class Homepage
             'btn2_text' => (string) ($slide['btn2_text'] ?? ''),
             'btn2_url' => (string) ($slide['btn2_url'] ?? ''),
         ];
+    }
+
+    /**
+     * Desktop or mobile hero image URL. Falls back to desktop when mobile is empty.
+     */
+    public static function slideResponsiveImageUrl(array $slide, bool $mobile = false): string
+    {
+        if ($mobile && ! empty($slide['image_mobile'])) {
+            return self::slideImageUrl($slide['image_mobile']);
+        }
+
+        return self::slideImageUrl($slide['image'] ?? null);
     }
 
     public static function normalizeColor(?string $color, string $fallback = '#ffffff'): string

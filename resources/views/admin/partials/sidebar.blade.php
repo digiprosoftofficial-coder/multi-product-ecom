@@ -119,13 +119,21 @@
     position: fixed;
     top: 0;
     left: 0;
+    bottom: 0;
     z-index: 1000;
-    overflow-y: auto;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    overflow: hidden;
 }
 .sidebar-inner {
-    min-height: 100vh;
+    height: 100%;
+    min-height: 0;
     padding: 1.15rem 1rem 1rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
 }
 .sidebar-brand {
     display: flex;
