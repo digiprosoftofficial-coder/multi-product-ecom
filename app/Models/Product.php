@@ -125,7 +125,7 @@ class Product extends Model
         if (!$this->thumbnail) {
             return null;
         }
-        return asset('uploads/products/thumbnails/' . $this->thumbnail);
+        return upload_url('uploads/products/thumbnails/' . $this->thumbnail);
     }
 
     public function seoTitle(): string

@@ -33,7 +33,7 @@
             <td>
               <div class="d-flex align-items-center gap-2">
                 @if($item['product']->thumbnail ?? null)
-                <img src="{{ asset('uploads/products/thumbnails/' . $item['product']->thumbnail) }}" alt="" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
+                <img src="{{ $item['product']->thumbnail_url }}" alt="" style="width: 50px; height: 50px; object-fit: cover;" class="rounded">
                 @else
                 <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="fas fa-image text-muted"></i></div>
                 @endif

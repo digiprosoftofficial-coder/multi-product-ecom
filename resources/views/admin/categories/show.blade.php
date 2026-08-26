@@ -33,7 +33,7 @@
                 <h6 class="fw-bold mb-3">Summary</h6>
                 @if($category->image)
                     <div class="mb-3 text-center">
-                        <img src="{{ asset('uploads/categories/medium/' . $category->image) }}"
+                        <img src="{{ upload_url('uploads/categories/medium/' . $category->image) }}"
                              alt="{{ $category->name }}"
                              class="img-fluid rounded"
                              style="max-height: 240px; object-fit: cover;">
@@ -58,7 +58,7 @@
                     <div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">
                         <div class="d-flex align-items-center gap-2">
                             @if($child->image)
-                                <img src="{{ asset('uploads/categories/thumbnails/' . $child->image) }}" alt="" style="width:32px;height:32px;object-fit:cover;" class="rounded">
+                                <img src="{{ $child->thumbnail_url }}" alt="" style="width:32px;height:32px;object-fit:cover;" class="rounded">
                             @endif
                             <div>
                                 <div class="fw-semibold">{{ $child->name }}</div>

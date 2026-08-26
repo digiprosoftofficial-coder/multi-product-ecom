@@ -40,8 +40,21 @@ return [
 
         'public' => [
             'driver' => 'local',
+            // Default: public/ (normal Laravel docroot).
+            // Shared hosting with the whole app inside public_html: set FILESYSTEM_PUBLIC_ROOT=base
+            // so uploads land at /uploads/... on the live site.
+            'root' => env('FILESYSTEM_PUBLIC_ROOT') === 'base' ? base_path() : public_path(),
+            'url' => rtrim((string) env('APP_URL', ''), '/'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
+        // Previous upload location (storage/app/public) — used for sync/fallback only.
+        'legacy_public' => [
+            'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -75,6 +88,7 @@ return [
 
     'links' => [
         public_path('storage') => storage_path('app/public'),
+        public_path('uploads') => storage_path('app/public/uploads'),
     ],
 
 ];

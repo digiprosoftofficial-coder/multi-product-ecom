@@ -55,7 +55,7 @@
                                    id="thumbnail" name="thumbnail" accept="image/jpeg,image/png,image/gif,image/webp,.jpg,.jpeg,.jfif,.png,.gif,.webp">
                             <img id="thumbnailPreview"
                                  class="product-dropzone-image {{ $isEdit && $product->thumbnail ? '' : 'd-none' }}"
-                                 src="{{ $isEdit && $product->thumbnail ? asset('uploads/products/thumbnails/' . $product->thumbnail) : '' }}"
+                                 src="{{ $isEdit && $product->thumbnail ? $product->thumbnail_url : '' }}"
                                  alt="Thumbnail preview">
                             <span id="thumbnailEmpty" class="product-dropzone-empty {{ $isEdit && $product->thumbnail ? 'd-none' : '' }}">
                                 <i class="fas fa-image mb-2"></i>
@@ -93,7 +93,7 @@
                                 @foreach($product->images as $image)
                                     <div class="col-4 col-md-3">
                                         <div class="product-gallery-item">
-                                            <img src="{{ asset('uploads/products/thumbnails/' . $image->filename) }}" alt="">
+                                            <img src="{{ $image->thumbnail_url }}" alt="">
                                             <button type="submit"
                                                     form="delete-image-form-{{ $image->id }}"
                                                     class="btn btn-sm btn-danger product-gallery-remove"

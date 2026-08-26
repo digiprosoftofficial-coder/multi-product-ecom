@@ -11,7 +11,7 @@
                     @foreach($images as $image)
                         <div class="swiper-slide">
                             <div class="product-zoom-wrap">
-                                <img src="{{ asset('uploads/products/'.$image->filename) }}"
+                                <img src="{{ $image->image_url }}"
                                      alt="{{ $product->name }}">
                             </div>
                         </div>
@@ -35,7 +35,7 @@
                     @foreach($images as $image)
                         <div class="swiper-slide">
                             <button type="button" class="product-detail-thumb-btn">
-                                <img src="{{ asset('uploads/products/'.$image->filename) }}"
+                                <img src="{{ $image->image_url }}"
                                      alt="{{ $product->name }} thumbnail">
                             </button>
                         </div>

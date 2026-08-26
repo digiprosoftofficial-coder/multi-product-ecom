@@ -44,7 +44,7 @@
           <div class="carousel-inner rounded overflow-hidden border border-secondary">
             @foreach($product->images as $index => $image)
             <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-              <img src="{{ asset('uploads/products/' . $image->filename) }}" class="d-block w-100" alt="{{ $product->name }}" style="aspect-ratio: 1; object-fit: cover;">
+              <img src="{{ $image->image_url }}" class="d-block w-100" alt="{{ $product->name }}" style="aspect-ratio: 1; object-fit: cover;">
             </div>
             @endforeach
           </div>

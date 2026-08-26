@@ -2,6 +2,27 @@
 
 Use this before going live. Templates: `.env.production.example` → copy to server `.env`.
 
+## Uploads (images)
+
+Uploads are stored under the web-accessible `uploads/` folder (not only `storage/app/public`).
+
+On **shared hosting** where the whole Laravel app sits in `public_html` and the site root is `public_html`, set in `.env`:
+
+```env
+FILESYSTEM_PUBLIC_ROOT=base
+QUEUE_CONNECTION=sync
+```
+
+Then clear config cache (`delete bootstrap/cache/config.php` or `php artisan config:clear`).
+
+Copy any old files once:
+
+```bash
+php artisan uploads:sync-legacy
+```
+
+Or in File Manager: copy `storage/app/public/uploads` → `uploads` at the site web root.
+
 ## 1. Server requirements
 
 - [ ] PHP 8.2+ with extensions: `bcmath`, `ctype`, `fileinfo`, `json`, `mbstring`, `openssl`, `pdo_mysql`, `tokenizer`, `xml`, `gd` (or `imagick`)

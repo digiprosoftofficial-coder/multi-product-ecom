@@ -26,17 +26,17 @@ class ProductImage extends Model
 
     public function getImageUrlAttribute(): string
     {
-        return asset('uploads/products/' . $this->filename);
+        return upload_url('uploads/products/' . $this->filename) ?? asset('images/product-placeholder.svg');
     }
 
     public function getThumbnailUrlAttribute(): string
     {
-        return asset('uploads/products/thumbnails/' . $this->filename);
+        return upload_url('uploads/products/thumbnails/' . $this->filename) ?? asset('images/product-placeholder.svg');
     }
 
     public function getMediumUrlAttribute(): string
     {
-        return asset('uploads/products/medium/' . $this->filename);
+        return upload_url('uploads/products/medium/' . $this->filename) ?? asset('images/product-placeholder.svg');
     }
 }
 

@@ -18,7 +18,7 @@
                 <tr>
                     <td>{{ $products->firstItem() + $loop->index }}</td>
                     <td>
-                        <img src="{{ $product->thumbnail ? asset('uploads/products/thumbnails/' . $product->thumbnail) : asset('images/product-placeholder.svg') }}"
+                        <img src="{{ $product->thumbnail ? $product->thumbnail_url : asset('images/product-placeholder.svg') }}"
                              alt="{{ $product->name }}"
                              class="rounded"
                              style="width: 50px; height: 50px; object-fit: cover; background: #e2e8f0;">

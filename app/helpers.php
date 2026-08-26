@@ -24,19 +24,54 @@ if (!function_exists('setting_image_url')) {
             return null;
         }
 
-        $path = 'uploads/settings/'.$filename;
+        return upload_url('uploads/settings/'.$filename);
+    }
+}
 
-        if (Storage::disk('public')->exists($path)) {
-            $version = Storage::disk('public')->lastModified($path);
-
-            return '/storage/'.$path.($version ? '?v='.$version : '');
+if (! function_exists('upload_url')) {
+    /**
+     * Public URL for an upload path (e.g. uploads/products/foo.jpg).
+     * Prefers files on the public disk; falls back to legacy storage/app/public.
+     */
+    function upload_url(?string $path, bool $versioned = true): ?string
+    {
+        if (! $path) {
+            return null;
         }
 
-        if (file_exists(public_path($path))) {
+        $path = ltrim(str_replace('\\', '/', $path), '/');
+
+        if (Storage::disk('public')->exists($path)) {
+            $url = asset($path);
+            if ($versioned) {
+                try {
+                    $url .= '?v='.Storage::disk('public')->lastModified($path);
+                } catch (\Throwable) {
+                    // ignore
+                }
+            }
+
+            return $url;
+        }
+
+        if (Storage::disk('legacy_public')->exists($path)) {
+            $url = asset('storage/'.$path);
+            if ($versioned) {
+                try {
+                    $url .= '?v='.Storage::disk('legacy_public')->lastModified($path);
+                } catch (\Throwable) {
+                    // ignore
+                }
+            }
+
+            return $url;
+        }
+
+        if (is_file(public_path($path))) {
             return asset($path);
         }
 
-        return null;
+        return asset($path);
     }
 }
 

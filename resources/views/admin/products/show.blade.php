@@ -28,7 +28,7 @@
                 
                 @if($product->thumbnail)
                     <div class="mb-3 text-center">
-                        <img src="{{ asset('uploads/products/thumbnails/' . $product->thumbnail) }}" 
+                        <img src="{{ $product->thumbnail_url }}" 
                              alt="{{ $product->name }}" 
                              class="img-fluid rounded"
                              style="max-width: 100%; height: auto; max-height: 300px; object-fit: cover;">
@@ -46,7 +46,7 @@
                         <div class="row g-2">
                             @foreach($product->images as $image)
                                 <div class="col-4">
-                                    <img src="{{ asset('uploads/products/thumbnails/' . $image->filename) }}" 
+                                    <img src="{{ $image->thumbnail_url }}" 
                                          alt="{{ $product->name }}" 
                                          class="img-fluid rounded border"
                                          style="width: 100%; height: 80px; object-fit: cover;">

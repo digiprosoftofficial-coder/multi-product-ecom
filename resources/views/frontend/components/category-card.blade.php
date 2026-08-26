@@ -1,6 +1,6 @@
 <div class="card h-100 shadow-sm">
     @if($category->image)
-        <img src="{{ asset('uploads/categories/thumbnails/' . $category->image) }}" 
+        <img src="{{ $category->thumbnail_url }}" 
              class="card-img-top" 
              alt="{{ $category->name }}"
              style="height: 200px; object-fit: cover;">

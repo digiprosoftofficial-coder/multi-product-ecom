@@ -104,7 +104,7 @@ class Category extends Model
             return asset('images/category-placeholder.svg');
         }
 
-        return asset('uploads/categories/'.$this->image);
+        return upload_url('uploads/categories/'.$this->image) ?? asset('images/category-placeholder.svg');
     }
 
     public function getThumbnailUrlAttribute(): string
@@ -113,7 +113,7 @@ class Category extends Model
             return asset('images/category-placeholder.svg');
         }
 
-        return asset('uploads/categories/thumbnails/'.$this->image);
+        return upload_url('uploads/categories/thumbnails/'.$this->image) ?? asset('images/category-placeholder.svg');
     }
 
     public function subtreeIds(): array

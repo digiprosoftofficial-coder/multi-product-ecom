@@ -60,7 +60,7 @@
     <div class="mb-3">
         <label class="form-label">Current Image</label>
         <div>
-            <img src="{{ asset('uploads/categories/thumbnails/' . $category->image) }}"
+            <img src="{{ $category->thumbnail_url }}"
                  alt="{{ $category->name }}"
                  style="max-width: 160px; height: auto;">
         </div>

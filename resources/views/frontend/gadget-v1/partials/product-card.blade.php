@@ -11,9 +11,9 @@
   <a href="{{ $url }}" class="text-decoration-none text-reset">
     <div class="position-relative overflow-hidden" style="aspect-ratio: 1;">
       @if($img)
-        <img src="{{ asset('uploads/products/' . $img->filename) }}" class="card-img-top object-fit-cover" alt="{{ $name }}" style="height: 100%; object-fit: cover;">
+        <img src="{{ $img->image_url }}" class="card-img-top object-fit-cover" alt="{{ $name }}" style="height: 100%; object-fit: cover;">
       @elseif($thumb)
-        <img src="{{ asset('uploads/products/thumbnails/' . $thumb) }}" class="card-img-top object-fit-cover" alt="{{ $name }}" style="height: 100%; object-fit: cover;">
+        <img src="{{ upload_url('uploads/products/thumbnails/' . $thumb) }}" class="card-img-top object-fit-cover" alt="{{ $name }}" style="height: 100%; object-fit: cover;">
       @else
         <div class="d-flex align-items-center justify-content-center bg-dark h-100">
           <i class="fas fa-image fa-3x text-secondary"></i>

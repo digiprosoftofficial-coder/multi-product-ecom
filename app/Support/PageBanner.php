@@ -102,7 +102,7 @@ class PageBanner
             : $product->images()->orderBy('sort_order')->first();
 
         if ($firstImage) {
-            $image = asset('uploads/products/'.$firstImage->filename);
+            $image = upload_url('uploads/products/'.$firstImage->filename) ?? asset('images/product-placeholder.svg');
         } elseif ($product->thumbnail_url) {
             $image = $product->thumbnail_url;
         }
