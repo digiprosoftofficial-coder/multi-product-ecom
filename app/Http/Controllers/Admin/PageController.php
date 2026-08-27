@@ -21,43 +21,28 @@ class PageController extends Controller
             'terms_content' => Setting::get('terms_content', ''),
             'delivery_content' => Setting::get('delivery_content', ''),
             'returns_content' => Setting::get('returns_content', ''),
-            'privacy_banner_title' => PageBanner::get('privacy_banner_title'),
-            'privacy_banner_subtitle' => PageBanner::get('privacy_banner_subtitle'),
-            'privacy_banner_image' => PageBanner::get('privacy_banner_image'),
-            'terms_banner_title' => PageBanner::get('terms_banner_title'),
-            'terms_banner_subtitle' => PageBanner::get('terms_banner_subtitle'),
-            'terms_banner_image' => PageBanner::get('terms_banner_image'),
-            'delivery_banner_title' => PageBanner::get('delivery_banner_title'),
-            'delivery_banner_subtitle' => PageBanner::get('delivery_banner_subtitle'),
-            'delivery_banner_image' => PageBanner::get('delivery_banner_image'),
-            'returns_banner_title' => PageBanner::get('returns_banner_title'),
-            'returns_banner_subtitle' => PageBanner::get('returns_banner_subtitle'),
-            'returns_banner_image' => PageBanner::get('returns_banner_image'),
         ];
+
+        foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
+            $pages = array_merge($pages, $this->bannerSettings($page));
+        }
 
         return view('admin.pages.index', compact('pages'));
     }
 
     public function about()
     {
-        $pages = [
+        $pages = array_merge([
             'about_title' => Homepage::get('about_title') ?: 'About '.site_name(),
             'about_content' => Setting::get('about_content', ''),
-            'about_banner_title' => PageBanner::get('about_banner_title'),
-            'about_banner_subtitle' => PageBanner::get('about_banner_subtitle'),
-            'about_banner_image' => PageBanner::get('about_banner_image'),
-        ];
+        ], $this->bannerSettings('about'));
 
         return view('admin.pages.about', compact('pages'));
     }
 
     public function shop()
     {
-        $pages = [
-            'shop_banner_title' => PageBanner::get('shop_banner_title'),
-            'shop_banner_subtitle' => PageBanner::get('shop_banner_subtitle'),
-            'shop_banner_image' => PageBanner::get('shop_banner_image'),
-        ];
+        $pages = $this->bannerSettings('shop');
 
         return view('admin.pages.shop', compact('pages'));
     }
@@ -65,6 +50,7 @@ class PageController extends Controller
     public function product()
     {
         $pages = [
+            'product_banner_enabled' => PageBanner::get('product_banner_enabled'),
             'product_banner_subtitle' => PageBanner::get('product_banner_subtitle'),
             'product_banner_image' => PageBanner::get('product_banner_image'),
         ];
@@ -74,68 +60,44 @@ class PageController extends Controller
 
     public function contact()
     {
-        $pages = [
-            'contact_banner_title' => PageBanner::get('contact_banner_title'),
-            'contact_banner_subtitle' => PageBanner::get('contact_banner_subtitle'),
-            'contact_banner_image' => PageBanner::get('contact_banner_image'),
-        ];
+        $pages = $this->bannerSettings('contact');
 
         return view('admin.pages.contact', compact('pages'));
     }
 
     public function cart()
     {
-        $pages = [
-            'cart_banner_title' => PageBanner::get('cart_banner_title'),
-            'cart_banner_subtitle' => PageBanner::get('cart_banner_subtitle'),
-            'cart_banner_image' => PageBanner::get('cart_banner_image'),
-        ];
+        $pages = $this->bannerSettings('cart');
 
         return view('admin.pages.cart', compact('pages'));
     }
 
     public function checkout()
     {
-        $pages = [
-            'checkout_banner_title' => PageBanner::get('checkout_banner_title'),
-            'checkout_banner_subtitle' => PageBanner::get('checkout_banner_subtitle'),
-            'checkout_banner_image' => PageBanner::get('checkout_banner_image'),
-        ];
+        $pages = $this->bannerSettings('checkout');
 
         return view('admin.pages.checkout', compact('pages'));
     }
 
     public function update(Request $request)
     {
-        $validated = $request->validate([
+        $rules = [
             'active_tab' => 'nullable|string|in:privacy,terms,delivery,returns',
             'privacy_content' => 'nullable|string',
             'terms_content' => 'nullable|string',
             'delivery_content' => 'nullable|string',
             'returns_content' => 'nullable|string',
-            'privacy_banner_title' => 'nullable|string|max:120',
-            'privacy_banner_subtitle' => 'nullable|string|max:255',
-            'privacy_banner_image' => image_upload_rules(),
-            'remove_privacy_banner_image' => 'nullable|boolean',
-            'terms_banner_title' => 'nullable|string|max:120',
-            'terms_banner_subtitle' => 'nullable|string|max:255',
-            'terms_banner_image' => image_upload_rules(),
-            'remove_terms_banner_image' => 'nullable|boolean',
-            'delivery_banner_title' => 'nullable|string|max:120',
-            'delivery_banner_subtitle' => 'nullable|string|max:255',
-            'delivery_banner_image' => image_upload_rules(),
-            'remove_delivery_banner_image' => 'nullable|boolean',
-            'returns_banner_title' => 'nullable|string|max:120',
-            'returns_banner_subtitle' => 'nullable|string|max:255',
-            'returns_banner_image' => image_upload_rules(),
-            'remove_returns_banner_image' => 'nullable|boolean',
-        ]);
+        ];
+
+        foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
+            $rules = array_merge($rules, $this->bannerValidationRules($page));
+        }
+
+        $validated = $request->validate($rules);
 
         foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
             Setting::set("{$page}_content", sanitize_rich_text($validated["{$page}_content"] ?? null) ?? '');
-            Setting::set("{$page}_banner_title", $validated["{$page}_banner_title"] ?? '');
-            Setting::set("{$page}_banner_subtitle", $validated["{$page}_banner_subtitle"] ?? '');
-            $this->storeBannerImage($request, "{$page}_banner_image", "{$page}-banner");
+            $this->saveBannerFields($request, $page, $validated);
         }
 
         return redirect()->route('admin.pages.index', ['tab' => $request->input('active_tab', 'privacy')])
@@ -144,20 +106,14 @@ class PageController extends Controller
 
     public function updateAbout(Request $request)
     {
-        $validated = $request->validate([
+        $validated = $request->validate(array_merge([
             'about_title' => 'nullable|string|max:255',
             'about_content' => 'nullable|string',
-            'about_banner_title' => 'nullable|string|max:120',
-            'about_banner_subtitle' => 'nullable|string|max:255',
-            'about_banner_image' => image_upload_rules(),
-            'remove_about_banner_image' => 'nullable|boolean',
-        ]);
+        ], $this->bannerValidationRules('about')));
 
         Setting::set('about_title', $validated['about_title'] ?? '');
         Setting::set('about_content', sanitize_rich_text($validated['about_content'] ?? null) ?? '');
-        Setting::set('about_banner_title', $validated['about_banner_title'] ?? '');
-        Setting::set('about_banner_subtitle', $validated['about_banner_subtitle'] ?? '');
-        $this->storeBannerImage($request, 'about_banner_image', 'about-banner');
+        $this->saveBannerFields($request, 'about', $validated);
 
         return redirect()->route('admin.about.index')
             ->with('success', 'About page updated successfully.');
@@ -165,16 +121,8 @@ class PageController extends Controller
 
     public function updateShop(Request $request)
     {
-        $validated = $request->validate([
-            'shop_banner_title' => 'nullable|string|max:120',
-            'shop_banner_subtitle' => 'nullable|string|max:255',
-            'shop_banner_image' => image_upload_rules(),
-            'remove_shop_banner_image' => 'nullable|boolean',
-        ]);
-
-        Setting::set('shop_banner_title', $validated['shop_banner_title'] ?? '');
-        Setting::set('shop_banner_subtitle', $validated['shop_banner_subtitle'] ?? '');
-        $this->storeBannerImage($request, 'shop_banner_image', 'shop-banner');
+        $validated = $request->validate($this->bannerValidationRules('shop'));
+        $this->saveBannerFields($request, 'shop', $validated);
 
         return redirect()->route('admin.shop-page.index')
             ->with('success', 'Shop page updated successfully.');
@@ -183,11 +131,13 @@ class PageController extends Controller
     public function updateProduct(Request $request)
     {
         $validated = $request->validate([
+            'product_banner_enabled' => 'nullable|boolean',
             'product_banner_subtitle' => 'nullable|string|max:255',
             'product_banner_image' => image_upload_rules(),
             'remove_product_banner_image' => 'nullable|boolean',
         ]);
 
+        Setting::set('product_banner_enabled', $request->boolean('product_banner_enabled') ? '1' : '0');
         Setting::set('product_banner_subtitle', $validated['product_banner_subtitle'] ?? '');
         $this->storeBannerImage($request, 'product_banner_image', 'product-banner');
 
@@ -197,16 +147,8 @@ class PageController extends Controller
 
     public function updateContact(Request $request)
     {
-        $validated = $request->validate([
-            'contact_banner_title' => 'nullable|string|max:120',
-            'contact_banner_subtitle' => 'nullable|string|max:255',
-            'contact_banner_image' => image_upload_rules(),
-            'remove_contact_banner_image' => 'nullable|boolean',
-        ]);
-
-        Setting::set('contact_banner_title', $validated['contact_banner_title'] ?? '');
-        Setting::set('contact_banner_subtitle', $validated['contact_banner_subtitle'] ?? '');
-        $this->storeBannerImage($request, 'contact_banner_image', 'contact-banner');
+        $validated = $request->validate($this->bannerValidationRules('contact'));
+        $this->saveBannerFields($request, 'contact', $validated);
 
         return redirect()->route('admin.contact-page.index')
             ->with('success', 'Contact page updated successfully.');
@@ -214,16 +156,8 @@ class PageController extends Controller
 
     public function updateCart(Request $request)
     {
-        $validated = $request->validate([
-            'cart_banner_title' => 'nullable|string|max:120',
-            'cart_banner_subtitle' => 'nullable|string|max:255',
-            'cart_banner_image' => image_upload_rules(),
-            'remove_cart_banner_image' => 'nullable|boolean',
-        ]);
-
-        Setting::set('cart_banner_title', $validated['cart_banner_title'] ?? '');
-        Setting::set('cart_banner_subtitle', $validated['cart_banner_subtitle'] ?? '');
-        $this->storeBannerImage($request, 'cart_banner_image', 'cart-banner');
+        $validated = $request->validate($this->bannerValidationRules('cart'));
+        $this->saveBannerFields($request, 'cart', $validated);
 
         return redirect()->route('admin.cart-page.index')
             ->with('success', 'Cart page updated successfully.');
@@ -231,19 +165,46 @@ class PageController extends Controller
 
     public function updateCheckout(Request $request)
     {
-        $validated = $request->validate([
-            'checkout_banner_title' => 'nullable|string|max:120',
-            'checkout_banner_subtitle' => 'nullable|string|max:255',
-            'checkout_banner_image' => image_upload_rules(),
-            'remove_checkout_banner_image' => 'nullable|boolean',
-        ]);
-
-        Setting::set('checkout_banner_title', $validated['checkout_banner_title'] ?? '');
-        Setting::set('checkout_banner_subtitle', $validated['checkout_banner_subtitle'] ?? '');
-        $this->storeBannerImage($request, 'checkout_banner_image', 'checkout-banner');
+        $validated = $request->validate($this->bannerValidationRules('checkout'));
+        $this->saveBannerFields($request, 'checkout', $validated);
 
         return redirect()->route('admin.checkout-page.index')
             ->with('success', 'Checkout page updated successfully.');
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function bannerSettings(string $page): array
+    {
+        return [
+            "{$page}_banner_enabled" => PageBanner::get("{$page}_banner_enabled"),
+            "{$page}_banner_title" => PageBanner::get("{$page}_banner_title"),
+            "{$page}_banner_subtitle" => PageBanner::get("{$page}_banner_subtitle"),
+            "{$page}_banner_image" => PageBanner::get("{$page}_banner_image"),
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function bannerValidationRules(string $page): array
+    {
+        return [
+            "{$page}_banner_enabled" => 'nullable|boolean',
+            "{$page}_banner_title" => 'nullable|string|max:120',
+            "{$page}_banner_subtitle" => 'nullable|string|max:255',
+            "{$page}_banner_image" => image_upload_rules(),
+            "remove_{$page}_banner_image" => 'nullable|boolean',
+        ];
+    }
+
+    protected function saveBannerFields(Request $request, string $page, array $validated): void
+    {
+        Setting::set("{$page}_banner_enabled", $request->boolean("{$page}_banner_enabled") ? '1' : '0');
+        Setting::set("{$page}_banner_title", $validated["{$page}_banner_title"] ?? '');
+        Setting::set("{$page}_banner_subtitle", $validated["{$page}_banner_subtitle"] ?? '');
+        $this->storeBannerImage($request, "{$page}_banner_image", "{$page}-banner");
     }
 
     protected function storeBannerImage(Request $request, string $field, string $prefix): void
@@ -268,7 +229,7 @@ class PageController extends Controller
 
         $manager = new ImageManager(new Driver());
         $img = $manager->read($file->getRealPath());
-        $img->scaleDown(1920, 600);
+        $img->scaleDown(1920, 440);
         Storage::disk('public')->put('uploads/settings/'.$filename, $img->encode());
 
         Setting::set($field, $filename);

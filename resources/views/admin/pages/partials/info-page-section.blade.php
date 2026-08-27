@@ -5,6 +5,8 @@
     $content = trim(strip_tags($pages[$pageKey.'_content'] ?? ''));
     $hasContent = $content !== '';
     $bannerImage = setting_image_url($pages[$pageKey.'_banner_image'] ?? null);
+    $enabledKey = $pageKey.'_banner_enabled';
+    $bannerEnabled = old($enabledKey, $pages[$enabledKey] ?? '1') === '1';
 @endphp
 
 <div class="info-page-section">
@@ -37,10 +39,15 @@
                 </div>
 
                 <div class="info-banner-fields">
-                    <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="d-flex align-items-center justify-content-between mb-3 gap-2">
                         <h6 class="mb-0">Top banner</h6>
-                        <span class="text-muted small">300px height</span>
+                        <div class="form-check form-switch mb-0">
+                            <input type="hidden" name="{{ $enabledKey }}" value="0">
+                            <input class="form-check-input" type="checkbox" name="{{ $enabledKey }}" value="1" id="{{ $enabledKey }}" {{ $bannerEnabled ? 'checked' : '' }}>
+                            <label class="form-check-label small" for="{{ $enabledKey }}">Show</label>
+                        </div>
                     </div>
+                    <p class="text-muted small mb-3">220px height · Recommended: 1920 × 440 px</p>
                     <div class="mb-3">
                         <label class="form-label">Title</label>
                         <input type="text" name="{{ $pageKey }}_banner_title" class="form-control js-banner-preview-input"
@@ -64,7 +71,6 @@
                             'imgStyle' => 'max-height: 72px; max-width: 100%; object-fit: cover; border-radius: 8px;',
                         ])
                         <input type="file" name="{{ $pageKey }}_banner_image" class="form-control mt-2" accept="image/*">
-                        <div class="form-text">Recommended: 1920 × 600 px</div>
                     </div>
                 </div>
             </div>

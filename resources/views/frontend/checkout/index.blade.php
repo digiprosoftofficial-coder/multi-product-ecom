@@ -14,7 +14,11 @@
 
 @php
     $paymentMethods = $paymentMethods ?? \App\Support\PaymentMethod::options();
-    $selectedMethod = old('payment_method', 'cash_on_delivery');
+    $defaultMethod = \App\Support\PaymentMethod::defaultMethod();
+    $selectedMethod = old('payment_method', $defaultMethod);
+    if ($selectedMethod && ! array_key_exists($selectedMethod, $paymentMethods)) {
+        $selectedMethod = $defaultMethod;
+    }
     $walletNumbers = [
         'bkash' => \App\Support\PaymentMethod::walletNumber('bkash'),
         'nagad' => \App\Support\PaymentMethod::walletNumber('nagad'),
@@ -92,6 +96,9 @@
                         </div>
                     </div>
                     <div class="checkout-panel-body">
+                        @if(count($paymentMethods) === 0)
+                            <div class="alert alert-warning mb-0">No payment methods are available. Please contact the store.</div>
+                        @else
                         <div class="payment-options">
                             @foreach($paymentMethods as $value => $method)
                                 <label class="payment-option {{ $selectedMethod === $value ? 'is-selected' : '' }}">
@@ -111,9 +118,10 @@
                                 </label>
                             @endforeach
                         </div>
+                        @endif
                         @error('payment_method')<div class="text-danger small mt-2">{{ $message }}</div>@enderror
 
-                        <div id="wallet-payment-fields" class="wallet-payment-fields {{ \App\Support\PaymentMethod::isMobileWallet($selectedMethod) ? '' : 'd-none' }}">
+                        <div id="wallet-payment-fields" class="wallet-payment-fields {{ $selectedMethod && \App\Support\PaymentMethod::isMobileWallet($selectedMethod) ? '' : 'd-none' }}">
                             <div class="wallet-payment-note" id="wallet-payment-note"></div>
                             <div class="row g-3 mt-1">
                                 <div class="col-md-6">

@@ -46,6 +46,37 @@
                 @enderror
             </div>
 
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                    <label for="logo_height_desktop" class="form-label">Logo height (desktop)</label>
+                    <div class="input-group">
+                        <input type="number" min="24" max="96" step="1"
+                               class="form-control @error('logo_height_desktop') is-invalid @enderror"
+                               id="logo_height_desktop" name="logo_height_desktop"
+                               value="{{ old('logo_height_desktop', $settings['logo_height_desktop']) }}">
+                        <span class="input-group-text">px</span>
+                    </div>
+                    <div class="form-text">24–96px. Default 48.</div>
+                    @error('logo_height_desktop')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-sm-6">
+                    <label for="logo_height_mobile" class="form-label">Logo height (mobile)</label>
+                    <div class="input-group">
+                        <input type="number" min="24" max="80" step="1"
+                               class="form-control @error('logo_height_mobile') is-invalid @enderror"
+                               id="logo_height_mobile" name="logo_height_mobile"
+                               value="{{ old('logo_height_mobile', $settings['logo_height_mobile']) }}">
+                        <span class="input-group-text">px</span>
+                    </div>
+                    <div class="form-text">24–80px. Default 50.</div>
+                    @error('logo_height_mobile')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
             <div class="mb-3">
                 <label class="form-label">Footer logo</label>
                 @include('admin.settings.partials.image-preview', [
@@ -305,7 +336,44 @@
             <h5 class="mb-0">Payment methods</h5>
         </div>
         <div class="card-body">
-            <p class="text-muted small">Mobile wallet numbers shown on checkout when customers choose bKash, Nagad, or Rocket.</p>
+            <p class="text-muted small mb-3">Turn methods on/off for checkout. Keep at least one enabled. Wallet numbers are shown when customers choose bKash, Nagad, or Rocket.</p>
+            @error('payment_cod_enabled')
+                <div class="alert alert-danger py-2">{{ $message }}</div>
+            @enderror
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="payment_cod_enabled" value="0">
+                        <input class="form-check-input" type="checkbox" name="payment_cod_enabled" value="1" id="payment_cod_enabled"
+                               {{ old('payment_cod_enabled', $settings['payment_cod_enabled']) === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="payment_cod_enabled">Cash on Delivery</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="payment_bkash_enabled" value="0">
+                        <input class="form-check-input" type="checkbox" name="payment_bkash_enabled" value="1" id="payment_bkash_enabled"
+                               {{ old('payment_bkash_enabled', $settings['payment_bkash_enabled']) === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="payment_bkash_enabled">bKash</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="payment_nagad_enabled" value="0">
+                        <input class="form-check-input" type="checkbox" name="payment_nagad_enabled" value="1" id="payment_nagad_enabled"
+                               {{ old('payment_nagad_enabled', $settings['payment_nagad_enabled']) === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="payment_nagad_enabled">Nagad</label>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-check form-switch">
+                        <input type="hidden" name="payment_rocket_enabled" value="0">
+                        <input class="form-check-input" type="checkbox" name="payment_rocket_enabled" value="1" id="payment_rocket_enabled"
+                               {{ old('payment_rocket_enabled', $settings['payment_rocket_enabled']) === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="payment_rocket_enabled">Rocket</label>
+                    </div>
+                </div>
+            </div>
             <div class="row g-3">
                 <div class="col-md-4">
                     <label for="payment_bkash_number" class="form-label">bKash number</label>

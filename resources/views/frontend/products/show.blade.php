@@ -84,7 +84,7 @@
         @if($relatedProducts->count() > 0)
             <div class="mt-5 pt-4">
                 <div class="section-header d-flex flex-wrap align-items-center justify-content-between mb-3">
-                    <h2 class="section-title mb-0">Related products</h2>
+                    <h2 class="section-title mb-0">You may also like</h2>
                 </div>
                 <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                     @foreach($relatedProducts as $relatedProduct)

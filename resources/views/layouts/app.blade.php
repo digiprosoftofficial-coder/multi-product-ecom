@@ -55,11 +55,25 @@
             text-overflow: ellipsis;
             max-width: 100%;
         }
-        #offcanvasCart .product-title {
+        #offcanvasCart .cart-sidebar-list,
+        #offcanvasCart .cart-sidebar-item {
+            max-width: 100%;
             overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
+        }
+        #offcanvasCart .cart-sidebar-item .d-flex {
             min-width: 0;
+        }
+        #offcanvasCart .product-title {
+            min-width: 0;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        #offcanvasCart .product-title a {
+            display: block;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            white-space: normal;
         }
         .page-content { text-align: left; }
         .page-content img { max-width: 100%; height: auto; }

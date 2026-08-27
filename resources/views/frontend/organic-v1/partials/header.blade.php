@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row py-2 py-lg-3 border-bottom align-items-center g-2 flex-nowrap header-main-row">
       {{-- Left: menu (mobile) + logo --}}
-      <div class="col-auto col-lg-2 d-flex align-items-center gap-2 header-left">
+      <div class="col-auto col-lg-3 d-flex align-items-center gap-2 header-left">
         <button class="navbar-toggler border-0 d-lg-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
           aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
           <i class="fa-solid fa-bars fa-lg"></i>
@@ -27,32 +27,9 @@
         </a>
       </div>
 
-      {{-- Desktop search --}}
-      <div class="col-lg-4 d-none d-lg-block header-search-col">
-        <div class="search-bar row bg-light p-2 rounded-4 g-0 align-items-center">
-          <div class="col-md-5 d-none d-md-block">
-            <select class="form-select border-0 bg-transparent" onchange="if (this.value) window.location.href = this.value;">
-              <option value="">All Categories</option>
-              @foreach($navCategories ?? collect() as $navCategory)
-                <option value="{{ route('products.category', $navCategory->slug) }}">{{ $navCategory->name }}</option>
-              @endforeach
-            </select>
-          </div>
-          <div class="col col-md-6">
-            <form id="search-form" class="text-center" action="{{ route('products.index') }}" method="GET">
-              <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products" value="{{ request('search') }}">
-            </form>
-          </div>
-          <div class="col-auto">
-            <button type="submit" form="search-form" class="btn p-1 border-0 bg-transparent" aria-label="Search">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-4 d-none d-lg-block">
-        <ul class="navbar-nav list-unstyled d-flex flex-row gap-3 gap-lg-4 justify-content-center flex-wrap align-items-center mb-0 fw-bold text-uppercase">
+      {{-- Desktop centered menu --}}
+      <div class="col-lg-6 d-none d-lg-flex justify-content-center header-nav-col">
+        <ul class="navbar-nav list-unstyled d-flex flex-row gap-3 gap-xl-4 justify-content-center flex-wrap align-items-center mb-0 fw-bold text-uppercase">
           <li class="nav-item">
             <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
           </li>
@@ -68,10 +45,32 @@
         </ul>
       </div>
 
-      <div class="col-auto col-lg-2 ms-auto d-flex gap-1 gap-sm-2 align-items-center justify-content-end header-right">
+      <div class="col-auto col-lg-3 ms-auto d-flex gap-1 gap-sm-2 align-items-center justify-content-end header-right">
         <ul class="d-flex justify-content-end list-unstyled m-0 align-items-center header-icon-list">
-          <li class="d-lg-none">
-            <button type="button" class="p-2 mx-1 border-0 bg-transparent header-search-toggle" data-bs-toggle="collapse" data-bs-target="#mobileHeaderSearch" aria-expanded="false" aria-controls="mobileHeaderSearch" title="Search" aria-label="Search">
+          <li class="header-search-item d-flex align-items-center">
+            {{-- Desktop: inline expand beside icon --}}
+            <form action="{{ route('products.index') }}" method="GET"
+                  class="header-inline-search d-none d-lg-flex align-items-center {{ request('search') ? 'is-open' : '' }}"
+                  id="desktop-search-form"
+                  role="search">
+              <input type="text"
+                     name="search"
+                     class="form-control header-inline-search-input"
+                     placeholder="Search products"
+                     value="{{ request('search') }}"
+                     id="desktop-search-input"
+                     autocomplete="off">
+              <button type="submit" class="btn header-inline-search-submit p-0 border-0 bg-transparent" aria-label="Search">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </form>
+            <button type="button"
+                    class="p-2 mx-1 border-0 bg-transparent header-search-toggle"
+                    id="headerSearchToggle"
+                    title="Search"
+                    aria-label="Search"
+                    aria-expanded="{{ request('search') ? 'true' : 'false' }}"
+                    aria-controls="desktop-search-form">
               <i class="fa-solid fa-magnifying-glass fa-lg"></i>
             </button>
           </li>
@@ -111,11 +110,11 @@
       </div>
     </div>
 
-    {{-- Mobile expandable search --}}
-    <div class="collapse d-lg-none" id="mobileHeaderSearch">
-      <div class="mobile-header-search py-2">
-        <form action="{{ route('products.index') }}" method="GET" class="search-bar d-flex align-items-center bg-light p-2 rounded-4 gap-2">
-          <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products" value="{{ request('search') }}" id="mobile-search-input">
+    {{-- Mobile expandable search only --}}
+    <div class="collapse d-lg-none" id="headerSearchPanel">
+      <div class="header-search-panel py-2">
+        <form action="{{ route('products.index') }}" method="GET" class="search-bar d-flex align-items-center bg-light p-2 rounded-4 gap-2" id="mobile-search-form">
+          <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products" value="{{ request('search') }}" id="mobile-search-input" autocomplete="off">
           <button type="submit" class="btn p-1 border-0 bg-transparent" aria-label="Search">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>

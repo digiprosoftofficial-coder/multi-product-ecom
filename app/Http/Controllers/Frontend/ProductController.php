@@ -40,18 +40,47 @@ class ProductController extends Controller
         }
 
         $product->load('category', 'images');
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
-            ->where('status', 1)
-            ->with(['images', 'category'])
-            ->take(4)
-            ->get();
+        $relatedProducts = $this->relatedProductsFor($product);
 
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.product") ? "frontend.{$theme}.product"
             : (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.show") ? "frontend.{$theme}.products.show" : 'frontend.products.show');
 
         return view($view, compact('product', 'relatedProducts'));
+    }
+
+    /**
+     * Same-category products first; fill remaining slots with other active products.
+     */
+    protected function relatedProductsFor(Product $product, int $limit = 4)
+    {
+        $excludeIds = [$product->id];
+
+        $related = Product::query()
+            ->where('status', 1)
+            ->where('id', '!=', $product->id)
+            ->when($product->category_id, fn ($q) => $q->where('category_id', $product->category_id))
+            ->with(['images', 'category'])
+            ->latest()
+            ->take($limit)
+            ->get();
+
+        if ($related->count() >= $limit) {
+            return $related;
+        }
+
+        $excludeIds = array_merge($excludeIds, $related->pluck('id')->all());
+        $needed = $limit - $related->count();
+
+        $fallback = Product::query()
+            ->where('status', 1)
+            ->whereNotIn('id', $excludeIds)
+            ->with(['images', 'category'])
+            ->latest()
+            ->take($needed)
+            ->get();
+
+        return $related->concat($fallback)->values();
     }
 
     public function category(Request $request, Category $category)

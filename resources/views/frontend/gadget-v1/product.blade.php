@@ -96,7 +96,7 @@
 
     @if(isset($relatedProducts) && $relatedProducts->count() > 0)
     <section class="mt-5 pt-4 border-top border-secondary">
-      <h2 class="h6 mb-3">Related</h2>
+      <h2 class="h6 mb-3">You may also like</h2>
       <div class="row g-3">
         @foreach($relatedProducts as $p)
         <div class="col-6 col-md-3">

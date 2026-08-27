@@ -15,9 +15,16 @@
     </div>
 
     <div class="card mb-4">
-        <div class="card-header"><h5 class="mb-0">Product details banner</h5></div>
+        <div class="card-header d-flex align-items-center justify-content-between gap-2">
+            <h5 class="mb-0">Product details banner</h5>
+            <div class="form-check form-switch mb-0">
+                <input type="hidden" name="product_banner_enabled" value="0">
+                <input class="form-check-input" type="checkbox" name="product_banner_enabled" value="1" id="product_banner_enabled" {{ old('product_banner_enabled', $pages['product_banner_enabled'] ?? '1') === '1' ? 'checked' : '' }}>
+                <label class="form-check-label" for="product_banner_enabled">Show banner</label>
+            </div>
+        </div>
         <div class="card-body">
-            <p class="text-muted small mb-3">Banner height is 300px on desktop. Recommended upload: 1920 × 600 px.</p>
+            <p class="text-muted small mb-3">Banner height is 220px on desktop. Recommended upload: 1920 × 440 px.</p>
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label">Default subtitle</label>

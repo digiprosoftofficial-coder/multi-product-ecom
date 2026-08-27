@@ -6,6 +6,8 @@
         --footer-text: {{ theme_color('footer_text_color', '#ffffff') }};
         --footer-bottom-bg: {{ theme_color('footer_bottom_bg_color', '#6bb252') }};
         --footer-bottom-text: {{ theme_color('footer_bottom_text_color', '#ffffff') }};
+        --logo-height-desktop: {{ max(24, min(96, (int) setting('logo_height_desktop', 48))) }}px;
+        --logo-height-mobile: {{ max(24, min(80, (int) setting('logo_height_mobile', 50))) }}px;
     }
     .site-header {
         background: var(--header-bg) !important;

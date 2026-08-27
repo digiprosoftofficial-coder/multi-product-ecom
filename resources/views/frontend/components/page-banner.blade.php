@@ -1,5 +1,8 @@
 @php
     $banner = $banner ?? \App\Support\PageBanner::for($page ?? 'shop');
+    if (! ($banner['enabled'] ?? true)) {
+        return;
+    }
     $title = $banner['title'] ?: ($fallbackTitle ?? '');
     $subtitle = $banner['subtitle'] ?? '';
     $image = $banner['image'] ?? null;
@@ -24,7 +27,7 @@
 <style>
     .page-top-banner {
         position: relative;
-        height: 300px;
+        height: 220px;
         display: flex;
         align-items: center;
         background-color: #1f3b2c;
@@ -55,7 +58,7 @@
     }
     .page-top-banner-title {
         margin: 0 0 .4rem;
-        font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+        font-size: clamp(1.65rem, 3vw, 2.35rem);
         font-weight: 700;
         line-height: 1.2;
         color: #fff;
@@ -63,18 +66,18 @@
     .page-top-banner-subtitle {
         margin: 0;
         color: rgba(255, 255, 255, 0.9);
-        font-size: 1.05rem;
+        font-size: 1.02rem;
         line-height: 1.55;
     }
     @media (max-width: 767px) {
         .page-top-banner:not(.has-custom-height) {
-            height: 240px;
+            height: 180px;
         }
         .page-top-banner.has-custom-height {
             height: var(--page-banner-height);
         }
         .page-top-banner-subtitle {
-            font-size: .98rem;
+            font-size: .95rem;
         }
     }
 </style>

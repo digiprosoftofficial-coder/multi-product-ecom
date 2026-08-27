@@ -20,12 +20,69 @@ document.addEventListener('DOMContentLoaded', function () {
     updateCartCount(cartCountEl.textContent);
   }
 
-  var mobileSearch = document.getElementById('mobileHeaderSearch');
-  if (mobileSearch) {
-    mobileSearch.addEventListener('shown.bs.collapse', function () {
-      var input = document.getElementById('mobile-search-input');
-      if (input) input.focus();
+  var searchToggle = document.getElementById('headerSearchToggle');
+  var desktopSearch = document.getElementById('desktop-search-form');
+  var desktopInput = document.getElementById('desktop-search-input');
+  var mobileSearchPanel = document.getElementById('headerSearchPanel');
+
+  function isDesktopSearch() {
+    return window.matchMedia('(min-width: 992px)').matches;
+  }
+
+  function openDesktopSearch() {
+    if (!desktopSearch) return;
+    desktopSearch.classList.add('is-open');
+    searchToggle?.closest('.header-search-item')?.classList.add('is-open');
+    searchToggle?.setAttribute('aria-expanded', 'true');
+    setTimeout(function () { desktopInput?.focus(); }, 220);
+  }
+
+  function closeDesktopSearch(force) {
+    if (!desktopSearch) return;
+    if (!force && desktopInput && desktopInput.value.trim() !== '') return;
+    desktopSearch.classList.remove('is-open');
+    searchToggle?.closest('.header-search-item')?.classList.remove('is-open');
+    searchToggle?.setAttribute('aria-expanded', 'false');
+  }
+
+  if (searchToggle) {
+    searchToggle.addEventListener('click', function () {
+      if (isDesktopSearch()) {
+        if (desktopSearch?.classList.contains('is-open')) {
+          closeDesktopSearch(true);
+        } else {
+          openDesktopSearch();
+        }
+        return;
+      }
+
+      if (mobileSearchPanel && window.bootstrap?.Collapse) {
+        bootstrap.Collapse.getOrCreateInstance(mobileSearchPanel).toggle();
+      }
     });
+  }
+
+  if (mobileSearchPanel) {
+    mobileSearchPanel.addEventListener('shown.bs.collapse', function () {
+      document.getElementById('mobile-search-input')?.focus();
+    });
+  }
+
+  document.addEventListener('click', function (e) {
+    if (!isDesktopSearch() || !desktopSearch?.classList.contains('is-open')) return;
+    if (e.target.closest('.header-search-item')) return;
+    closeDesktopSearch(false);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && desktopSearch?.classList.contains('is-open')) {
+      closeDesktopSearch(true);
+      searchToggle?.focus();
+    }
+  });
+
+  if (desktopSearch?.classList.contains('is-open')) {
+    searchToggle?.closest('.header-search-item')?.classList.add('is-open');
   }
 
   document.querySelectorAll('form.js-add-to-cart').forEach(function (form) {

@@ -24,7 +24,7 @@
                             <p style="margin:0 0 18px;">
                                 <strong>Order number:</strong> {{ $order->order_number }}<br>
                                 <strong>Date:</strong> {{ $order->created_at->format('M d, Y H:i') }}<br>
-                                <strong>Total:</strong> ${{ number_format($order->total, 2) }}
+                                <strong>Total:</strong> {{ money($order->total) }}
                             </p>
 
                             <table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;font-size:14px;">
@@ -37,7 +37,7 @@
                                     <tr>
                                         <td style="border-bottom:1px solid #e5e7eb;">{{ $item->product_name }}</td>
                                         <td style="border-bottom:1px solid #e5e7eb;">{{ $item->quantity }}</td>
-                                        <td style="border-bottom:1px solid #e5e7eb;" align="right">${{ number_format($item->total, 2) }}</td>
+                                        <td style="border-bottom:1px solid #e5e7eb;" align="right">{{ money($item->total) }}</td>
                                     </tr>
                                 @endforeach
                             </table>

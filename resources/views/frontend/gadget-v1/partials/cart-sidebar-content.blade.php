@@ -6,12 +6,12 @@
   @if(count($cartItems ?? []) > 0)
     <ul class="list-group list-group-flush mb-3">
       @foreach($cartItems as $cartItem)
-        <li class="list-group-item bg-transparent border-secondary d-flex justify-content-between lh-sm">
-          <div class="flex-grow-1">
-            <h6 class="my-0 small">{{ $cartItem['product']->name }}</h6>
+        <li class="list-group-item bg-transparent border-secondary d-flex justify-content-between lh-sm gap-2 min-w-0">
+          <div class="flex-grow-1 min-w-0 overflow-hidden">
+            <h6 class="my-0 small text-break" style="overflow-wrap: anywhere; word-break: break-word;">{{ $cartItem['product']->name }}</h6>
             <small class="text-muted">Qty: {{ $cartItem['quantity'] }}</small>
           </div>
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex align-items-center gap-2 flex-shrink-0">
             <span class="text-muted small">${{ number_format($cartItem['subtotal'], 2) }}</span>
             <form action="{{ route('cart.remove', $cartItem['product']) }}" method="POST" class="d-inline js-remove-from-cart">
               @csrf

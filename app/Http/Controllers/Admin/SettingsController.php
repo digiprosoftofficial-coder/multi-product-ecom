@@ -21,6 +21,8 @@ class SettingsController extends Controller
             'site_logo' => Setting::get('site_logo'),
             'footer_logo' => Setting::get('footer_logo'),
             'favicon' => Setting::get('favicon'),
+            'logo_height_desktop' => Setting::get('logo_height_desktop', '48'),
+            'logo_height_mobile' => Setting::get('logo_height_mobile', '50'),
             'footer_text' => Setting::get('footer_text', ''),
             'contact_phone' => Setting::get('contact_phone', ''),
             'contact_email' => Setting::get('contact_email', ''),
@@ -45,6 +47,10 @@ class SettingsController extends Controller
             'footer_text_color' => Setting::get('footer_text_color', '#ffffff'),
             'footer_bottom_bg_color' => Setting::get('footer_bottom_bg_color', '#6bb252'),
             'footer_bottom_text_color' => Setting::get('footer_bottom_text_color', '#ffffff'),
+            'payment_cod_enabled' => Setting::get('payment_cod_enabled', '1'),
+            'payment_bkash_enabled' => Setting::get('payment_bkash_enabled', '1'),
+            'payment_nagad_enabled' => Setting::get('payment_nagad_enabled', '1'),
+            'payment_rocket_enabled' => Setting::get('payment_rocket_enabled', '1'),
             'payment_bkash_number' => Setting::get('payment_bkash_number', ''),
             'payment_nagad_number' => Setting::get('payment_nagad_number', ''),
             'payment_rocket_number' => Setting::get('payment_rocket_number', ''),
@@ -67,6 +73,8 @@ class SettingsController extends Controller
             'remove_site_logo' => 'nullable|boolean',
             'remove_footer_logo' => 'nullable|boolean',
             'remove_favicon' => 'nullable|boolean',
+            'logo_height_desktop' => 'required|integer|min:24|max:96',
+            'logo_height_mobile' => 'required|integer|min:24|max:80',
             'footer_text' => 'nullable|string|max:2000',
             'contact_phone' => ['nullable', 'string', 'max:50', new BangladeshPhone],
             'contact_email' => 'nullable|email|max:255',
@@ -91,6 +99,10 @@ class SettingsController extends Controller
             'footer_text_color' => 'nullable|string|max:7',
             'footer_bottom_bg_color' => 'nullable|string|max:7',
             'footer_bottom_text_color' => 'nullable|string|max:7',
+            'payment_cod_enabled' => 'nullable|boolean',
+            'payment_bkash_enabled' => 'nullable|boolean',
+            'payment_nagad_enabled' => 'nullable|boolean',
+            'payment_rocket_enabled' => 'nullable|boolean',
             'payment_bkash_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
             'payment_nagad_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
             'payment_rocket_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
@@ -112,6 +124,8 @@ class SettingsController extends Controller
         }
 
         Setting::set('site_name', $validated['site_name']);
+        Setting::set('logo_height_desktop', (string) (int) $validated['logo_height_desktop']);
+        Setting::set('logo_height_mobile', (string) (int) $validated['logo_height_mobile']);
         Setting::set('footer_text', $validated['footer_text'] ?? '');
         Setting::set('contact_phone', BangladeshPhone::normalize($validated['contact_phone'] ?? null) ?? '');
         Setting::set('contact_email', $validated['contact_email'] ?? '');
@@ -136,6 +150,25 @@ class SettingsController extends Controller
         Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($validated['footer_text_color'] ?? '#ffffff', '#ffffff'));
         Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));
         Setting::set('footer_bottom_text_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_text_color'] ?? '#ffffff', '#ffffff'));
+        $paymentEnabled = [
+            'payment_cod_enabled' => $request->boolean('payment_cod_enabled'),
+            'payment_bkash_enabled' => $request->boolean('payment_bkash_enabled'),
+            'payment_nagad_enabled' => $request->boolean('payment_nagad_enabled'),
+            'payment_rocket_enabled' => $request->boolean('payment_rocket_enabled'),
+        ];
+
+        if (! in_array(true, $paymentEnabled, true)) {
+            return redirect()->route('admin.settings.index')
+                ->withInput()
+                ->withErrors([
+                    'payment_cod_enabled' => 'Enable at least one payment method.',
+                ]);
+        }
+
+        foreach ($paymentEnabled as $key => $enabled) {
+            Setting::set($key, $enabled ? '1' : '0');
+        }
+
         Setting::set('payment_bkash_number', BangladeshPhone::normalize($validated['payment_bkash_number'] ?? null) ?? '');
         Setting::set('payment_nagad_number', BangladeshPhone::normalize($validated['payment_nagad_number'] ?? null) ?? '');
         Setting::set('payment_rocket_number', BangladeshPhone::normalize($validated['payment_rocket_number'] ?? null) ?? '');

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
+use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
@@ -67,9 +68,22 @@ class CheckoutController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => ['required', 'string', 'max:20', new BangladeshPhone],
             'shipping_address' => 'required|string',
-            'payment_method' => 'required|in:'.implode(',', PaymentMethod::values()),
-            'payment_reference' => 'nullable|required_if:payment_method,bkash,nagad,rocket|string|max:100',
-            'payment_sender_phone' => ['nullable', 'required_if:payment_method,bkash,nagad,rocket', 'string', 'max:20', new BangladeshPhone],
+            'payment_method' => 'required|in:'.implode(',', PaymentMethod::values() ?: ['__none__']),
+            'payment_reference' => [
+                'nullable',
+                'string',
+                'max:100',
+                Rule::requiredIf(fn () => PaymentMethod::isMobileWallet((string) $request->input('payment_method'))
+                    && PaymentMethod::isEnabled((string) $request->input('payment_method'))),
+            ],
+            'payment_sender_phone' => [
+                'nullable',
+                'string',
+                'max:20',
+                new BangladeshPhone,
+                Rule::requiredIf(fn () => PaymentMethod::isMobileWallet((string) $request->input('payment_method'))
+                    && PaymentMethod::isEnabled((string) $request->input('payment_method'))),
+            ],
             'notes' => 'nullable|string',
         ]);
 
