@@ -49,14 +49,14 @@
         }
         .product-discount-badge {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: -10px;
+            right: -10px;
             z-index: 2;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-width: 2.6rem;
-            padding: 0.35rem 0.55rem;
+            padding: 0.20rem 0.2rem;
             border-radius: 999px;
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: #fff;
