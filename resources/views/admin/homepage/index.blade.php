@@ -46,6 +46,24 @@
             </div>
             <div class="row g-3 mb-3">
                 <div class="col-md-3">
+                    <label class="form-label" for="home_hero_height_desktop">Slider height — desktop (px)</label>
+                    <input type="number" min="200" max="900" name="home_hero_height_desktop" id="home_hero_height_desktop" class="form-control @error('home_hero_height_desktop') is-invalid @enderror" value="{{ old('home_hero_height_desktop', $settings['home_hero_height_desktop'] ?? '480') }}">
+                    <div class="form-text">200–900. Default 480.</div>
+                    @error('home_hero_height_desktop')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label" for="home_hero_height_mobile">Slider height — mobile (px)</label>
+                    <input type="number" min="180" max="800" name="home_hero_height_mobile" id="home_hero_height_mobile" class="form-control @error('home_hero_height_mobile') is-invalid @enderror" value="{{ old('home_hero_height_mobile', $settings['home_hero_height_mobile'] ?? '320') }}">
+                    <div class="form-text">180–800. Default 320.</div>
+                    @error('home_hero_height_mobile')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
                     <div class="form-check form-switch">
                         <input type="hidden" name="home_hero_show_overlay" value="0">
                         <input class="form-check-input" type="checkbox" name="home_hero_show_overlay" value="1" id="home_hero_show_overlay" {{ old('home_hero_show_overlay', $settings['home_hero_show_overlay'] ?? '1') === '1' ? 'checked' : '' }}>

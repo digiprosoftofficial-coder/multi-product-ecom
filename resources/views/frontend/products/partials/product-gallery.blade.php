@@ -1,6 +1,7 @@
 @php
     $images = $product->images;
     $hasMultiple = $images->count() > 1;
+    $discountPercent = $product->discountPercent();
 @endphp
 
 <div class="product-detail-gallery">
@@ -18,6 +19,12 @@
                     @endforeach
                 </div>
             </div>
+
+            @if($discountPercent)
+                <span class="product-discount-badge product-discount-badge--lg" aria-label="{{ $discountPercent }}% off">
+                    −{{ $discountPercent }}%
+                </span>
+            @endif
 
             @if($hasMultiple)
                 <button type="button" class="product-detail-gallery-prev" aria-label="Previous image">
@@ -48,10 +55,20 @@
             <div class="product-zoom-wrap">
                 <img src="{{ $product->thumbnail_url }}" alt="{{ $product->name }}">
             </div>
+            @if($discountPercent)
+                <span class="product-discount-badge product-discount-badge--lg" aria-label="{{ $discountPercent }}% off">
+                    −{{ $discountPercent }}%
+                </span>
+            @endif
         </div>
     @else
-        <div class="bg-light border rounded-3 d-flex align-items-center justify-content-center product-detail-gallery-empty">
+        <div class="bg-light border rounded-3 d-flex align-items-center justify-content-center product-detail-gallery-empty position-relative">
             <span class="text-muted">No Image Available</span>
+            @if($discountPercent)
+                <span class="product-discount-badge product-discount-badge--lg" aria-label="{{ $discountPercent }}% off">
+                    −{{ $discountPercent }}%
+                </span>
+            @endif
         </div>
     @endif
 </div>

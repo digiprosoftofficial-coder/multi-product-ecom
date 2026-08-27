@@ -53,16 +53,20 @@
                 <h1 class="product-detail-title mb-2">{{ $product->name }}</h1>
                 <p class="text-muted mb-2">SKU: {{ $product->sku }}</p>
 
-                <div class="d-flex align-items-center gap-2 mb-4">
-                    @if($product->discount_price)
-                        <del class="text-muted">{{ money($product->price) }}</del>
-                        <span class="text-dark fw-semibold fs-3">{{ money($product->discount_price) }}</span>
-                    @else
-                        <span class="text-dark fw-semibold fs-3">{{ money($product->price) }}</span>
-                    @endif
-                    @if(compare_price_enabled() && $product->compare_price && $product->compare_price > $product->final_price)
-                        <span class="badge border border-dark-subtle rounded-0 fw-normal px-1 fs-7 lh-1 text-body-tertiary">
-                            {{ round((($product->compare_price - $product->final_price) / $product->compare_price) * 100) }}% OFF
+                @php
+                    $listPrice = $product->listPriceForDiscount();
+                    $discountPercent = $product->discountPercent();
+                @endphp
+                <div class="product-detail-pricing mb-4">
+                    <div class="product-detail-prices">
+                        @if($listPrice)
+                            <del class="product-detail-price-old">{{ money($listPrice) }}</del>
+                        @endif
+                        <span class="product-detail-price-current">{{ money($product->final_price) }}</span>
+                    </div>
+                    @if($discountPercent)
+                        <span class="product-discount-badge product-discount-badge--inline" aria-label="{{ $discountPercent }}% off">
+                            −{{ $discountPercent }}% OFF
                         </span>
                     @endif
                 </div>
@@ -115,5 +119,31 @@
     if (window.StorefrontTracking) {
         window.StorefrontTracking.viewContent(@json(\App\Support\Tracking::productPayload($product), JSON_HEX_TAG | JSON_HEX_APOS | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
     }
+
+    document.querySelectorAll('.js-add-to-cart').forEach(function (form) {
+        const input = form.querySelector('.js-product-qty-input');
+        const minus = form.querySelector('.js-product-qty-minus');
+        const plus = form.querySelector('.js-product-qty-plus');
+        if (!input || !minus || !plus) return;
+
+        function clamp() {
+            const min = Number(input.min || 1);
+            const max = Number(input.max || 99);
+            let value = Number(input.value || 1);
+            if (Number.isNaN(value)) value = min;
+            value = Math.max(min, Math.min(max, value));
+            input.value = value;
+        }
+
+        minus.addEventListener('click', function () {
+            input.value = Number(input.value || 1) - 1;
+            clamp();
+        });
+        plus.addEventListener('click', function () {
+            input.value = Number(input.value || 1) + 1;
+            clamp();
+        });
+        input.addEventListener('change', clamp);
+    });
 </script>
 @endpush

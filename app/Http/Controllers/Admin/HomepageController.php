@@ -37,6 +37,8 @@ class HomepageController extends Controller
             'home_hero_overlay_color' => 'nullable|string|max:7',
             'home_hero_overlay_opacity' => 'nullable|integer|min:0|max:100',
             'home_hero_interval' => 'required|integer|min:2|max:15',
+            'home_hero_height_desktop' => 'required|integer|min:200|max:900',
+            'home_hero_height_mobile' => 'required|integer|min:180|max:800',
             'slides' => 'required|array|min:1|max:5',
             'slides.*.enabled' => 'nullable|boolean',
             'slides.*.show_content' => 'nullable|boolean',
@@ -112,6 +114,8 @@ class HomepageController extends Controller
         Setting::set('home_hero_overlay_color', Homepage::normalizeColor($validated['home_hero_overlay_color'] ?? '#ffffff'));
         Setting::set('home_hero_overlay_opacity', (string) ($validated['home_hero_overlay_opacity'] ?? 45));
         Setting::set('home_hero_interval', (string) $validated['home_hero_interval']);
+        Setting::set('home_hero_height_desktop', (string) (int) $validated['home_hero_height_desktop']);
+        Setting::set('home_hero_height_mobile', (string) (int) $validated['home_hero_height_mobile']);
 
         unset(
             $validated['home_hero_autoplay'],
@@ -121,6 +125,8 @@ class HomepageController extends Controller
             $validated['home_hero_overlay_color'],
             $validated['home_hero_overlay_opacity'],
             $validated['home_hero_interval'],
+            $validated['home_hero_height_desktop'],
+            $validated['home_hero_height_mobile'],
             $validated['slides']
         );
 

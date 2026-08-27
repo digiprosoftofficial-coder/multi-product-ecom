@@ -21,6 +21,8 @@ class Homepage
             'home_hero_slides' => '',
             'home_hero_autoplay' => '1',
             'home_hero_interval' => '5',
+            'home_hero_height_desktop' => '480',
+            'home_hero_height_mobile' => '320',
             'home_hero_show_dots' => '1',
             'home_hero_show_arrows' => '1',
             'home_hero_show_overlay' => '1',
@@ -138,6 +140,16 @@ class Homepage
         $seconds = max(2, min(15, (int) self::get('home_hero_interval', '5')));
 
         return $seconds * 1000;
+    }
+
+    public static function heroHeightDesktop(): int
+    {
+        return max(200, min(900, (int) self::get('home_hero_height_desktop', '480')));
+    }
+
+    public static function heroHeightMobile(): int
+    {
+        return max(180, min(800, (int) self::get('home_hero_height_mobile', '320')));
     }
 
     /** @return array<string, mixed> */

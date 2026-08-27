@@ -439,6 +439,12 @@
         color: #1f2937;
         padding: 0;
         -moz-appearance: textfield;
+        appearance: textfield;
+    }
+    .checkout-qty-input::-webkit-outer-spin-button,
+    .checkout-qty-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
     }
     .checkout-qty-form.is-updating {
         opacity: 0.7;

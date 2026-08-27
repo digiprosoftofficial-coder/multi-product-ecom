@@ -155,7 +155,11 @@ if (!function_exists('currency_symbol')) {
 if (!function_exists('money')) {
     function money($amount): string
     {
-        return currency_symbol().number_format((float) $amount, 2);
+        $amount = (float) $amount;
+        $formatted = number_format($amount, 2);
+        $formatted = preg_replace('/\.00$/', '', $formatted);
+
+        return currency_symbol().$formatted;
     }
 }
 

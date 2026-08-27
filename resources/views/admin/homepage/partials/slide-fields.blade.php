@@ -31,7 +31,7 @@
                     'imgStyle' => 'max-height: 90px; max-width: 220px;',
                 ])
                 <input type="file" name="slides[{{ $index }}][image]" class="form-control" accept="image/*">
-                <div class="form-text">Recommended: 1920 × 720 px</div>
+                <div class="form-text">Recommended: 1920 × 720 px (wide banner). Important content near the top/center.</div>
             </div>
             <div class="col-md-6">
                 <label class="form-label">Mobile background image <span class="text-muted fw-normal">(optional)</span></label>

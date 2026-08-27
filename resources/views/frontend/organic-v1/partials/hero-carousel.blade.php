@@ -4,10 +4,12 @@
     $showDots = \App\Support\Homepage::enabled('home_hero_show_dots');
     $showArrows = \App\Support\Homepage::enabled('home_hero_show_arrows');
     $showOverlay = \App\Support\Homepage::enabled('home_hero_show_overlay');
+    $heroHeightDesktop = \App\Support\Homepage::heroHeightDesktop();
+    $heroHeightMobile = \App\Support\Homepage::heroHeightMobile();
     $carouselId = 'homeHeroCarousel';
 @endphp
 
-<section class="hero-carousel-section">
+<section class="hero-carousel-section" style="--hero-height-desktop: {{ $heroHeightDesktop }}px; --hero-height-mobile: {{ $heroHeightMobile }}px;">
     <div id="{{ $carouselId }}" class="carousel slide @if(\App\Support\Homepage::heroAutoplay() && $multiple) carousel-fade @endif" @if(\App\Support\Homepage::heroAutoplay() && $multiple) data-bs-ride="carousel" data-bs-interval="{{ \App\Support\Homepage::heroIntervalMs() }}" @endif>
         @if($multiple && $showDots)
             <div class="carousel-indicators hero-carousel-indicators">
@@ -100,10 +102,12 @@
     }
     .hero-carousel-item {
         position: relative;
-        min-height: 720px;
+        width: 100%;
+        height: var(--hero-height-desktop, 480px);
+        min-height: var(--hero-height-desktop, 480px);
         background-repeat: no-repeat;
         background-size: cover;
-        background-position: center;
+        background-position: center top;
         touch-action: pan-y;
     }
     @media (max-width: 767.98px) {
@@ -118,16 +122,18 @@
         pointer-events: none;
     }
     .hero-carousel-content {
-        position: relative;
+        position: absolute;
+        inset: 0;
         z-index: 1;
-        min-height: 720px;
         display: flex;
         align-items: center;
+        min-height: 0;
+        height: 100%;
     }
     .hero-copy-col {
-        padding-top: 3rem;
+        padding-top: 2rem;
         padding-bottom: 2rem;
-        margin-top: 1.5rem;
+        margin-top: 0;
     }
     .hero-title {
         font-size: clamp(1.75rem, 5vw, 4.5rem);
@@ -191,25 +197,20 @@
         box-shadow: none;
     }
     @media (max-width: 991.98px) {
-        .hero-carousel-item,
-        .hero-carousel-content {
-            min-height: min(520px, 70vh);
-        }
         .hero-copy-col {
-            padding-top: 2rem;
+            padding-top: 1.5rem;
             padding-bottom: 1.5rem;
-            margin-top: 0.5rem;
         }
     }
     @media (max-width: 767.98px) {
-        .hero-carousel-item,
-        .hero-carousel-content {
-            min-height: min(400px, 62vh);
+        .hero-carousel-item {
+            height: var(--hero-height-mobile, 320px);
+            min-height: var(--hero-height-mobile, 320px);
+            background-position: center top;
         }
         .hero-copy-col {
-            padding-top: 1.25rem;
-            padding-bottom: 1.25rem;
-            margin-top: 0;
+            padding-top: 1.1rem;
+            padding-bottom: 1.1rem;
         }
         .hero-cta-btn {
             font-size: 0.78rem;

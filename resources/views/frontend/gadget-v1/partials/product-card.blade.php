@@ -6,6 +6,7 @@
   $thumb = $product->thumbnail;
   $price = $product->final_price;
   $name = $product->name;
+  $discountPercent = $product->discountPercent();
 @endphp
 <div class="card gadget-card h-100 border-secondary product-card-img">
   <a href="{{ $url }}" class="text-decoration-none text-reset">
@@ -19,11 +20,13 @@
           <i class="fas fa-image fa-3x text-secondary"></i>
         </div>
       @endif
-      <span class="position-absolute top-0 end-0 m-2 badge bg-primary">${{ number_format($price, 2) }}</span>
+      @if($discountPercent)
+        <span class="product-discount-badge">−{{ $discountPercent }}%</span>
+      @endif
     </div>
     <div class="card-body">
       <h6 class="card-title text-truncate">{{ $name }}</h6>
-      <p class="card-text text-muted small mb-0">SKU: {{ $product->sku }}</p>
+      <p class="card-text text-muted small mb-0">{{ money($price) }}</p>
     </div>
   </a>
   <div class="card-footer border-secondary bg-transparent">

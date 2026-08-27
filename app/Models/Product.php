@@ -103,6 +103,37 @@ class Product extends Model
         return $this->price;
     }
 
+    /**
+     * List/compare price used to show savings (compare_price preferred when enabled).
+     */
+    public function listPriceForDiscount(): ?float
+    {
+        $final = (float) $this->final_price;
+
+        if (compare_price_enabled() && $this->compare_price && (float) $this->compare_price > $final) {
+            return (float) $this->compare_price;
+        }
+
+        if ($this->discount_price && (float) $this->price > $final) {
+            return (float) $this->price;
+        }
+
+        return null;
+    }
+
+    public function discountPercent(): ?int
+    {
+        $list = $this->listPriceForDiscount();
+        if (! $list) {
+            return null;
+        }
+
+        $final = (float) $this->final_price;
+        $percent = (int) round((($list - $final) / $list) * 100);
+
+        return $percent > 0 ? $percent : null;
+    }
+
     public function hasDescription(): bool
     {
         return trim(preg_replace('/\s+/', ' ', strip_tags((string) $this->description))) !== '';
