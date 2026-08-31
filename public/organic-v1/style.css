@@ -373,12 +373,19 @@ h1,h2,h3,h4,h5,h6 {
   overflow: hidden;
   background-color: #fff;
 }
+/* Only clip on the Swiper viewport — overflow on .swiper-wrapper breaks sliding */
 .products-carousel .swiper,
-.products-carousel .swiper-container,
-.products-carousel .swiper-wrapper,
-.products-carousel .swiper-slide {
+.products-carousel .swiper-container {
   overflow: hidden;
   background: transparent;
+}
+.products-carousel .swiper-wrapper {
+  background: transparent;
+}
+.products-carousel .swiper-slide {
+  background: transparent;
+  height: auto;
+  box-sizing: border-box;
 }
 
 /* product-grid */

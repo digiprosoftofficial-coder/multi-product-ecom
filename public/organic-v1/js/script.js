@@ -70,9 +70,12 @@
 
       new Swiper("#"+$el_id+" .swiper", {
         slidesPerView: 2,
+        slidesPerGroup: 1,
         spaceBetween: 12,
         speed: 500,
         watchOverflow: true,
+        resistanceRatio: 0.65,
+        grabCursor: true,
         navigation: {
           nextEl: "#"+$el_id+" .products-carousel-next",
           prevEl: "#"+$el_id+" .products-carousel-prev",
@@ -80,26 +83,32 @@
         breakpoints: {
           0: {
             slidesPerView: 2,
+            slidesPerGroup: 1,
             spaceBetween: 12,
           },
           576: {
             slidesPerView: 2,
+            slidesPerGroup: 1,
             spaceBetween: 14,
           },
           768: {
             slidesPerView: 2,
+            slidesPerGroup: 1,
             spaceBetween: 18,
           },
           992: {
             slidesPerView: 3,
+            slidesPerGroup: 1,
             spaceBetween: 22,
           },
           1200: {
             slidesPerView: 4,
+            slidesPerGroup: 1,
             spaceBetween: 24,
           },
           1500: {
             slidesPerView: 5,
+            slidesPerGroup: 1,
             spaceBetween: 28,
           },
         }
