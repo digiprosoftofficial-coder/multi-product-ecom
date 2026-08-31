@@ -179,6 +179,7 @@
             overflow: hidden;
             min-width: 0;
             max-width: 100%;
+            text-transform: capitalize;
         }
         .product-item .product-title a {
             display: block;
@@ -186,6 +187,7 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             max-width: 100%;
+            text-transform: capitalize;
         }
         #offcanvasCart .cart-sidebar-list,
         #offcanvasCart .cart-sidebar-item {
@@ -199,6 +201,7 @@
             min-width: 0;
             max-width: 100%;
             overflow: hidden;
+            text-transform: capitalize;
         }
         #offcanvasCart .product-title a {
             display: block;
@@ -206,6 +209,7 @@
             overflow-wrap: anywhere;
             word-break: break-word;
             white-space: normal;
+            text-transform: capitalize;
         }
         .page-content { text-align: left; }
         .page-content img { max-width: 100%; height: auto; }
@@ -218,6 +222,11 @@
         .section-header .section-title {
             margin-bottom: 0;
             line-height: 1.25;
+            text-transform: capitalize;
+        }
+        .section-title,
+        .product-detail-title {
+            text-transform: capitalize;
         }
         .section-header .btn {
             align-self: center;

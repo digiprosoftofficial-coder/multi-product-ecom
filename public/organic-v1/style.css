@@ -451,6 +451,13 @@ input[type=number]::-webkit-outer-spin-button {
   text-decoration: none;
 }
 
+.section-title,
+.product-title,
+.product-detail-title,
+.category-title {
+  text-transform: capitalize;
+}
+
 .rating i {
   color: #f7a422;
   font-size: 0.95rem;
