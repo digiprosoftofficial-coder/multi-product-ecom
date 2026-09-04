@@ -57,6 +57,7 @@ class SettingsController extends Controller
             'seo_meta_description' => Setting::get('seo_meta_description', ''),
             'seo_og_image' => Setting::get('seo_og_image'),
             'google_analytics_id' => Setting::get('google_analytics_id', ''),
+            'google_tag_manager_id' => Setting::get('google_tag_manager_id', ''),
             'facebook_pixel_id' => Setting::get('facebook_pixel_id', ''),
         ];
 
@@ -110,6 +111,7 @@ class SettingsController extends Controller
             'seo_og_image' => image_upload_rules(),
             'remove_seo_og_image' => 'nullable|boolean',
             'google_analytics_id' => ['nullable', 'string', 'max:30', 'regex:/^G-[A-Z0-9]+$/'],
+            'google_tag_manager_id' => ['nullable', 'string', 'max:30', 'regex:/^GTM-[A-Z0-9]+$/'],
             'facebook_pixel_id' => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
         ]);
 
@@ -174,6 +176,7 @@ class SettingsController extends Controller
         Setting::set('payment_rocket_number', BangladeshPhone::normalize($validated['payment_rocket_number'] ?? null) ?? '');
         Setting::set('seo_meta_description', $validated['seo_meta_description'] ?? '');
         Setting::set('google_analytics_id', strtoupper(trim((string) ($validated['google_analytics_id'] ?? ''))));
+        Setting::set('google_tag_manager_id', strtoupper(trim((string) ($validated['google_tag_manager_id'] ?? ''))));
         Setting::set('facebook_pixel_id', preg_replace('/\D+/', '', (string) ($validated['facebook_pixel_id'] ?? '')) ?: '');
 
         $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);

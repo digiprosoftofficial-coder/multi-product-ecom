@@ -14,6 +14,13 @@ class Tracking
         return preg_match('/^G-[A-Z0-9]+$/', $id) ? $id : null;
     }
 
+    public static function googleTagManagerId(): ?string
+    {
+        $id = strtoupper(trim((string) setting('google_tag_manager_id', '')));
+
+        return preg_match('/^GTM-[A-Z0-9]+$/', $id) ? $id : null;
+    }
+
     public static function facebookPixelId(): ?string
     {
         $id = preg_replace('/\D+/', '', (string) setting('facebook_pixel_id', ''));

@@ -245,6 +245,7 @@
     'auth-page' => request()->routeIs('login', 'register'),
     'has-mobile-bottom-nav' => true,
 ])>
+    @include('frontend.partials.tracking-noscript')
     <div class="preloader-wrapper">
         <div class="preloader"></div>
     </div>

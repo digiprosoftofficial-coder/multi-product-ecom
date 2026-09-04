@@ -307,15 +307,24 @@
             <h5 class="mb-0">Analytics &amp; pixel</h5>
         </div>
         <div class="card-body">
-            <p class="text-muted small">Add your tracking IDs to enable Google Analytics 4 and Facebook Pixel site-wide.</p>
+            <p class="text-muted small">Add your tracking IDs to enable Google Tag Manager, Google Analytics 4, and Facebook Pixel site-wide. If you load GA4 inside GTM, leave the Measurement ID empty to avoid double counting.</p>
             <div class="row g-3">
+                <div class="col-md-6">
+                    <label for="google_tag_manager_id" class="form-label">Google Tag Manager Container ID</label>
+                    <input type="text" class="form-control @error('google_tag_manager_id') is-invalid @enderror"
+                           id="google_tag_manager_id" name="google_tag_manager_id"
+                           value="{{ old('google_tag_manager_id', $settings['google_tag_manager_id']) }}"
+                           placeholder="GTM-XXXXXXX">
+                    <div class="form-text">Enables <code>dataLayer</code> ecommerce + click events for GTM triggers. Format: <code>GTM-XXXXXXX</code></div>
+                    @error('google_tag_manager_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
                 <div class="col-md-6">
                     <label for="google_analytics_id" class="form-label">Google Analytics Measurement ID</label>
                     <input type="text" class="form-control @error('google_analytics_id') is-invalid @enderror"
                            id="google_analytics_id" name="google_analytics_id"
                            value="{{ old('google_analytics_id', $settings['google_analytics_id']) }}"
                            placeholder="G-XXXXXXXXXX">
-                    <div class="form-text">Format: <code>G-XXXXXXXXXX</code></div>
+                    <div class="form-text">Direct gtag.js (optional if GA4 is loaded via GTM). Format: <code>G-XXXXXXXXXX</code></div>
                     @error('google_analytics_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
