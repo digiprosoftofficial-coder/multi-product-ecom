@@ -2,11 +2,23 @@
 
 Use this before going live. Templates: `.env.production.example` → copy to server `.env`.
 
+**Shared hosting (cPanel, no SSH):** use **Option A** — see `SHARED_HOSTING.md`.
+Set Document Root to `public_html/public`, then `git pull` for updates.
+
 ## Uploads (images)
 
-Uploads are stored under the web-accessible `uploads/` folder (not only `storage/app/public`).
+Uploads are stored under web-accessible `public/uploads/` (not only `storage/app/public`).
 
-On **shared hosting** where the whole Laravel app sits in `public_html` and the site root is `public_html`, set in `.env`:
+### Shared hosting Option A (recommended)
+
+- Document Root = `public_html/public`
+- Do **not** set `FILESYSTEM_PUBLIC_ROOT`
+- Keep images in `public/uploads/`
+- Use `QUEUE_CONNECTION=sync`
+
+### Legacy flatten layout only
+
+If Document Root is the project root (`public_html`) and uploads must live at `/uploads` on that root:
 
 ```env
 FILESYSTEM_PUBLIC_ROOT=base
@@ -21,7 +33,7 @@ Copy any old files once:
 php artisan uploads:sync-legacy
 ```
 
-Or in File Manager: copy `storage/app/public/uploads` → `uploads` at the site web root.
+Or in File Manager: copy `storage/app/public/uploads` → `public/uploads` (Option A) or project-root `uploads` (legacy).
 
 ## 1. Server requirements
 

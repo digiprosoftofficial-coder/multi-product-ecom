@@ -1,0 +1,16 @@
+# Shared hosting safety net (Option A).
+# Preferred: set the domain Document Root to /public_html/public in cPanel.
+# If Document Root is still /public_html, this sends all traffic into /public.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Keep real files/folders at project root reachable only when needed (e.g. ACME).
+    # App traffic always goes through public/.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Block direct access to sensitive files if Document Root is mis-set to project root.
+<FilesMatch "^\.env">
+    Require all denied
+</FilesMatch>

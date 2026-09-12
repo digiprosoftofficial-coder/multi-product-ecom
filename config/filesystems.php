@@ -40,9 +40,9 @@ return [
 
         'public' => [
             'driver' => 'local',
-            // Default: public/ (normal Laravel docroot).
-            // Shared hosting with the whole app inside public_html: set FILESYSTEM_PUBLIC_ROOT=base
-            // so uploads land at /uploads/... on the live site.
+            // Default / Option A: public/uploads (Document Root = public_html/public).
+            // Legacy only: FILESYSTEM_PUBLIC_ROOT=base stores at project-root /uploads
+            // when the site root is public_html itself (not recommended).
             'root' => env('FILESYSTEM_PUBLIC_ROOT') === 'base' ? base_path() : public_path(),
             'url' => rtrim((string) env('APP_URL', ''), '/'),
             'visibility' => 'public',
