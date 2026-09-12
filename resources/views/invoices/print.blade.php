@@ -240,6 +240,12 @@
                     <td class="num">{{ money($order->vat) }}</td>
                 </tr>
             @endif
+            @if($order->shipping_cost > 0)
+                <tr>
+                    <td>Delivery charge{{ $order->delivery_zone ? ' (' . $order->deliveryZoneLabel() . ')' : '' }}</td>
+                    <td class="num">{{ money($order->shipping_cost) }}</td>
+                </tr>
+            @endif
             <tr class="grand">
                 <td>Total due</td>
                 <td class="num">{{ money($order->total) }}</td>

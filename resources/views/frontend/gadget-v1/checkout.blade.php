@@ -44,6 +44,27 @@
                 <textarea class="form-control bg-dark border-secondary text-white" id="shipping_address" name="shipping_address" rows="2" required>{{ old('shipping_address') }}</textarea>
                 @error('shipping_address')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
+              <div class="mb-3">
+                <label class="form-label">Delivery area <span class="text-danger">*</span></label>
+                @php $selZone = old('delivery_zone', 'inside_dhaka'); @endphp
+                <div class="d-flex gap-2">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="delivery_zone" id="zone_inside" value="inside_dhaka"
+                           {{ $selZone === 'inside_dhaka' ? 'checked' : '' }} required>
+                    <label class="form-check-label" for="zone_inside">
+                      Inside Dhaka – {{ money($shippingInside ?? 60) }}
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="delivery_zone" id="zone_outside" value="outside_dhaka"
+                           {{ $selZone === 'outside_dhaka' ? 'checked' : '' }}>
+                    <label class="form-check-label" for="zone_outside">
+                      Outside Dhaka – {{ money($shippingOutside ?? 120) }}
+                    </label>
+                  </div>
+                </div>
+                @error('delivery_zone')<div class="text-danger small">{{ $message }}</div>@enderror
+              </div>
               <div class="mb-0">
                 <label for="notes" class="form-label">Notes</label>
                 <textarea class="form-control bg-dark border-secondary text-white" id="notes" name="notes" rows="2">{{ old('notes') }}</textarea>
@@ -63,10 +84,14 @@
               @endforeach
               <hr class="border-secondary">
               <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ number_format($subtotal ?? 0, 2) }}</span></div>
-              @if(($tax ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>Tax</span><span>${{ number_format($tax, 2) }}</span></div>@endif
-              @if(($vat ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>VAT</span><span>${{ number_format($vat, 2) }}</span></div>@endif
+              @if(($tax ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>Tax</span><span>{{ money($tax) }}</span></div>@endif
+              @if(($vat ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>VAT</span><span>{{ money($vat) }}</span></div>@endif
+              <div class="d-flex justify-content-between small text-muted">
+                <span>Delivery</span>
+                <span id="gadget-shipping">{{ money($shippingCost ?? 60) }}</span>
+              </div>
               <hr class="border-secondary">
-              <div class="d-flex justify-content-between fw-bold"><span>Total</span><span>${{ number_format($total ?? 0, 2) }}</span></div>
+              <div class="d-flex justify-content-between fw-bold"><span>Total</span><span id="gadget-total">{{ money($total ?? 0) }}</span></div>
             </div>
             <div class="card-footer border-secondary">
               <button type="submit" class="btn btn-primary w-100">Place order</button>
@@ -81,5 +106,30 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
   <script src="{{ asset('js/bangladesh-phone.js') }}"></script>
+  <script>
+  (function () {
+      const shippingData = {
+          inside_dhaka:  { cost: @json((float)($shippingInside ?? 60)),  formatted: @json(money($shippingInside ?? 60)) },
+          outside_dhaka: { cost: @json((float)($shippingOutside ?? 120)), formatted: @json(money($shippingOutside ?? 120)) },
+      };
+      const baseTotalNumeric = @json((float)($baseTotal ?? ($subtotal ?? 0)));
+      const currencySymbol   = @json(currency_symbol());
+
+      function formatMoney(n) {
+          return currencySymbol + n.toFixed(2).replace(/\.00$/, '');
+      }
+
+      document.querySelectorAll('input[name="delivery_zone"]').forEach(function (radio) {
+          radio.addEventListener('change', function () {
+              const d = shippingData[radio.value];
+              if (!d) return;
+              const shippingEl = document.getElementById('gadget-shipping');
+              const totalEl    = document.getElementById('gadget-total');
+              if (shippingEl) shippingEl.textContent = d.formatted;
+              if (totalEl)    totalEl.textContent    = formatMoney(baseTotalNumeric + d.cost);
+          });
+      });
+  })();
+  </script>
 </body>
 </html>

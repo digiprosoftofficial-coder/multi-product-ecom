@@ -84,6 +84,38 @@
                                   id="shipping_address" name="shipping_address" rows="3" required
                                   placeholder="House, road, area, district">{{ old('shipping_address') }}</textarea>
                         @error('shipping_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
+
+                        {{-- Delivery zone --}}
+                        <div class="mt-3">
+                            <label class="form-label fw-semibold">Delivery area <span class="text-danger">*</span></label>
+                            <div class="delivery-zone-options">
+                                <label class="delivery-zone-option {{ ($selectedZone ?? 'inside_dhaka') === 'inside_dhaka' ? 'is-selected' : '' }}">
+                                    <input type="radio" name="delivery_zone" value="inside_dhaka"
+                                           class="delivery-zone-input"
+                                           {{ ($selectedZone ?? 'inside_dhaka') === 'inside_dhaka' ? 'checked' : '' }} required>
+                                    <span class="delivery-zone-body">
+                                        <span class="delivery-zone-icon"><i class="fa-solid fa-city"></i></span>
+                                        <span class="delivery-zone-text">
+                                            <strong>Inside Dhaka</strong>
+                                            <small class="js-zone-price-inside">{{ money($shippingInside ?? 60) }}</small>
+                                        </span>
+                                    </span>
+                                </label>
+                                <label class="delivery-zone-option {{ ($selectedZone ?? '') === 'outside_dhaka' ? 'is-selected' : '' }}">
+                                    <input type="radio" name="delivery_zone" value="outside_dhaka"
+                                           class="delivery-zone-input"
+                                           {{ ($selectedZone ?? '') === 'outside_dhaka' ? 'checked' : '' }}>
+                                    <span class="delivery-zone-body">
+                                        <span class="delivery-zone-icon"><i class="fa-solid fa-map-location-dot"></i></span>
+                                        <span class="delivery-zone-text">
+                                            <strong>Outside Dhaka</strong>
+                                            <small class="js-zone-price-outside">{{ money($shippingOutside ?? 120) }}</small>
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+                            @error('delivery_zone')<div class="text-danger small mt-1">{{ $message }}</div>@enderror
+                        </div>
                     </div>
                 </div>
 
@@ -218,6 +250,10 @@
                             <span class="js-checkout-vat">{{ money($vat) }}</span>
                         </div>
                     @endif
+                    <div class="checkout-summary-row" id="js-shipping-row">
+                        <span>Delivery charge</span>
+                        <span id="js-shipping-amount">{{ money($shippingCost ?? 0) }}</span>
+                    </div>
                     <div class="checkout-summary-total">
                         <span>Total</span>
                         <strong class="js-checkout-total">{{ money($total) }}</strong>
@@ -495,8 +531,62 @@
         align-items: center;
         gap: .45rem;
     }
+    /* Delivery zone */
+    .delivery-zone-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .75rem;
+    }
+    .delivery-zone-option {
+        position: relative;
+        margin: 0;
+        cursor: pointer;
+    }
+    .delivery-zone-input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .delivery-zone-body {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: .9rem 1rem;
+        border: 1.5px solid #d8dfd3;
+        border-radius: 14px;
+        background: #fff;
+        transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+        height: 100%;
+    }
+    .delivery-zone-option.is-selected .delivery-zone-body,
+    .delivery-zone-input:checked + .delivery-zone-body {
+        border-color: #6BB252;
+        background: #f6fbf3;
+        box-shadow: 0 0 0 0.18rem rgba(107, 178, 82, 0.14);
+    }
+    .delivery-zone-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: rgba(107, 178, 82, 0.12);
+        color: #6BB252;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+    .delivery-zone-text {
+        display: flex;
+        flex-direction: column;
+    }
+    .delivery-zone-text strong { font-size: .95rem; color: #1f2937; }
+    .delivery-zone-text small  { color: #64748b; font-size: .83rem; }
     @media (max-width: 767px) {
         .payment-options {
+            grid-template-columns: 1fr;
+        }
+        .delivery-zone-options {
             grid-template-columns: 1fr;
         }
         .checkout-summary {
@@ -515,8 +605,46 @@
 <script>
 (function () {
     const walletNumbers = @json($walletNumbers);
+    const methodLabels  = @json($methodLabels);
+    const currencySymbol = @json(currency_symbol());
+
+    // Shipping / delivery zone
+    const shippingData = {
+        inside_dhaka:  { cost: @json((float) ($shippingInside ?? 60)),  formatted: @json(money($shippingInside ?? 60)) },
+        outside_dhaka: { cost: @json((float) ($shippingOutside ?? 120)), formatted: @json(money($shippingOutside ?? 120)) },
+    };
+    let baseTotalNumeric = @json((float) ($baseTotal ?? $total));  // subtotal + tax + vat without shipping
+    let currentShippingCost = @json((float) ($shippingCost ?? 0));
+
+    const shippingAmountEl = document.getElementById('js-shipping-amount');
+    const totalEl          = document.querySelector('.js-checkout-total');
+
+    function formatMoney(amount) {
+        let formatted = amount.toFixed(2).replace(/\.00$/, '');
+        return currencySymbol + formatted;
+    }
+
+    function applyZone(zone) {
+        const data = shippingData[zone];
+        if (!data) return;
+        currentShippingCost = data.cost;
+        if (shippingAmountEl) shippingAmountEl.textContent = data.formatted;
+        if (totalEl) totalEl.textContent = formatMoney(baseTotalNumeric + currentShippingCost);
+        orderTotal = formatMoney(baseTotalNumeric + currentShippingCost);
+        updatePaymentUI();
+    }
+
+    document.querySelectorAll('.delivery-zone-input').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.delivery-zone-option').forEach(function (el) {
+                el.classList.remove('is-selected');
+            });
+            radio.closest('.delivery-zone-option')?.classList.add('is-selected');
+            applyZone(radio.value);
+        });
+    });
+
     let orderTotal = @json(money($total));
-    const methodLabels = @json($methodLabels);
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
     const fields = document.getElementById('wallet-payment-fields');
@@ -568,13 +696,17 @@
         const subtotalEl = document.querySelector('.js-checkout-subtotal');
         const taxEl = document.querySelector('.js-checkout-tax');
         const vatEl = document.querySelector('.js-checkout-vat');
-        const totalEl = document.querySelector('.js-checkout-total');
         if (subtotalEl && data.subtotal) subtotalEl.textContent = data.subtotal;
         if (taxEl && data.tax) taxEl.textContent = data.tax;
         if (vatEl && data.vat) vatEl.textContent = data.vat;
-        if (totalEl && data.total) totalEl.textContent = data.total;
-        if (data.totalFormatted || data.total) {
-            orderTotal = data.totalFormatted || data.total;
+
+        // Recalculate base total from AJAX, then re-add shipping
+        if (data.total) {
+            // Parse numeric base total from AJAX response (no shipping included)
+            baseTotalNumeric = parseFloat(String(data.total).replace(/[^0-9.]/g, '')) || baseTotalNumeric;
+            const newTotal = formatMoney(baseTotalNumeric + currentShippingCost);
+            if (totalEl) totalEl.textContent = newTotal;
+            orderTotal = newTotal;
             updatePaymentUI();
         }
         if (typeof data.cartCount !== 'undefined') {

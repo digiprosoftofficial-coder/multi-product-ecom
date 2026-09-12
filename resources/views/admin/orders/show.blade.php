@@ -128,6 +128,18 @@
                         <span>{{ money($order->vat) }}</span>
                     </div>
                 @endif
+                @if($order->shipping_cost > 0)
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Delivery charge:</span>
+                        <span>{{ money($order->shipping_cost) }}</span>
+                    </div>
+                @endif
+                @if($order->delivery_zone)
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Delivery area:</span>
+                        <span class="badge bg-secondary">{{ $order->deliveryZoneLabel() }}</span>
+                    </div>
+                @endif
                 <hr>
                 <div class="d-flex justify-content-between">
                     <strong>Total:</strong>

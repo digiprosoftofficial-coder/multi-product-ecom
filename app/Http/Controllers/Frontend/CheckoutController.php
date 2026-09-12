@@ -52,12 +52,21 @@ class CheckoutController extends Controller
 
         $tax = ($subtotal * $taxRate) / 100;
         $vat = ($subtotal * $vatRate) / 100;
-        $total = $subtotal + $tax + $vat;
+        $baseTotal = $subtotal + $tax + $vat;
+
+        $shippingInside  = (float) Setting::get('shipping_inside_dhaka', 60);
+        $shippingOutside = (float) Setting::get('shipping_outside_dhaka', 120);
+
+        // Default zone: inside_dhaka
+        $selectedZone   = old('delivery_zone', 'inside_dhaka');
+        $shippingCost   = $selectedZone === 'outside_dhaka' ? $shippingOutside : $shippingInside;
+        $total          = $baseTotal + $shippingCost;
 
         $theme = setting('active_frontend_theme', 'organic-v1');
         $view = View::exists("frontend.{$theme}.checkout") ? "frontend.{$theme}.checkout" : 'frontend.checkout.index';
 
-        return view($view, compact('cartItems', 'subtotal', 'tax', 'vat', 'total'))
+        return view($view, compact('cartItems', 'subtotal', 'tax', 'vat', 'baseTotal', 'total',
+            'shippingInside', 'shippingOutside', 'shippingCost', 'selectedZone'))
             ->with('paymentMethods', PaymentMethod::options());
     }
 
@@ -68,6 +77,7 @@ class CheckoutController extends Controller
             'customer_email' => 'required|email|max:255',
             'customer_phone' => ['required', 'string', 'max:20', new BangladeshPhone],
             'shipping_address' => 'required|string',
+            'delivery_zone' => 'required|in:inside_dhaka,outside_dhaka',
             'payment_method' => 'required|in:'.implode(',', PaymentMethod::values() ?: ['__none__']),
             'payment_reference' => [
                 'nullable',
@@ -125,7 +135,12 @@ class CheckoutController extends Controller
 
             $tax = ($subtotal * $taxRate) / 100;
             $vat = ($subtotal * $vatRate) / 100;
-            $total = $subtotal + $tax + $vat;
+
+            $shippingInside  = (float) Setting::get('shipping_inside_dhaka', 60);
+            $shippingOutside = (float) Setting::get('shipping_outside_dhaka', 120);
+            $shippingCost    = $validated['delivery_zone'] === 'outside_dhaka' ? $shippingOutside : $shippingInside;
+
+            $total = $subtotal + $tax + $vat + $shippingCost;
 
             $order = Order::create([
                 'user_id' => Auth::id(),
@@ -133,6 +148,8 @@ class CheckoutController extends Controller
                 'customer_email' => $validated['customer_email'],
                 'customer_phone' => BangladeshPhone::normalize($validated['customer_phone']) ?? $validated['customer_phone'],
                 'shipping_address' => $validated['shipping_address'],
+                'delivery_zone'   => $validated['delivery_zone'],
+                'shipping_cost'   => $shippingCost,
                 'payment_method' => $validated['payment_method'],
                 'payment_reference' => PaymentMethod::isMobileWallet($validated['payment_method'])
                     ? ($validated['payment_reference'] ?? null)

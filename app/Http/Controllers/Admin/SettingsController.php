@@ -59,6 +59,8 @@ class SettingsController extends Controller
             'google_analytics_id' => Setting::get('google_analytics_id', ''),
             'google_tag_manager_id' => Setting::get('google_tag_manager_id', ''),
             'facebook_pixel_id' => Setting::get('facebook_pixel_id', ''),
+            'shipping_inside_dhaka' => Setting::get('shipping_inside_dhaka', '60'),
+            'shipping_outside_dhaka' => Setting::get('shipping_outside_dhaka', '120'),
         ];
 
         return view('admin.settings.index', compact('settings'));
@@ -113,6 +115,8 @@ class SettingsController extends Controller
             'google_analytics_id' => ['nullable', 'string', 'max:30', 'regex:/^G-[A-Z0-9]+$/'],
             'google_tag_manager_id' => ['nullable', 'string', 'max:30', 'regex:/^GTM-[A-Z0-9]+$/'],
             'facebook_pixel_id' => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
+            'shipping_inside_dhaka' => 'nullable|numeric|min:0|max:99999',
+            'shipping_outside_dhaka' => 'nullable|numeric|min:0|max:99999',
         ]);
 
         $newMax = (int) $validated['category_max_depth'];
@@ -178,6 +182,8 @@ class SettingsController extends Controller
         Setting::set('google_analytics_id', strtoupper(trim((string) ($validated['google_analytics_id'] ?? ''))));
         Setting::set('google_tag_manager_id', strtoupper(trim((string) ($validated['google_tag_manager_id'] ?? ''))));
         Setting::set('facebook_pixel_id', preg_replace('/\D+/', '', (string) ($validated['facebook_pixel_id'] ?? '')) ?: '');
+        Setting::set('shipping_inside_dhaka', (string) max(0, (float) ($validated['shipping_inside_dhaka'] ?? 0)));
+        Setting::set('shipping_outside_dhaka', (string) max(0, (float) ($validated['shipping_outside_dhaka'] ?? 0)));
 
         $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);
         $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);

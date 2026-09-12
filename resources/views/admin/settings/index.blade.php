@@ -342,6 +342,37 @@
 
     <div class="card mb-4">
         <div class="card-header">
+            <h5 class="mb-0">Delivery charges</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small mb-3">
+                Customers choose <strong>Inside Dhaka</strong> or <strong>Outside Dhaka</strong> at checkout.
+                The matching charge is added to their order total automatically.
+                Set to <strong>0</strong> for free delivery.
+            </p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="shipping_inside_dhaka" class="form-label">Inside Dhaka <span class="text-muted fw-normal">({{ currency_symbol() }})</span></label>
+                    <input type="number" step="1" min="0" max="99999"
+                           class="form-control @error('shipping_inside_dhaka') is-invalid @enderror"
+                           id="shipping_inside_dhaka" name="shipping_inside_dhaka"
+                           value="{{ old('shipping_inside_dhaka', $settings['shipping_inside_dhaka']) }}">
+                    @error('shipping_inside_dhaka')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="shipping_outside_dhaka" class="form-label">Outside Dhaka <span class="text-muted fw-normal">({{ currency_symbol() }})</span></label>
+                    <input type="number" step="1" min="0" max="99999"
+                           class="form-control @error('shipping_outside_dhaka') is-invalid @enderror"
+                           id="shipping_outside_dhaka" name="shipping_outside_dhaka"
+                           value="{{ old('shipping_outside_dhaka', $settings['shipping_outside_dhaka']) }}">
+                    @error('shipping_outside_dhaka')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
             <h5 class="mb-0">Payment methods</h5>
         </div>
         <div class="card-body">

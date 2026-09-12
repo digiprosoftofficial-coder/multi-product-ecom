@@ -18,6 +18,8 @@ class Order extends Model
         'customer_email',
         'customer_phone',
         'shipping_address',
+        'delivery_zone',
+        'shipping_cost',
         'payment_method',
         'payment_reference',
         'payment_sender_phone',
@@ -34,8 +36,19 @@ class Order extends Model
         'subtotal' => 'decimal:2',
         'tax' => 'decimal:2',
         'vat' => 'decimal:2',
+        'shipping_cost' => 'decimal:2',
         'total' => 'decimal:2',
     ];
+
+    /** Human-readable delivery zone label */
+    public function deliveryZoneLabel(): string
+    {
+        return match ($this->delivery_zone) {
+            'inside_dhaka'  => 'Inside Dhaka',
+            'outside_dhaka' => 'Outside Dhaka',
+            default         => '—',
+        };
+    }
 
     protected static function boot()
     {
