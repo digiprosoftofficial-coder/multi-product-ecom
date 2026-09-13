@@ -95,6 +95,7 @@ class HomepageController extends Controller
         ]);
 
         foreach ([
+            'home_show_stats',
             'home_show_categories',
             'home_show_best_selling',
             'home_show_banners',

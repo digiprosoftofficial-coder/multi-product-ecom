@@ -85,6 +85,17 @@
                 @endforeach
             </div>
             <hr>
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                <div>
+                    <h6 class="mb-1">Stats below slider</h6>
+                    <p class="text-muted small mb-0">Shows under the hero carousel on the homepage. Value on top, label below.</p>
+                </div>
+                <div class="form-check form-switch mb-0">
+                    <input type="hidden" name="home_show_stats" value="0">
+                    <input class="form-check-input" type="checkbox" name="home_show_stats" value="1" id="home_show_stats" {{ old('home_show_stats', $settings['home_show_stats'] ?? '1') === '1' ? 'checked' : '' }}>
+                    <label class="form-check-label" for="home_show_stats">Show stats</label>
+                </div>
+            </div>
             <div class="row g-3">
                 @foreach([1,2,3] as $i)
                     <div class="col-md-4">
