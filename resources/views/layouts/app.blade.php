@@ -37,6 +37,13 @@
             top: 0;
             z-index: 1020;
         }
+        .header-menu-toggle {
+            color: inherit;
+            line-height: 1;
+        }
+        .header-menu-toggle:focus {
+            box-shadow: none;
+        }
         .preloader-wrapper { z-index: 2000; }
         #footer-bottom { margin-top: auto; text-align: center; padding: 14px 0; }
         #footer-bottom p { margin: 0; }

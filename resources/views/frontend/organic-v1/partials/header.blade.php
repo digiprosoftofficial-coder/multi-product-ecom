@@ -1,9 +1,9 @@
 <header class="site-header">
   <div class="container-fluid">
     <div class="row py-2 py-lg-3 border-bottom align-items-center g-2 flex-nowrap header-main-row">
-      {{-- Left: menu (mobile) + logo --}}
+      {{-- Left: hamburger + logo --}}
       <div class="col-auto col-lg-3 d-flex align-items-center gap-2 header-left">
-        <button class="navbar-toggler border-0 d-lg-none p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+        <button class="navbar-toggler border-0 p-1 header-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
           aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
           <i class="fa-solid fa-bars fa-lg"></i>
         </button>
