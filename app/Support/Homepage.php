@@ -34,6 +34,7 @@ class Homepage
             'home_stat2_label' => 'Happy Customers',
             'home_stat3_value' => '10+',
             'home_stat3_label' => 'Store Locations',
+            'home_show_stats' => '1',
             'home_show_categories' => '1',
             'home_show_best_selling' => '1',
             'home_show_banners' => '1',

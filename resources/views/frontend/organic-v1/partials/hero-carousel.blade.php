@@ -80,6 +80,7 @@
         @endif
     </div>
 
+    @if(\App\Support\Homepage::enabled('home_show_stats'))
     <div class="container-lg">
         <div class="hero-stats-wrap">
             <div class="row g-0 hero-stats-row">
@@ -92,6 +93,7 @@
             </div>
         </div>
     </div>
+    @endif
 </section>
 
 @once
