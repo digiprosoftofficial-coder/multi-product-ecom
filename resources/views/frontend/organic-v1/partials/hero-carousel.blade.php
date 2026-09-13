@@ -81,15 +81,15 @@
     </div>
 
     <div class="container-lg">
-        <div class="row my-3 my-md-4 my-lg-5 g-3 hero-stats-row">
-            @foreach([1,2,3] as $i)
-                <div class="col-4 col-md-4">
-                    <div class="row text-dark g-1 g-md-2 align-items-center">
-                        <div class="col-12 col-sm-auto"><p class="hero-stat-value fw-bold lh-sm mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_value') }}</p></div>
-                        <div class="col"><p class="text-uppercase lh-sm mb-0 hero-stat-label">{{ \App\Support\Homepage::get('home_stat'.$i.'_label') }}</p></div>
+        <div class="hero-stats-wrap">
+            <div class="row g-0 hero-stats-row">
+                @foreach([1,2,3] as $i)
+                    <div class="col-4 hero-stat-col text-center">
+                        <p class="hero-stat-value fw-bold mb-1">{{ \App\Support\Homepage::get('home_stat'.$i.'_value') }}</p>
+                        <p class="hero-stat-label text-uppercase mb-0">{{ \App\Support\Homepage::get('home_stat'.$i.'_label') }}</p>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         </div>
     </div>
 </section>
@@ -150,11 +150,39 @@
         padding: 0.7rem 1.35rem;
         margin-top: 0.85rem;
     }
+    .hero-stats-wrap {
+        margin: 1.5rem 0 2rem;
+    }
+    .hero-stats-row {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(15, 23, 42, 0.07);
+        border: 1px solid #eef2ea;
+        overflow: hidden;
+    }
+    .hero-stat-col {
+        padding: 1.25rem 1rem;
+        position: relative;
+    }
+    .hero-stat-col + .hero-stat-col::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 20%;
+        height: 60%;
+        width: 1px;
+        background: #e2ead9;
+    }
     .hero-stat-value {
-        font-size: clamp(1.35rem, 3vw, 2.5rem);
+        font-size: clamp(1.4rem, 3vw, 2.2rem);
+        color: #6BB252;
+        line-height: 1.1;
     }
     .hero-stat-label {
-        font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+        font-size: clamp(0.65rem, 1.4vw, 0.82rem);
+        color: #64748b;
+        letter-spacing: 0.04em;
+        line-height: 1.4;
     }
     .hero-carousel-indicators [data-bs-target] {
         width: 10px;
@@ -228,8 +256,8 @@
             height: 40px;
             font-size: 0.9rem;
         }
-        .hero-stats-row .col-4 {
-            text-align: center;
+        .hero-stat-col {
+            padding: 1rem 0.6rem;
         }
     }
 </style>
