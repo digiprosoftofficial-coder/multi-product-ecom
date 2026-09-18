@@ -101,7 +101,13 @@ class ProductController extends Controller
         $categories = Storefront::shopCategories();
 
         $theme = setting('active_frontend_theme', 'organic-v1');
-        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category") ? "frontend.{$theme}.products.category" : 'frontend.products.category';
+        if (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category")) {
+            $view = "frontend.{$theme}.products.category";
+        } elseif (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.shop")) {
+            $view = "frontend.{$theme}.shop";
+        } else {
+            $view = 'frontend.products.category';
+        }
 
         return view($view, compact('category', 'products', 'children', 'categories'));
     }

@@ -16,6 +16,21 @@ class SettingsController extends Controller
 {
     public function index()
     {
+        abort_unless(auth()->user()?->canAccessSettingsPage(), 403);
+
+        $canEditAllSettings = auth()->user()->isSuperAdmin();
+        $canEditIdentity = auth()->user()->canAccessIdentity();
+        $canEditContact = auth()->user()->canAccessContact();
+        $canEditSeo = auth()->user()->canAccessSeo();
+        $canEditPayment = auth()->user()->canAccessPayment();
+
+        $profileCardCount = (int) $canEditIdentity + (int) $canEditContact + (int) $canEditAllSettings;
+        $profileColClass = match ($profileCardCount) {
+            1 => 'col-12',
+            2 => 'col-12 col-lg-6',
+            default => 'col-12 col-lg-6 col-xxl-4',
+        };
+
         $settings = [
             'site_name' => Setting::get('site_name', config('app.name')),
             'site_logo' => Setting::get('site_logo'),
@@ -63,11 +78,26 @@ class SettingsController extends Controller
             'shipping_outside_dhaka' => Setting::get('shipping_outside_dhaka', '120'),
         ];
 
-        return view('admin.settings.index', compact('settings'));
+        return view('admin.settings.index', compact(
+            'settings',
+            'canEditAllSettings',
+            'canEditIdentity',
+            'canEditContact',
+            'canEditSeo',
+            'canEditPayment',
+            'profileColClass'
+        ));
     }
 
     public function update(Request $request)
     {
+        $user = auth()->user();
+        abort_unless($user?->canAccessSettingsPage(), 403);
+
+        if (! $user->isSuperAdmin()) {
+            return $this->updateOwnerAllowed($request, $user);
+        }
+
         $validated = $request->validate([
             'site_name' => 'required|string|max:255',
             'site_logo' => image_upload_rules(),
@@ -189,6 +219,105 @@ class SettingsController extends Controller
         $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);
         $this->storeBrandImage($request, 'favicon', 'favicon', 64, 64);
         $this->storeBrandImage($request, 'seo_og_image', 'seo-og', 1200, 630);
+
+        return redirect()->route('admin.settings.index')
+            ->with('success', 'Settings updated successfully.');
+    }
+
+    protected function updateOwnerAllowed(Request $request, \App\Models\User $user)
+    {
+        if ($user->canAccessIdentity()) {
+            $profile = $request->validate([
+                'site_name' => 'required|string|max:255',
+                'site_logo' => image_upload_rules(),
+                'footer_logo' => image_upload_rules(),
+                'favicon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,ico|max:1024',
+                'remove_site_logo' => 'nullable|boolean',
+                'remove_footer_logo' => 'nullable|boolean',
+                'remove_favicon' => 'nullable|boolean',
+                'logo_height_desktop' => 'required|integer|min:24|max:96',
+                'logo_height_mobile' => 'required|integer|min:24|max:80',
+                'footer_text' => 'nullable|string|max:2000',
+            ]);
+
+            Setting::set('site_name', $profile['site_name']);
+            Setting::set('logo_height_desktop', (string) (int) $profile['logo_height_desktop']);
+            Setting::set('logo_height_mobile', (string) (int) $profile['logo_height_mobile']);
+            Setting::set('footer_text', $profile['footer_text'] ?? '');
+            $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);
+            $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);
+            $this->storeBrandImage($request, 'favicon', 'favicon', 64, 64);
+        }
+
+        if ($user->canAccessContact()) {
+            $contact = $request->validate([
+                'contact_phone' => ['nullable', 'string', 'max:50', new BangladeshPhone],
+                'contact_email' => 'nullable|email|max:255',
+                'contact_address' => 'nullable|string|max:2000',
+                'contact_hours' => 'nullable|string|max:255',
+                'contact_intro' => 'nullable|string|max:2000',
+                'contact_map_url' => 'nullable|url|max:2000',
+            ]);
+
+            Setting::set('contact_phone', BangladeshPhone::normalize($contact['contact_phone'] ?? null) ?? '');
+            Setting::set('contact_email', $contact['contact_email'] ?? '');
+            Setting::set('contact_address', $contact['contact_address'] ?? '');
+            Setting::set('contact_hours', $contact['contact_hours'] ?? '');
+            Setting::set('contact_intro', $contact['contact_intro'] ?? '');
+            Setting::set('contact_map_url', $contact['contact_map_url'] ?? '');
+        }
+
+        if ($user->canAccessSeo()) {
+            $validated = $request->validate([
+                'seo_meta_description' => 'nullable|string|max:320',
+                'seo_og_image' => image_upload_rules(),
+                'remove_seo_og_image' => 'nullable|boolean',
+                'google_analytics_id' => ['nullable', 'string', 'max:30', 'regex:/^G-[A-Z0-9]+$/'],
+                'google_tag_manager_id' => ['nullable', 'string', 'max:30', 'regex:/^GTM-[A-Z0-9]+$/'],
+                'facebook_pixel_id' => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
+            ]);
+
+            Setting::set('seo_meta_description', $validated['seo_meta_description'] ?? '');
+            Setting::set('google_analytics_id', strtoupper(trim((string) ($validated['google_analytics_id'] ?? ''))));
+            Setting::set('google_tag_manager_id', strtoupper(trim((string) ($validated['google_tag_manager_id'] ?? ''))));
+            Setting::set('facebook_pixel_id', preg_replace('/\D+/', '', (string) ($validated['facebook_pixel_id'] ?? '')) ?: '');
+            $this->storeBrandImage($request, 'seo_og_image', 'seo-og', 1200, 630);
+        }
+
+        if ($user->canAccessPayment()) {
+            $request->validate([
+                'payment_cod_enabled' => 'nullable|boolean',
+                'payment_bkash_enabled' => 'nullable|boolean',
+                'payment_nagad_enabled' => 'nullable|boolean',
+                'payment_rocket_enabled' => 'nullable|boolean',
+                'payment_bkash_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
+                'payment_nagad_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
+                'payment_rocket_number' => ['nullable', 'string', 'max:30', new BangladeshPhone],
+            ]);
+
+            $paymentEnabled = [
+                'payment_cod_enabled' => $request->boolean('payment_cod_enabled'),
+                'payment_bkash_enabled' => $request->boolean('payment_bkash_enabled'),
+                'payment_nagad_enabled' => $request->boolean('payment_nagad_enabled'),
+                'payment_rocket_enabled' => $request->boolean('payment_rocket_enabled'),
+            ];
+
+            if (! in_array(true, $paymentEnabled, true)) {
+                return redirect()->route('admin.settings.index')
+                    ->withInput()
+                    ->withErrors([
+                        'payment_cod_enabled' => 'Enable at least one payment method.',
+                    ]);
+            }
+
+            foreach ($paymentEnabled as $key => $enabled) {
+                Setting::set($key, $enabled ? '1' : '0');
+            }
+
+            Setting::set('payment_bkash_number', BangladeshPhone::normalize($request->input('payment_bkash_number')) ?? '');
+            Setting::set('payment_nagad_number', BangladeshPhone::normalize($request->input('payment_nagad_number')) ?? '');
+            Setting::set('payment_rocket_number', BangladeshPhone::normalize($request->input('payment_rocket_number')) ?? '');
+        }
 
         return redirect()->route('admin.settings.index')
             ->with('success', 'Settings updated successfully.');

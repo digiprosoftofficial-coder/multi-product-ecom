@@ -17,6 +17,16 @@ if (!function_exists('site_name')) {
     }
 }
 
+if (! function_exists('theme_view')) {
+    function theme_view(string $name, string $fallback): string
+    {
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $candidate = "frontend.{$theme}.{$name}";
+
+        return view()->exists($candidate) ? $candidate : $fallback;
+    }
+}
+
 if (!function_exists('setting_image_url')) {
     function setting_image_url(?string $filename): ?string
     {

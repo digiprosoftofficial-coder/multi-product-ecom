@@ -31,6 +31,7 @@
                 <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'is-active' : '' }}" href="{{ route('admin.reports.index') }}">
                     <i class="fas fa-chart-bar"></i> Reports
                 </a>
+                @if(Auth::user()->canAccessSiteSetting())
                 @php
                     $siteSettingOpen = request()->routeIs('admin.homepage.*')
                         || request()->routeIs('admin.about.*')
@@ -78,10 +79,20 @@
                         </a>
                     </nav>
                 </div>
+                @endif
+                @if(Auth::user()->canAccessSettingsPage())
                 <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'is-active' : '' }}" href="{{ route('admin.settings.index') }}">
                     <i class="fas fa-cog"></i> Settings
                 </a>
-                {{-- Themes hidden for this version --}}
+                @endif
+                @if(Auth::user()->isSuperAdmin())
+                <a class="nav-link {{ request()->routeIs('admin.themes.*') ? 'is-active' : '' }}" href="{{ route('admin.themes.index') }}">
+                    <i class="fas fa-palette"></i> Themes
+                </a>
+                <a class="nav-link {{ request()->routeIs('admin.owner-access.*') ? 'is-active' : '' }}" href="{{ route('admin.owner-access.index') }}">
+                    <i class="fas fa-user-shield"></i> Owner access
+                </a>
+                @endif
             </nav>
         </div>
 
@@ -91,6 +102,7 @@
                 <div class="user-meta">
                     <div class="user-name">{{ Auth::user()->name }}</div>
                     <div class="user-email">{{ Auth::user()->email }}</div>
+                    <div class="user-email">{{ Auth::user()->isSuperAdmin() ? 'Super admin' : 'Store owner' }}</div>
                 </div>
             </div>
             <form method="POST" action="{{ route('logout') }}">

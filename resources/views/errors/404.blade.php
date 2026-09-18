@@ -1,9 +1,9 @@
-@extends('layouts.app')
+@extends(setting('active_frontend_theme', 'organic-v1') === 'gadget-v1' ? 'layouts.gadget' : 'layouts.app')
 
 @section('title', 'Page not found – '.site_name())
 
 @section('content')
-<div class="container-lg py-5">
+<div class="{{ setting('active_frontend_theme', 'organic-v1') === 'gadget-v1' ? '' : 'container-lg py-5' }}">
     <div class="row justify-content-center">
         <div class="col-lg-6 text-center py-5">
             <p class="display-6 fw-semibold mb-2">404</p>

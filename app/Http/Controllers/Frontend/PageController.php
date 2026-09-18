@@ -14,7 +14,7 @@ class PageController extends Controller
 {
     public function about()
     {
-        return view('frontend.about', [
+        return view(theme_view('about', 'frontend.about'), [
             'title' => filled($title = \App\Support\Homepage::get('about_title')) ? $title : 'About '.site_name(),
             'content' => setting('about_content'),
         ]);
@@ -22,7 +22,7 @@ class PageController extends Controller
 
     public function contact()
     {
-        return view('frontend.contact', [
+        return view(theme_view('contact', 'frontend.contact'), [
             'mapUrl' => $this->contactMapUrl(),
         ]);
     }
@@ -74,28 +74,28 @@ class PageController extends Controller
 
     public function privacy()
     {
-        return view('frontend.privacy', [
+        return view(theme_view('privacy', 'frontend.privacy'), [
             'content' => setting('privacy_content'),
         ]);
     }
 
     public function terms()
     {
-        return view('frontend.terms', [
+        return view(theme_view('terms', 'frontend.terms'), [
             'content' => setting('terms_content'),
         ]);
     }
 
     public function delivery()
     {
-        return view('frontend.delivery', [
+        return view(theme_view('delivery', 'frontend.delivery'), [
             'content' => setting('delivery_content'),
         ]);
     }
 
     public function returns()
     {
-        return view('frontend.returns', [
+        return view(theme_view('returns', 'frontend.returns'), [
             'content' => setting('returns_content'),
         ]);
     }
