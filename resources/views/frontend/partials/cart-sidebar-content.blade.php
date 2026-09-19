@@ -10,13 +10,15 @@
         <li class="list-group-item d-flex justify-content-between lh-sm">
           <div class="flex-grow-1">
             <h6 class="my-0">{{ $cartItem['product']->name }}</h6>
+            @include('frontend.partials.cart-variant-picker', ['item' => $cartItem, 'compact' => true])
             <small class="text-body-secondary">Qty: {{ $cartItem['quantity'] }}</small>
           </div>
           <div class="d-flex align-items-center gap-2">
-            <span class="text-body-secondary">${{ number_format($cartItem['subtotal'], 2) }}</span>
+            <span class="text-body-secondary">{{ money($cartItem['subtotal']) }}</span>
             <form action="{{ route('cart.remove', $cartItem['product']) }}" method="POST" class="d-inline js-remove-from-cart">
               @csrf
               @method('DELETE')
+              @include('frontend.partials.cart-variant-field', ['item' => $cartItem])
               <button type="submit" class="btn btn-sm btn-link text-danger p-0"><i class="fa-solid fa-trash"></i></button>
             </form>
           </div>
@@ -24,7 +26,7 @@
       @endforeach
       <li class="list-group-item d-flex justify-content-between">
         <span>Total (USD)</span>
-        <strong id="cart-total">${{ number_format($cartTotal, 2) }}</strong>
+        <strong id="cart-total">{{ money($cartTotal) }}</strong>
       </li>
     </ul>
   @else

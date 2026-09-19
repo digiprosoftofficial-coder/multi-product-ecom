@@ -28,34 +28,39 @@ class CheckoutController extends Controller
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
-        $productIds = array_keys($cart);
-        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+        $data = \App\Support\Storefront::cartData();
+        if (empty($data['cartItems'])) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
 
         $cartItems = [];
         $subtotal = 0;
 
-        foreach ($cart as $productId => $item) {
-            $product = $products->get($productId);
-            if ($product) {
-                $itemTotal = $product->final_price * $item['quantity'];
-                $subtotal += $itemTotal;
-                $cartItems[] = [
-                    'product' => $product,
-                    'quantity' => $item['quantity'],
-                    'total' => $itemTotal,
-                ];
-            }
+        foreach ($data['cartItems'] as $item) {
+            $product = $item['product'];
+            $itemTotal = taka($product->final_price) * $item['quantity'];
+            $subtotal += $itemTotal;
+            $cartItems[] = [
+                'product' => $product,
+                'quantity' => $item['quantity'],
+                'total' => $itemTotal,
+                'variant' => $item['variant'] ?? null,
+                'variant_id' => $item['variant_id'] ?? null,
+                'variant_label' => $item['variant_label'] ?? null,
+                'sku' => $item['sku'] ?? $product->sku,
+                'max_stock' => $item['max_stock'] ?? max(1, (int) $product->stock),
+            ];
         }
 
         $taxRate = (float) Setting::get('tax_rate', 0);
         $vatRate = (float) Setting::get('vat_rate', 0);
 
-        $tax = ($subtotal * $taxRate) / 100;
-        $vat = ($subtotal * $vatRate) / 100;
+        $tax = taka(($subtotal * $taxRate) / 100);
+        $vat = taka(($subtotal * $vatRate) / 100);
         $baseTotal = $subtotal + $tax + $vat;
 
-        $shippingInside  = (float) Setting::get('shipping_inside_dhaka', 60);
-        $shippingOutside = (float) Setting::get('shipping_outside_dhaka', 120);
+        $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
+        $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
 
         // Default zone: inside_dhaka
         $selectedZone   = old('delivery_zone', 'inside_dhaka');
@@ -105,27 +110,34 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
         try {
-            $productIds = array_keys($cart);
-            $products = Product::whereIn('id', $productIds)->lockForUpdate()->get()->keyBy('id');
-
+            $resolved = \App\Support\Storefront::cartData();
             $cartItems = [];
             $subtotal = 0;
 
-            foreach ($cart as $productId => $item) {
-                $product = $products->get($productId);
-                if (! $product || $product->stock < $item['quantity']) {
+            foreach ($resolved['cartItems'] as $row) {
+                $product = Product::whereKey($row['product']->id)->lockForUpdate()->first();
+                $variant = $row['variant_id']
+                    ? \App\Models\ProductVariant::whereKey($row['variant_id'])->lockForUpdate()->first()
+                    : null;
+
+                $available = $variant ? $variant->stock : ($product?->stock ?? 0);
+                if (! $product || ($row['variant_id'] && ! $variant) || $available < $row['quantity']) {
                     DB::rollBack();
                     $productName = $product ? $product->name : 'Unknown';
 
                     return back()->with('error', "Product '{$productName}' is out of stock or insufficient quantity.");
                 }
 
-                $itemTotal = $product->final_price * $item['quantity'];
+                $unit = taka($product->final_price);
+                $itemTotal = $unit * $row['quantity'];
                 $subtotal += $itemTotal;
                 $cartItems[] = [
                     'product' => $product,
-                    'quantity' => $item['quantity'],
-                    'price' => $product->final_price,
+                    'variant' => $variant,
+                    'variant_label' => $variant?->label($product->option1_name, $product->option2_name),
+                    'sku' => $variant?->sku ?: $product->sku,
+                    'quantity' => $row['quantity'],
+                    'price' => $unit,
                     'total' => $itemTotal,
                 ];
             }
@@ -133,11 +145,11 @@ class CheckoutController extends Controller
             $taxRate = (float) Setting::get('tax_rate', 0);
             $vatRate = (float) Setting::get('vat_rate', 0);
 
-            $tax = ($subtotal * $taxRate) / 100;
-            $vat = ($subtotal * $vatRate) / 100;
+            $tax = taka(($subtotal * $taxRate) / 100);
+            $vat = taka(($subtotal * $vatRate) / 100);
 
-            $shippingInside  = (float) Setting::get('shipping_inside_dhaka', 60);
-            $shippingOutside = (float) Setting::get('shipping_outside_dhaka', 120);
+            $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
+            $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
             $shippingCost    = $validated['delivery_zone'] === 'outside_dhaka' ? $shippingOutside : $shippingInside;
 
             $total = $subtotal + $tax + $vat + $shippingCost;
@@ -170,15 +182,22 @@ class CheckoutController extends Controller
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item['product']->id,
+                    'product_variant_id' => $item['variant']?->id,
                     'product_name' => $item['product']->name,
-                    'product_sku' => $item['product']->sku,
+                    'product_sku' => $item['sku'],
+                    'variant_label' => $item['variant_label'],
                     'quantity' => $item['quantity'],
                     'price' => $item['price'],
                     'cost_price' => $item['product']->cost_price,
                     'total' => $item['total'],
                 ]);
 
-                $item['product']->decrement('stock', $item['quantity']);
+                if ($item['variant']) {
+                    $item['variant']->decrement('stock', $item['quantity']);
+                    $item['product']->decrement('stock', $item['quantity']);
+                } else {
+                    $item['product']->decrement('stock', $item['quantity']);
+                }
             }
 
             DB::commit();

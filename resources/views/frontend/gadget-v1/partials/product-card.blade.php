@@ -12,7 +12,7 @@
   <a href="{{ $url }}" class="text-decoration-none text-reset">
     <div class="position-relative overflow-hidden" style="aspect-ratio: 1;">
       @if($img)
-        <img src="{{ $img->image_url }}" class="card-img-top object-fit-cover" alt="{{ $name }}" style="height: 100%; object-fit: cover;">
+        <img src="{{ $img->thumbnail_url }}" class="card-img-top object-fit-cover" alt="{{ $name }}" loading="lazy" decoding="async" style="height: 100%; object-fit: cover;">
       @elseif($thumb)
         <img src="{{ upload_url('uploads/products/thumbnails/' . $thumb) }}" class="card-img-top object-fit-cover" alt="{{ $name }}" style="height: 100%; object-fit: cover;">
       @else
@@ -30,7 +30,7 @@
     </div>
   </a>
   <div class="card-footer border-secondary bg-transparent">
-    @if($product->stock > 0)
+    @if($product->isInStock())
       <form action="{{ route('cart.add', $product) }}" method="POST" class="js-add-to-cart">
         @csrf
         <input type="hidden" name="quantity" value="1">

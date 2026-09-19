@@ -6,6 +6,10 @@
     $costPrice = old('cost_price', $isEdit ? $product->cost_price : '');
     $comparePrice = old('compare_price', $isEdit ? $product->compare_price : '');
     $discountPrice = old('discount_price', $isEdit ? $product->discount_price : '');
+    $price = $price === '' || $price === null ? '' : format_amount($price);
+    $costPrice = $costPrice === '' || $costPrice === null ? '' : format_amount($costPrice);
+    $comparePrice = $comparePrice === '' || $comparePrice === null ? '' : format_amount($comparePrice);
+    $discountPrice = $discountPrice === '' || $discountPrice === null ? '' : format_amount($discountPrice);
     $stock = old('stock', $isEdit ? $product->stock : 0);
     $status = (string) old('status', $isEdit ? $product->status : '1');
     $metaTitle = old('meta_title', $isEdit ? $product->meta_title : '');
@@ -122,6 +126,8 @@
             </div>
         </div>
 
+        @include('admin.products.partials.variants')
+
         <div class="card mb-4">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h6 class="fw-semibold mb-0">Search listing</h6>
@@ -161,7 +167,7 @@
                         <label for="cost_price" class="form-label">Purchase price</label>
                         <div class="input-group">
                             <span class="input-group-text">{{ currency_symbol() }}</span>
-                            <input type="number" step="0.01" min="0" class="form-control @error('cost_price') is-invalid @enderror"
+                            <input type="number" step="1" min="0" class="form-control @error('cost_price') is-invalid @enderror"
                                    id="cost_price" name="cost_price" value="{{ $costPrice }}">
                         </div>
                         <div class="form-text">What you paid per unit. Used for dashboard profit.</div>
@@ -173,7 +179,7 @@
                         <label for="price" class="form-label">Selling price <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <span class="input-group-text">{{ currency_symbol() }}</span>
-                            <input type="number" step="0.01" min="0" class="form-control @error('price') is-invalid @enderror"
+                            <input type="number" step="1" min="0" class="form-control @error('price') is-invalid @enderror"
                                    id="price" name="price" value="{{ $price }}" required>
                         </div>
                         @error('price')
@@ -185,7 +191,7 @@
                         <label for="compare_price" class="form-label">Compare price (MRP)</label>
                         <div class="input-group">
                             <span class="input-group-text">{{ currency_symbol() }}</span>
-                            <input type="number" step="0.01" min="0" class="form-control @error('compare_price') is-invalid @enderror"
+                            <input type="number" step="1" min="0" class="form-control @error('compare_price') is-invalid @enderror"
                                    id="compare_price" name="compare_price" value="{{ $comparePrice }}">
                         </div>
                         <div class="form-text">Optional. Should be higher than selling price.</div>
@@ -220,13 +226,14 @@
             <div class="card mb-4">
                 <div class="card-body">
                     <h6 class="fw-semibold mb-3">Inventory</h6>
-                    <div class="mb-3">
+                    <div class="mb-3" id="simpleStockField">
                         <label for="stock" class="form-label">Stock <span class="text-danger">*</span></label>
                         <input type="number" min="0" class="form-control @error('stock') is-invalid @enderror"
                                id="stock" name="stock" value="{{ $stock }}" required>
                         @error('stock')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
+                        <div class="form-text d-none" id="variantStockHint">Total stock is the sum of all size/color rows.</div>
                     </div>
                     <div class="form-check form-switch">
                         <input type="hidden" name="status" value="0">

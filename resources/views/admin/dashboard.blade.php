@@ -448,6 +448,9 @@
                                             @forelse($order->items as $item)
                                                 <div>
                                                     {{ $item->product_name }}
+                                                    @if($item->variant_label)
+                                                        <small class="text-muted d-block">{{ $item->variant_label }}</small>
+                                                    @endif
                                                     @if($item->quantity > 1)
                                                         <small class="text-muted">× {{ $item->quantity }}</small>
                                                     @endif

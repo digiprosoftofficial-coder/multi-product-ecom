@@ -35,7 +35,7 @@
                                 </tr>
                                 @foreach($order->items as $item)
                                     <tr>
-                                        <td style="border-bottom:1px solid #e5e7eb;">{{ $item->product_name }}</td>
+                                        <td style="border-bottom:1px solid #e5e7eb;">{{ $item->product_name }}@if($item->variant_label) ({{ $item->variant_label }})@endif</td>
                                         <td style="border-bottom:1px solid #e5e7eb;">{{ $item->quantity }}</td>
                                         <td style="border-bottom:1px solid #e5e7eb;" align="right">{{ money($item->total) }}</td>
                                     </tr>

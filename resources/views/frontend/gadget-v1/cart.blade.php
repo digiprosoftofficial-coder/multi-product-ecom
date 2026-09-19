@@ -38,21 +38,24 @@
                 <div class="bg-secondary rounded d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;"><i class="fas fa-image text-muted"></i></div>
                 @endif
                 <span>{{ $item['product']->name }}</span>
+                @include('frontend.partials.cart-variant-picker', ['item' => $item, 'compact' => true])
               </div>
             </td>
-            <td>${{ number_format($item['product']->final_price, 2) }}</td>
+            <td>{{ money($item['product']->final_price) }}</td>
             <td>
               <form action="{{ route('cart.update', $item['product']) }}" method="POST" class="d-inline">
                 @csrf
                 @method('PUT')
-                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ $item['product']->stock }}" class="form-control form-control-sm d-inline-block" style="width: 70px;" onchange="this.form.submit()">
+                <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ $item['max_stock'] ?? $item['product']->stock }}" class="form-control form-control-sm d-inline-block" style="width: 70px;" onchange="this.form.submit()">
+                @include('frontend.partials.cart-variant-field', ['item' => $item])
               </form>
             </td>
-            <td>${{ number_format($item['subtotal'] ?? ($item['product']->final_price * $item['quantity']), 2) }}</td>
+            <td>{{ money($item['subtotal'] ?? ($item['product']->final_price * $item['quantity'])) }}</td>
             <td>
               <form action="{{ route('cart.remove', $item['product']) }}" method="POST" class="d-inline">
                 @csrf
                 @method('DELETE')
+                @include('frontend.partials.cart-variant-field', ['item' => $item])
                 <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
               </form>
             </td>
@@ -63,7 +66,7 @@
     </div>
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
       <a href="{{ route('products.index') }}" class="btn btn-outline-primary">Continue shopping</a>
-      <div class="fw-bold">Total: ${{ number_format($total ?? 0, 2) }}</div>
+      <div class="fw-bold">Total: {{ money($total ?? 0) }}</div>
       <a href="{{ route('checkout.index') }}" class="btn btn-primary">Checkout</a>
     </div>
     <form action="{{ route('cart.clear') }}" method="POST" class="mt-2">

@@ -9,13 +9,15 @@
         <li class="list-group-item bg-transparent border-secondary d-flex justify-content-between lh-sm gap-2 min-w-0">
           <div class="flex-grow-1 min-w-0 overflow-hidden">
             <h6 class="my-0 small text-break" style="overflow-wrap: anywhere; word-break: break-word;">{{ $cartItem['product']->name }}</h6>
+            @include('frontend.partials.cart-variant-picker', ['item' => $cartItem, 'compact' => true])
             <small class="text-muted">Qty: {{ $cartItem['quantity'] }}</small>
           </div>
           <div class="d-flex align-items-center gap-2 flex-shrink-0">
-            <span class="text-muted small">${{ number_format($cartItem['subtotal'], 2) }}</span>
+            <span class="text-muted small">{{ money($cartItem['subtotal']) }}</span>
             <form action="{{ route('cart.remove', $cartItem['product']) }}" method="POST" class="d-inline js-remove-from-cart">
               @csrf
               @method('DELETE')
+              @include('frontend.partials.cart-variant-field', ['item' => $cartItem])
               <button type="submit" class="btn btn-sm btn-link text-danger p-0"><i class="fas fa-trash small"></i></button>
             </form>
           </div>
@@ -23,7 +25,7 @@
       @endforeach
       <li class="list-group-item bg-transparent border-secondary d-flex justify-content-between">
         <span>Total</span>
-        <strong id="cart-total">${{ number_format($cartTotal ?? 0, 2) }}</strong>
+        <strong id="cart-total">{{ money($cartTotal ?? 0) }}</strong>
       </li>
     </ul>
   @else

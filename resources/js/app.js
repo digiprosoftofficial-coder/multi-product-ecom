@@ -88,9 +88,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     const imgUrl = form.dataset.productImage || '';
                     flyToCart(imgUrl, submitBtn);
+                    if (window.showStoreToast) {
+                        window.showStoreToast(form.dataset.productName || data?.message || '');
+                    }
                 })
                 .catch((err) => {
                     console.error(err);
+                    if (window.showStoreToast) {
+                        window.showStoreToast(err?.message || 'Unable to add to cart.', 'error');
+                        return;
+                    }
                     form.submit();
                 });
         });

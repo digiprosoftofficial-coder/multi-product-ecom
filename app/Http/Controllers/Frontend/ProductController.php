@@ -39,7 +39,7 @@ class ProductController extends Controller
             abort(404);
         }
 
-        $product->load('category', 'images');
+        $product->load('category', 'images', 'variants');
         $relatedProducts = $this->relatedProductsFor($product);
 
         $theme = setting('active_frontend_theme', 'organic-v1');

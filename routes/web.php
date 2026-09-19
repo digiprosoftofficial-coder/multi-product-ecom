@@ -35,6 +35,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
     Route::get('/sidebar', [CartController::class, 'sidebar'])->name('sidebar');
     Route::post('/add/{product}', [CartController::class, 'add'])->name('add');
     Route::put('/update/{product}', [CartController::class, 'update'])->name('update');
+    Route::post('/variant/{product}', [CartController::class, 'changeVariant'])->name('variant');
     Route::delete('/remove/{product}', [CartController::class, 'remove'])->name('remove');
     Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
 });

@@ -27,7 +27,7 @@
                     <td>{{ $product->sku }}</td>
                     <td>{{ $product->category->name ?? '-' }}</td>
                     <td>{{ money($product->price) }}</td>
-                    <td>{{ $product->stock }}</td>
+                    <td>{{ $product->stock }}@if($product->has_variants) <span class="text-muted small">options</span>@endif</td>
                     <td>
                         <span class="badge bg-{{ $product->status ? 'success' : 'danger' }}">
                             {{ $product->status ? 'Active' : 'Inactive' }}

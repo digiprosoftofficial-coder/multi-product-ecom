@@ -121,8 +121,15 @@ document.addEventListener('DOMContentLoaded', function () {
             updateCartCount(data.cartCount);
             refreshCartSidebar();
           }
+          if (window.showStoreToast) {
+            window.showStoreToast(form.dataset.productName || data.message || '');
+          }
         })
-        .catch(function () {
+        .catch(function (err) {
+          if (window.showStoreToast) {
+            window.showStoreToast(err && err.message ? err.message : 'Unable to add to cart.', 'error');
+            return;
+          }
           form.submit();
         });
     });
@@ -131,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const offcanvasCart = document.getElementById('offcanvasCart');
   if (offcanvasCart) {
     offcanvasCart.addEventListener('submit', function (e) {
-      if (!e.target.matches('form.js-remove-from-cart') && !e.target.matches('form.js-update-cart-qty')) return;
+      if (!e.target.matches('form.js-remove-from-cart') && !e.target.matches('form.js-update-cart-qty') && !e.target.matches('form.js-change-cart-variant')) return;
       e.preventDefault();
       const form = e.target;
       const formData = new FormData(form);
@@ -212,5 +219,49 @@ document.addEventListener('DOMContentLoaded', function () {
       })
       .catch(function () {});
   }
+
+  function syncCartVariantForm(form) {
+    var variants = [];
+    try { variants = JSON.parse(form.getAttribute('data-variants') || '[]'); } catch (e) { variants = []; }
+    var o1 = form.querySelector('[data-cart-option="1"]');
+    var o2 = form.querySelector('[data-cart-option="2"]');
+    var hidden = form.querySelector('.js-variant-id');
+    var selected1 = o1 ? o1.value : '';
+    var selected2 = o2 ? o2.value : '';
+
+    if (o2) {
+      var firstAvailable = '';
+      Array.prototype.forEach.call(o2.options, function (opt) {
+        if (!opt.value) return;
+        var row = variants.find(function (v) { return v.option1 === selected1 && v.option2 === opt.value; });
+        opt.disabled = !row || row.stock < 1;
+        if (!opt.disabled && !firstAvailable) firstAvailable = opt.value;
+      });
+      var current = variants.find(function (v) { return v.option1 === selected1 && v.option2 === selected2; });
+      if ((!current || current.stock < 1) && firstAvailable) {
+        o2.value = firstAvailable;
+        selected2 = firstAvailable;
+      }
+    }
+
+    var match = variants.find(function (row) {
+      if (row.option1 !== selected1) return false;
+      if (o2 && row.option2 !== selected2) return false;
+      return true;
+    });
+    if (hidden && match) hidden.value = String(match.id);
+    return match;
+  }
+
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches('[data-cart-option]')) return;
+    var form = e.target.closest('form.js-change-cart-variant');
+    if (!form) return;
+    var from = form.querySelector('[name="from_variant_id"]');
+    var match = syncCartVariantForm(form);
+    if (!match || match.stock < 1) return;
+    if (from && String(match.id) === String(from.value)) return;
+    form.requestSubmit();
+  });
 });
 </script>

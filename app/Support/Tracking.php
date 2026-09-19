@@ -36,7 +36,7 @@ class Tracking
     public static function productPayload(Product $product, int $quantity = 1): array
     {
         $qty = max(1, $quantity);
-        $price = round((float) $product->final_price, 2);
+        $price = (float) taka($product->final_price);
 
         return [
             'id' => (string) $product->id,
@@ -44,7 +44,7 @@ class Tracking
             'name' => $product->name,
             'price' => $price,
             'quantity' => $qty,
-            'value' => round($price * $qty, 2),
+            'value' => $price * $qty,
             'currency' => self::currency(),
         ];
     }
@@ -67,7 +67,7 @@ class Tracking
 
         return [
             'currency' => self::currency(),
-            'value' => round($value, 2),
+            'value' => taka($value),
             'items' => $items,
         ];
     }
@@ -81,9 +81,9 @@ class Tracking
                 'id' => (string) ($item->product_id ?: $item->product_sku),
                 'sku' => (string) $item->product_sku,
                 'name' => $item->product_name,
-                'price' => round((float) $item->price, 2),
+                'price' => taka($item->price),
                 'quantity' => (int) $item->quantity,
-                'value' => round((float) $item->total, 2),
+                'value' => taka($item->total),
                 'currency' => self::currency(),
             ];
         }
@@ -91,8 +91,8 @@ class Tracking
         return [
             'transaction_id' => (string) $order->order_number,
             'currency' => self::currency(),
-            'value' => round((float) $order->total, 2),
-            'tax' => round((float) $order->tax + (float) $order->vat, 2),
+            'value' => taka($order->total),
+            'tax' => taka((float) $order->tax + (float) $order->vat),
             'items' => $items,
         ];
     }

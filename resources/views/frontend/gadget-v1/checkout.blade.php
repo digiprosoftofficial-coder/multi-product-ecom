@@ -78,12 +78,12 @@
             <div class="card-body">
               @foreach($cartItems ?? [] as $item)
               <div class="d-flex justify-content-between small mb-2">
-                <span>{{ $item['product']->name }} × {{ $item['quantity'] }}</span>
-                <span>${{ number_format($item['total'] ?? ($item['product']->final_price * $item['quantity']), 2) }}</span>
+                <span>{{ $item['product']->name }}@if(!empty($item['variant_label'])) ({{ $item['variant_label'] }})@endif × {{ $item['quantity'] }}</span>
+                <span>{{ money($item['total'] ?? ($item['product']->final_price * $item['quantity'])) }}</span>
               </div>
               @endforeach
               <hr class="border-secondary">
-              <div class="d-flex justify-content-between"><span>Subtotal</span><span>${{ number_format($subtotal ?? 0, 2) }}</span></div>
+              <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ money($subtotal ?? 0) }}</span></div>
               @if(($tax ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>Tax</span><span>{{ money($tax) }}</span></div>@endif
               @if(($vat ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>VAT</span><span>{{ money($vat) }}</span></div>@endif
               <div class="d-flex justify-content-between small text-muted">
@@ -116,7 +116,7 @@
       const currencySymbol   = @json(currency_symbol());
 
       function formatMoney(n) {
-          return currencySymbol + n.toFixed(2).replace(/\.00$/, '');
+          return currencySymbol + Math.round(Number(n) || 0);
       }
 
       document.querySelectorAll('input[name="delivery_zone"]').forEach(function (radio) {

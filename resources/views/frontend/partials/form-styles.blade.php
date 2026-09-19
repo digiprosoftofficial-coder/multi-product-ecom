@@ -85,4 +85,33 @@
         padding: 0.25rem 0.5rem;
         border-radius: 6px;
     }
+
+    .cart-variant-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .4rem .55rem;
+        margin: .35rem 0 .15rem;
+    }
+    .cart-variant-field {
+        display: flex;
+        flex-direction: column;
+        gap: .15rem;
+        min-width: 4.5rem;
+        margin: 0;
+        font-size: .72rem;
+        font-weight: 600;
+        color: #64748b;
+    }
+    .cart-variant-field .form-select {
+        min-height: 34px !important;
+        padding: .2rem .5rem !important;
+        font-size: .82rem;
+        font-weight: 600;
+        color: #1f2937;
+        width: auto;
+        min-width: 4.75rem;
+    }
+    .cart-variant-picker--compact .form-select {
+        min-height: 32px !important;
+    }
 </style>

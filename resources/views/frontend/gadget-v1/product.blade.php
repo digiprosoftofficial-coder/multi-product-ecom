@@ -63,7 +63,16 @@
           <div class="carousel-inner rounded overflow-hidden border border-secondary">
             @foreach($product->images as $index => $image)
             <div class="carousel-item {{ $index === 0 ? 'active' : '' }}">
-              <img src="{{ $image->image_url }}" class="d-block w-100" alt="{{ $product->name }}" style="aspect-ratio: 1; object-fit: cover;">
+              <img src="{{ $image->medium_url }}"
+                   srcset="{{ $image->srcset() }}"
+                   sizes="(max-width: 767px) 92vw, 540px"
+                   class="d-block w-100"
+                   alt="{{ $product->name }}"
+                   width="800"
+                   height="800"
+                   decoding="async"
+                   @if($index === 0) fetchpriority="high" @else loading="lazy" @endif
+                   style="aspect-ratio: 1; object-fit: cover;">
             </div>
             @endforeach
           </div>
@@ -90,7 +99,7 @@
       </div>
       <div class="col-md-6">
         <h1 class="h4 mb-2">{{ $product->name }}</h1>
-        <p class="text-muted small">SKU: {{ $product->sku }}</p>
+        <p class="text-muted small">SKU: <span class="js-product-sku">{{ $product->sku }}</span></p>
         @php $listPrice = $product->listPriceForDiscount(); @endphp
         <div class="product-detail-pricing mb-3">
           <div class="product-detail-prices">
@@ -107,25 +116,27 @@
         <div class="product-description text-muted">{!! $product->description_html !!}</div>
         @endif
         <p class="small text-muted">Category: {{ $product->category->name ?? '-' }}</p>
-        <p class="small text-muted">Stock: {{ $product->stock }}</p>
 
-        @if($product->stock > 0)
-        <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex align-items-center gap-2 flex-wrap js-add-to-cart">
+        @if($product->isInStock())
+        <form action="{{ route('cart.add', $product) }}" method="POST" class="d-flex flex-column gap-2 js-add-to-cart">
           @csrf
-          <div class="cart-qty-control product-order-qty-control" role="group" aria-label="Quantity">
-            <button type="button" class="cart-qty-btn js-product-qty-minus" aria-label="Decrease">−</button>
-            <input type="number" name="quantity" value="1" min="1" max="{{ $product->stock }}" class="cart-qty-input js-product-qty-input" required>
-            <button type="button" class="cart-qty-btn js-product-qty-plus" aria-label="Increase">+</button>
-          </div>
-          <div class="product-card-actions product-card-actions--lg flex-grow-1">
-            <button type="submit" class="btn btn-cart-action">
-              <i class="fa-solid fa-cart-shopping"></i>
-              <span>Add to Cart</span>
-            </button>
-            <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
-              <i class="fa-solid fa-bolt"></i>
-              <span>Order Now</span>
-            </button>
+          @include('frontend.partials.variant-picker', ['product' => $product])
+          <div class="d-flex align-items-center gap-2 flex-wrap">
+            <div class="cart-qty-control product-order-qty-control" role="group" aria-label="Quantity">
+              <button type="button" class="cart-qty-btn js-product-qty-minus" aria-label="Decrease">−</button>
+              <input type="number" name="quantity" value="1" min="1" max="{{ max(1, $product->availableStock()) }}" class="cart-qty-input js-product-qty-input" required>
+              <button type="button" class="cart-qty-btn js-product-qty-plus" aria-label="Increase">+</button>
+            </div>
+            <div class="product-card-actions product-card-actions--lg flex-grow-1">
+              <button type="submit" class="btn btn-cart-action">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span>Add to Cart</span>
+              </button>
+              <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
+                <i class="fa-solid fa-bolt"></i>
+                <span>Order Now</span>
+              </button>
+            </div>
           </div>
         </form>
         @else
