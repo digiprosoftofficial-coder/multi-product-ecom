@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row py-2 py-lg-3 border-bottom align-items-center g-2 flex-nowrap header-main-row">
       {{-- Left: hamburger + logo --}}
-      <div class="col-auto col-lg-3 d-flex align-items-center gap-2 header-left">
+      <div class="col-auto col-lg-3 d-flex align-items-center gap-4 header-left">
         <button class="navbar-toggler border-0 p-1 header-menu-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
           aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
           <i class="fa-solid fa-bars fa-lg"></i>
@@ -48,9 +48,9 @@
       <div class="col-auto col-lg-3 ms-auto d-flex gap-1 gap-sm-2 align-items-center justify-content-end header-right">
         <ul class="d-flex justify-content-end list-unstyled m-0 align-items-center header-icon-list">
           <li class="header-search-item d-flex align-items-center">
-            {{-- Desktop: inline expand beside icon --}}
+            {{-- Desktop: always-visible search bar --}}
             <form action="{{ route('products.index') }}" method="GET"
-                  class="header-inline-search d-none d-lg-flex align-items-center {{ request('search') ? 'is-open' : '' }}"
+                  class="header-inline-search d-none d-lg-flex align-items-center"
                   id="desktop-search-form"
                   role="search">
               <input type="text"
@@ -61,16 +61,16 @@
                      id="desktop-search-input"
                      autocomplete="off">
               <button type="submit" class="btn header-inline-search-submit p-0 border-0 bg-transparent" aria-label="Search">
-                <i class="fa-solid fa-arrow-right"></i>
+                <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </form>
             <button type="button"
-                    class="p-2 mx-1 border-0 bg-transparent header-search-toggle"
+                    class="p-2 mx-1 border-0 bg-transparent header-search-toggle d-lg-none"
                     id="headerSearchToggle"
                     title="Search"
                     aria-label="Search"
-                    aria-expanded="{{ request('search') ? 'true' : 'false' }}"
-                    aria-controls="desktop-search-form">
+                    aria-expanded="false"
+                    aria-controls="headerSearchPanel">
               <i class="fa-solid fa-magnifying-glass fa-lg"></i>
             </button>
           </li>

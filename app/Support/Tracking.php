@@ -28,6 +28,13 @@ class Tracking
         return $id !== '' ? $id : null;
     }
 
+    public static function facebookDomainVerification(): ?string
+    {
+        $value = strtolower(preg_replace('/[^A-Za-z0-9]+/', '', (string) setting('facebook_domain_verification', '')));
+
+        return $value !== '' ? $value : null;
+    }
+
     public static function currency(): string
     {
         return Seo::currencyCode();

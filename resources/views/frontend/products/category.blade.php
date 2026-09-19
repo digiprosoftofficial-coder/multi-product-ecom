@@ -38,5 +38,6 @@
     'categories' => $categories,
     'currentCategory' => $category,
     'children' => $children,
+    'priceBounds' => $priceBounds ?? null,
 ])
 @endsection
