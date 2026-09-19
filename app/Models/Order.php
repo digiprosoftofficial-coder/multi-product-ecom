@@ -171,6 +171,13 @@ class Order extends Model
         $this->loadMissing('items');
 
         foreach ($this->items as $item) {
+            if ($item->product_variant_id) {
+                $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
+                if ($variant) {
+                    $variant->increment('stock', $item->quantity);
+                }
+            }
+
             $product = Product::whereKey($item->product_id)->lockForUpdate()->first();
             if ($product) {
                 $product->increment('stock', $item->quantity);
@@ -183,6 +190,16 @@ class Order extends Model
         $this->loadMissing('items');
 
         foreach ($this->items as $item) {
+            if ($item->product_variant_id) {
+                $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
+                if (! $variant || $variant->stock < $item->quantity) {
+                    throw ValidationException::withMessages([
+                        'order_status' => "Cannot reopen this order. Insufficient stock for {$item->product_name}.",
+                    ]);
+                }
+                $variant->decrement('stock', $item->quantity);
+            }
+
             $product = Product::whereKey($item->product_id)->lockForUpdate()->first();
 
             if (! $product || $product->stock < $item->quantity) {

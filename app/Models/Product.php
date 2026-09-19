@@ -27,6 +27,9 @@ class Product extends Model
         'is_popular',
         'is_new_arrival',
         'is_best_selling',
+        'has_variants',
+        'option1_name',
+        'option2_name',
         'thumbnail',
         'meta_title',
         'meta_description',
@@ -43,6 +46,7 @@ class Product extends Model
         'is_popular' => 'boolean',
         'is_new_arrival' => 'boolean',
         'is_best_selling' => 'boolean',
+        'has_variants' => 'boolean',
     ];
 
     protected static function boot()
@@ -75,6 +79,48 @@ class Product extends Model
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
     }
 
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('id');
+    }
+
+    public function hasVariants(): bool
+    {
+        return (bool) $this->has_variants;
+    }
+
+    public function option1Values(): array
+    {
+        return $this->variants
+            ->pluck('option1')
+            ->filter(fn ($value) => $value !== '')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function option2Values(): array
+    {
+        return $this->variants
+            ->pluck('option2')
+            ->filter(fn ($value) => $value !== '')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    public function variantsJson(): array
+    {
+        return $this->variants->map(fn (ProductVariant $variant) => [
+            'id' => $variant->id,
+            'option1' => $variant->option1,
+            'option2' => $variant->option2,
+            'sku' => $variant->sku,
+            'stock' => $variant->stock,
+            'label' => $variant->label($this->option1_name, $this->option2_name),
+        ])->values()->all();
+    }
+
     public function primaryImage(): HasMany
     {
         return $this->hasMany(ProductImage::class)->where('is_primary', true);
@@ -92,15 +138,19 @@ class Product extends Model
 
     public function isInStock(): bool
     {
-        return $this->stock > 0;
+        return $this->availableStock() > 0;
+    }
+
+    public function availableStock(): int
+    {
+        return (int) $this->stock;
     }
 
     public function getFinalPriceAttribute(): float
     {
-        if ($this->discount_price) {
-            return $this->discount_price;
-        }
-        return $this->price;
+        $price = $this->discount_price ?: $this->price;
+
+        return (float) taka($price);
     }
 
     /**
@@ -110,12 +160,12 @@ class Product extends Model
     {
         $final = (float) $this->final_price;
 
-        if (compare_price_enabled() && $this->compare_price && (float) $this->compare_price > $final) {
-            return (float) $this->compare_price;
+        if (compare_price_enabled() && $this->compare_price && taka($this->compare_price) > $final) {
+            return (float) taka($this->compare_price);
         }
 
-        if ($this->discount_price && (float) $this->price > $final) {
-            return (float) $this->price;
+        if ($this->discount_price && taka($this->price) > $final) {
+            return (float) taka($this->price);
         }
 
         return null;

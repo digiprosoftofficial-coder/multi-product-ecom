@@ -10,7 +10,7 @@
         @php
           $product = $cartItem['product'];
           $qty = (int) $cartItem['quantity'];
-          $max = max(1, (int) $product->stock);
+          $max = max(1, (int) ($cartItem['max_stock'] ?? $product->stock));
           $thumb = $product->thumbnail_url ?: asset('images/product-placeholder.svg');
         @endphp
         <li class="list-group-item cart-sidebar-item">
@@ -22,10 +22,12 @@
               <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
                 <h6 class="my-0 product-title flex-grow-1">
                   <a href="{{ route('products.show', $product->slug) }}" class="text-decoration-none text-dark">{{ $product->name }}</a>
+                  @include('frontend.partials.cart-variant-picker', ['item' => $cartItem, 'compact' => true])
                 </h6>
                 <form action="{{ route('cart.remove', $product) }}" method="POST" class="d-inline js-remove-from-cart">
                   @csrf
                   @method('DELETE')
+                  @include('frontend.partials.cart-variant-field', ['item' => $cartItem])
                   <button type="submit" class="btn btn-sm btn-link text-danger p-0" aria-label="Remove">
                     <i class="fa-solid fa-trash"></i>
                   </button>
@@ -35,6 +37,7 @@
                 <form action="{{ route('cart.update', $product) }}" method="POST" class="js-update-cart-qty">
                   @csrf
                   @method('PUT')
+                  @include('frontend.partials.cart-variant-field', ['item' => $cartItem])
                   <div class="input-group input-group-sm" style="width: 118px;">
                     <button type="button" class="btn btn-outline-secondary js-qty-minus" aria-label="Decrease">−</button>
                     <input type="number"

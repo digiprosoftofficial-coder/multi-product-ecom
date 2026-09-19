@@ -10,6 +10,8 @@
                 src="{{ $product->thumbnail_url ?: asset('images/product-placeholder.svg') }}"
                 alt="{{ $product->name }}"
                 class="tab-image"
+                loading="lazy"
+                decoding="async"
             >
         </a>
         @if($discountPercent)

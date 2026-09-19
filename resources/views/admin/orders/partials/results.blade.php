@@ -23,12 +23,15 @@
                         @php
                             $productLines = $order->items->map(function ($item) {
                                 $name = $item->product_name ?: $item->product?->name;
-                                return $name ? ['name' => $name, 'qty' => $item->quantity] : null;
+                                return $name ? ['name' => $name, 'qty' => $item->quantity, 'variant' => $item->variant_label] : null;
                             })->filter()->values();
                         @endphp
                         @forelse($productLines as $line)
                             <div class="order-product-line">
                                 <span class="fw-semibold">{{ $line['name'] }}</span>
+                                @if(!empty($line['variant']))
+                                    <small class="text-muted d-block">{{ $line['variant'] }}</small>
+                                @endif
                                 @if($line['qty'] > 1)
                                     <small class="text-muted">× {{ $line['qty'] }}</small>
                                 @endif

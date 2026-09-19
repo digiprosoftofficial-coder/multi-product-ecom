@@ -1,7 +1,7 @@
 @php
     $showQty = $showQty ?? false;
     $compact = $compact ?? false;
-    $maxQty = max(1, (int) $product->stock);
+    $maxQty = max(1, (int) $product->availableStock());
 @endphp
 <form action="{{ route('cart.add', $product) }}" method="POST"
       class="{{ $compact ? 'w-100' : 'product-order-actions' }} js-add-to-cart"
@@ -10,6 +10,7 @@
       data-product-image="{{ $product->thumbnail_url }}">
     @csrf
     @if($showQty)
+        @include('frontend.partials.variant-picker', ['product' => $product])
         <div class="product-order-qty-row">
             <div class="cart-qty-control product-order-qty-control" role="group" aria-label="Quantity">
                 <button type="button" class="cart-qty-btn js-product-qty-minus" aria-label="Decrease">−</button>

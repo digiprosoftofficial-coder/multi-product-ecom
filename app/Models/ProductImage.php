@@ -38,5 +38,10 @@ class ProductImage extends Model
     {
         return upload_url('uploads/products/medium/' . $this->filename) ?? asset('images/product-placeholder.svg');
     }
+
+    public function srcset(): string
+    {
+        return $this->thumbnail_url.' 300w, '.$this->medium_url.' 800w, '.$this->image_url.' 1600w';
+    }
 }
 

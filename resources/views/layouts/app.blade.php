@@ -52,7 +52,7 @@
         .product-item .tab-image { width: 100%; height: 180px; object-fit: contain; }
         .product-card-media {
             position: relative;
-            margin: 0;
+            margin: 0 0 6px;
         }
         .product-discount-badge {
             position: absolute;
@@ -283,6 +283,7 @@
 
     @include('frontend.organic-v1.partials.footer')
     @include('frontend.organic-v1.partials.mobile-bottom-nav')
+    @include('frontend.partials.store-toast')
     @stack('styles')
     @include('frontend.organic-v1.partials.scripts')
     @stack('scripts')

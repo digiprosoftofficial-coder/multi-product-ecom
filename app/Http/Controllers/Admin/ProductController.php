@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
+use App\Support\ProductVariants;
+use App\Support\StoreImages;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManager;
-use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -68,7 +68,16 @@ class ProductController extends Controller
             'compare_price' => 'nullable|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discount_price' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'stock' => $request->boolean('has_variants') ? 'nullable|integer|min:0' : 'required|integer|min:0',
+            'has_variants' => 'nullable|boolean',
+            'option1_name' => 'nullable|string|max:40',
+            'option2_name' => 'nullable|string|max:40',
+            'option1_values' => $request->boolean('has_variants') ? 'required|string|max:500' : 'nullable|string|max:500',
+            'option2_values' => 'nullable|string|max:500',
+            'variants' => 'nullable|array|max:48',
+            'variants.*.option1' => 'nullable|string|max:40',
+            'variants.*.option2' => 'nullable|string|max:40',
+            'variants.*.stock' => 'nullable|integer|min:0',
             'status' => 'required|in:0,1',
             'is_featured' => 'nullable|boolean',
             'is_popular' => 'nullable|boolean',
@@ -94,7 +103,7 @@ class ProductController extends Controller
             $basePrice = $request->price; // user requested: base on price only
             if ($basePrice > 0) {
                 $discountAmount = ($basePrice * $discountPercentage) / 100;
-                $validated['discount_price'] = round($basePrice - $discountAmount, 2);
+                $validated['discount_price'] = taka($basePrice - $discountAmount);
             }
         } else {
             // If discount_percentage is empty or 0, use the submitted discount_price or null
@@ -104,7 +113,22 @@ class ProductController extends Controller
         }
 
         // Remove discount_percentage from validated as it's not a database field
-        unset($validated['discount_percentage'], $validated['images']);
+        unset(
+            $validated['discount_percentage'],
+            $validated['images'],
+            $validated['has_variants'],
+            $validated['option1_name'],
+            $validated['option2_name'],
+            $validated['option1_values'],
+            $validated['option2_values'],
+            $validated['variants']
+        );
+
+        if ($request->boolean('has_variants')) {
+            $validated['stock'] = (int) ($validated['stock'] ?? 0);
+        }
+
+        $validated = $this->roundMoneyFields($validated);
 
         foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
             $validated[$flag] = $request->boolean($flag);
@@ -126,25 +150,18 @@ class ProductController extends Controller
 
         // Handle thumbnail
         if ($request->hasFile('thumbnail')) {
-            $thumbnail = $request->file('thumbnail');
-            $filename = time() . '_thumb_' . Str::random(10) . '.' . $thumbnail->getClientOriginalExtension();
-            
-            $this->ensureDirectoriesExist('products');
-            
-            $manager = new ImageManager(new Driver());
-            $img = $manager->read($thumbnail->getRealPath());
-            $img->scale(width: 300, height: 300);
-            Storage::disk('public')->put("uploads/products/thumbnails/{$filename}", $img->encode());
-            
+            $filename = StoreImages::uniqueName('thumb');
+            StoreImages::processListingThumb($request->file('thumbnail'), $filename);
             $validated['thumbnail'] = $filename;
         }
 
         $product = Product::create($validated);
+        $this->syncVariants($request, $product);
 
         foreach ($this->uploadedGalleryImages($request) as $index => $image) {
-            $filename = time() . '_' . $index . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+            $filename = StoreImages::uniqueName((string) $index);
 
-            $this->processProductImage($image, $filename);
+            StoreImages::processGallery($image, $filename);
 
             ProductImage::create([
                 'product_id' => $product->id,
@@ -162,6 +179,7 @@ class ProductController extends Controller
     {
         $product->load([
             'category',
+            'variants',
             'images' => function ($q) {
                 $q->orderBy('sort_order');
             },
@@ -172,7 +190,7 @@ class ProductController extends Controller
 
     public function edit(Product $product)
     {
-        $product->load('images');
+        $product->load('images', 'variants');
         $categoryPickerLevels = Category::pickerLevels(
             old('category_id', $product->category_id) ? (int) old('category_id', $product->category_id) : null
         );
@@ -192,7 +210,16 @@ class ProductController extends Controller
             'compare_price' => 'nullable|numeric|min:0',
             'discount_percentage' => 'nullable|numeric|min:0|max:100',
             'discount_price' => 'nullable|numeric|min:0',
-            'stock' => 'required|integer|min:0',
+            'stock' => $request->boolean('has_variants') ? 'nullable|integer|min:0' : 'required|integer|min:0',
+            'has_variants' => 'nullable|boolean',
+            'option1_name' => 'nullable|string|max:40',
+            'option2_name' => 'nullable|string|max:40',
+            'option1_values' => $request->boolean('has_variants') ? 'required|string|max:500' : 'nullable|string|max:500',
+            'option2_values' => 'nullable|string|max:500',
+            'variants' => 'nullable|array|max:48',
+            'variants.*.option1' => 'nullable|string|max:40',
+            'variants.*.option2' => 'nullable|string|max:40',
+            'variants.*.stock' => 'nullable|integer|min:0',
             'status' => 'required|in:0,1',
             'is_featured' => 'nullable|boolean',
             'is_popular' => 'nullable|boolean',
@@ -218,7 +245,7 @@ class ProductController extends Controller
             $basePrice = $request->price; // base on price only
             if ($basePrice > 0) {
                 $discountAmount = ($basePrice * $discountPercentage) / 100;
-                $validated['discount_price'] = round($basePrice - $discountAmount, 2);
+                $validated['discount_price'] = taka($basePrice - $discountAmount);
             }
         } else {
             if (empty($request->discount_price)) {
@@ -227,7 +254,22 @@ class ProductController extends Controller
         }
 
         // Remove discount_percentage from validated as it's not a database field
-        unset($validated['discount_percentage'], $validated['images']);
+        unset(
+            $validated['discount_percentage'],
+            $validated['images'],
+            $validated['has_variants'],
+            $validated['option1_name'],
+            $validated['option2_name'],
+            $validated['option1_values'],
+            $validated['option2_values'],
+            $validated['variants']
+        );
+
+        if ($request->boolean('has_variants')) {
+            $validated['stock'] = (int) ($validated['stock'] ?? 0);
+        }
+
+        $validated = $this->roundMoneyFields($validated);
 
         foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
             $validated[$flag] = $request->boolean($flag);
@@ -243,36 +285,28 @@ class ProductController extends Controller
 
         $validated['slug'] = Str::slug($validated['name']);
 
-        // Ensure upload directories exist (mirrors store logic)
-        $this->ensureDirectoriesExist('products');
-
         // Handle thumbnail
         if ($request->hasFile('thumbnail')) {
             if ($product->thumbnail) {
                 Storage::disk('public')->delete("uploads/products/thumbnails/{$product->thumbnail}");
             }
 
-            $thumbnail = $request->file('thumbnail');
-            $filename = time() . '_thumb_' . Str::random(10) . '.' . $thumbnail->getClientOriginalExtension();
-
-            $manager = new ImageManager(new Driver());
-            $img = $manager->read($thumbnail->getRealPath());
-            $img->scale(width: 300, height: 300);
-            Storage::disk('public')->put("uploads/products/thumbnails/{$filename}", $img->encode());
-
+            $filename = StoreImages::uniqueName('thumb');
+            StoreImages::processListingThumb($request->file('thumbnail'), $filename);
             $validated['thumbnail'] = $filename;
         }
 
         $product->update($validated);
+        $this->syncVariants($request, $product);
 
         $galleryImages = $this->uploadedGalleryImages($request);
         if ($galleryImages) {
             $maxSortOrder = $product->images()->max('sort_order') ?? -1;
 
             foreach ($galleryImages as $index => $image) {
-                $filename = time() . '_' . ($maxSortOrder + $index + 1) . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+                $filename = StoreImages::uniqueName((string) ($maxSortOrder + $index + 1));
 
-                $this->processProductImage($image, $filename);
+                StoreImages::processGallery($image, $filename);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -333,6 +367,28 @@ class ProductController extends Controller
         }));
     }
 
+    private function roundMoneyFields(array $validated): array
+    {
+        foreach (['price', 'cost_price', 'compare_price', 'discount_price'] as $field) {
+            if (array_key_exists($field, $validated) && $validated[$field] !== null && $validated[$field] !== '') {
+                $validated[$field] = taka($validated[$field]);
+            }
+        }
+
+        return $validated;
+    }
+
+    private function syncVariants(Request $request, Product $product): void
+    {
+        ProductVariants::sync($product, $request->boolean('has_variants'), [
+            'option1_name' => $request->input('option1_name'),
+            'option2_name' => $request->input('option2_name'),
+            'option1_values' => $request->input('option1_values'),
+            'option2_values' => $request->input('option2_values'),
+            'variants' => $request->input('variants', []),
+        ]);
+    }
+
     private function leafCategoryRule(): \Closure
     {
         return function (string $attribute, mixed $value, \Closure $fail) {
@@ -341,43 +397,6 @@ class ProductController extends Controller
                 $fail('Products can only be assigned to a last-level category. Add children first, then put products on the deepest category.');
             }
         };
-    }
-
-    private function ensureDirectoriesExist(string $type): void
-    {
-        $paths = [
-            "uploads/{$type}",
-            "uploads/{$type}/thumbnails",
-            "uploads/{$type}/medium",
-        ];
-
-        foreach ($paths as $path) {
-            if (!Storage::disk('public')->exists($path)) {
-                Storage::disk('public')->makeDirectory($path);
-            }
-        }
-    }
-
-    private function processProductImage($image, string $filename): void
-    {
-        $this->ensureDirectoriesExist('products');
-        
-        $manager = new ImageManager(new Driver());
-        
-        // Thumbnail (300px)
-        $img = $manager->read($image->getRealPath());
-        $img->scale(width: 300, height: 300);
-        Storage::disk('public')->put("uploads/products/thumbnails/{$filename}", $img->encode());
-
-        // Medium (600px)
-        $img = $manager->read($image->getRealPath());
-        $img->scale(width: 600, height: 600);
-        Storage::disk('public')->put("uploads/products/medium/{$filename}", $img->encode());
-
-        // Large (1200px)
-        $img = $manager->read($image->getRealPath());
-        $img->scale(width: 1200, height: 1200);
-        Storage::disk('public')->put("uploads/products/{$filename}", $img->encode());
     }
 
     private function deleteProductImage(string $filename): void

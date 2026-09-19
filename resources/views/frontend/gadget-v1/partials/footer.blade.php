@@ -32,3 +32,4 @@
     <div class="text-center text-muted small">&copy; {{ date('Y') }} GadgetStore. All rights reserved.</div>
   </div>
 </footer>
+@include('frontend.partials.store-toast')

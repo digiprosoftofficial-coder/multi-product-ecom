@@ -68,7 +68,12 @@
                         <tbody>
                             @foreach($order->items as $item)
                                 <tr>
-                                    <td>{{ $item->product_name }}</td>
+                                    <td>
+                                        {{ $item->product_name }}
+                                        @if($item->variant_label)
+                                            <div class="small text-muted">{{ $item->variant_label }}</div>
+                                        @endif
+                                    </td>
                                     <td>{{ $item->product_sku }}</td>
                                     <td>{{ $item->quantity }}</td>
                                     <td>{{ money($item->price) }}</td>

@@ -162,14 +162,24 @@ if (!function_exists('currency_symbol')) {
     }
 }
 
+if (!function_exists('taka')) {
+    function taka($amount): int
+    {
+        return (int) round((float) $amount);
+    }
+}
+
+if (!function_exists('format_amount')) {
+    function format_amount($amount, bool $thousands = false): string
+    {
+        return number_format(taka($amount), 0, '.', $thousands ? ',' : '');
+    }
+}
+
 if (!function_exists('money')) {
     function money($amount): string
     {
-        $amount = (float) $amount;
-        $formatted = number_format($amount, 2);
-        $formatted = preg_replace('/\.00$/', '', $formatted);
-
-        return currency_symbol().$formatted;
+        return currency_symbol().format_amount($amount, true);
     }
 }
 

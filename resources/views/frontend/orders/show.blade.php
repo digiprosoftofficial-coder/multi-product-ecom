@@ -57,34 +57,39 @@
                     <tbody>
                         @foreach($order->items as $item)
                             <tr>
-                                <td>{{ $item->product_name }}</td>
+                                <td>
+                                    {{ $item->product_name }}
+                                    @if($item->variant_label)
+                                        <div class="small text-muted">{{ $item->variant_label }}</div>
+                                    @endif
+                                </td>
                                 <td>{{ $item->product_sku }}</td>
                                 <td>{{ $item->quantity }}</td>
-                                <td>${{ number_format($item->price, 2) }}</td>
-                                <td>${{ number_format($item->total, 2) }}</td>
+                                <td>{{ money($item->price) }}</td>
+                                <td>{{ money($item->total) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
                     <tfoot>
                         <tr>
                             <td colspan="4" class="text-end"><strong>Subtotal:</strong></td>
-                            <td><strong>${{ number_format($order->subtotal, 2) }}</strong></td>
+                            <td><strong>{{ money($order->subtotal) }}</strong></td>
                         </tr>
                         @if($order->tax > 0)
                             <tr>
                                 <td colspan="4" class="text-end"><strong>Tax:</strong></td>
-                                <td><strong>${{ number_format($order->tax, 2) }}</strong></td>
+                                <td><strong>{{ money($order->tax) }}</strong></td>
                             </tr>
                         @endif
                         @if($order->vat > 0)
                             <tr>
                                 <td colspan="4" class="text-end"><strong>VAT:</strong></td>
-                                <td><strong>${{ number_format($order->vat, 2) }}</strong></td>
+                                <td><strong>{{ money($order->vat) }}</strong></td>
                             </tr>
                         @endif
                         <tr>
                             <td colspan="4" class="text-end"><strong>Total:</strong></td>
-                            <td><strong class="fs-5">${{ number_format($order->total, 2) }}</strong></td>
+                            <td><strong class="fs-5">{{ money($order->total) }}</strong></td>
                         </tr>
                     </tfoot>
                 </table>

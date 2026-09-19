@@ -51,7 +51,7 @@
 
             <div class="col-md-6">
                 <h1 class="product-detail-title mb-2">{{ $product->name }}</h1>
-                <p class="text-muted mb-2">SKU: {{ $product->sku }}</p>
+                <p class="text-muted mb-2">SKU: <span class="js-product-sku">{{ $product->sku }}</span></p>
 
                 @php
                     $listPrice = $product->listPriceForDiscount();

@@ -221,6 +221,9 @@
                             @forelse($order->items as $item)
                                 <div>
                                     {{ $item->product_name }}
+                                    @if($item->variant_label)
+                                        <span class="muted">({{ $item->variant_label }})</span>
+                                    @endif
                                     @if($item->quantity > 1)
                                         <span class="muted">× {{ $item->quantity }}</span>
                                     @endif

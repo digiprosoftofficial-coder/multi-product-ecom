@@ -22,7 +22,8 @@
                 @php
                     $product = $item['product'];
                     $thumb = $product->thumbnail_url ?: asset('images/product-placeholder.svg');
-                    $max = max(1, (int) $product->stock);
+                    $max = max(1, (int) ($item['max_stock'] ?? $product->stock));
+                    $sku = $item['sku'] ?? $product->sku;
                 @endphp
                 <div class="cart-mobile-card">
                     <div class="cart-mobile-card__main">
@@ -33,13 +34,15 @@
                             <div class="d-flex justify-content-between gap-2 align-items-start">
                                 <div class="min-w-0">
                                     <a href="{{ route('products.show', $product->slug) }}" class="cart-mobile-card__name">{{ $product->name }}</a>
-                                    @if($product->sku)
-                                        <div class="cart-mobile-card__sku">SKU: {{ $product->sku }}</div>
+                                    @include('frontend.partials.cart-variant-picker', ['item' => $item, 'compact' => true])
+                                    @if($sku)
+                                        <div class="cart-mobile-card__sku">SKU: {{ $sku }}</div>
                                     @endif
                                 </div>
                                 <form action="{{ route('cart.remove', $product) }}" method="POST" class="flex-shrink-0">
                                     @csrf
                                     @method('DELETE')
+                                    @include('frontend.partials.cart-variant-field', ['item' => $item])
                                     <button type="submit" class="btn btn-sm btn-link text-danger p-0" aria-label="Remove" onclick="return confirm('Remove this item?')">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -50,6 +53,7 @@
                                 <form action="{{ route('cart.update', $product) }}" method="POST" class="cart-qty-form">
                                     @csrf
                                     @method('PUT')
+                                    @include('frontend.partials.cart-variant-field', ['item' => $item])
                                     <div class="cart-qty-control">
                                         <button type="button" class="cart-qty-btn js-cart-qty-minus" aria-label="Decrease">−</button>
                                         <input type="number"
@@ -92,7 +96,8 @@
                         @php
                             $product = $item['product'];
                             $thumb = $product->thumbnail_url ?: asset('images/product-placeholder.svg');
-                            $max = max(1, (int) $product->stock);
+                            $max = max(1, (int) ($item['max_stock'] ?? $product->stock));
+                    $sku = $item['sku'] ?? $product->sku;
                         @endphp
                         <tr>
                             <td>
@@ -102,8 +107,9 @@
                                          class="cart-table-thumb">
                                     <div>
                                         <h6 class="mb-1">{{ $product->name }}</h6>
-                                        @if($product->sku)
-                                            <small class="text-muted">SKU: {{ $product->sku }}</small>
+                                        @include('frontend.partials.cart-variant-picker', ['item' => $item, 'compact' => true])
+                                        @if($sku)
+                                            <small class="text-muted">SKU: {{ $sku }}</small>
                                         @endif
                                     </div>
                                 </div>
@@ -113,6 +119,7 @@
                                 <form action="{{ route('cart.update', $product) }}" method="POST" class="cart-qty-form">
                                     @csrf
                                     @method('PUT')
+                                    @include('frontend.partials.cart-variant-field', ['item' => $item])
                                     <div class="cart-qty-control">
                                         <button type="button" class="cart-qty-btn js-cart-qty-minus" aria-label="Decrease">−</button>
                                         <input type="number"
@@ -131,6 +138,7 @@
                                 <form action="{{ route('cart.remove', $product) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
+                                    @include('frontend.partials.cart-variant-field', ['item' => $item])
                                     <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this item?')">
                                         <i class="fas fa-trash"></i>
                                     </button>

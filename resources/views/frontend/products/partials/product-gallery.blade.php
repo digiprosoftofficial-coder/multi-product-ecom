@@ -9,11 +9,17 @@
         <div class="product-detail-gallery-main-wrap">
             <div class="swiper product-detail-gallery-main border rounded-3 overflow-hidden">
                 <div class="swiper-wrapper">
-                    @foreach($images as $image)
+                    @foreach($images as $index => $image)
                         <div class="swiper-slide">
                             <div class="product-zoom-wrap">
-                                <img src="{{ $image->image_url }}"
-                                     alt="{{ $product->name }}">
+                                <img src="{{ $image->medium_url }}"
+                                     srcset="{{ $image->srcset() }}"
+                                     sizes="(max-width: 767px) 92vw, 540px"
+                                     width="800"
+                                     height="800"
+                                     alt="{{ $product->name }}"
+                                     decoding="async"
+                                     @if($index === 0) fetchpriority="high" @else loading="lazy" @endif>
                             </div>
                         </div>
                     @endforeach
@@ -42,8 +48,12 @@
                     @foreach($images as $image)
                         <div class="swiper-slide">
                             <button type="button" class="product-detail-thumb-btn">
-                                <img src="{{ $image->image_url }}"
-                                     alt="{{ $product->name }} thumbnail">
+                                <img src="{{ $image->thumbnail_url }}"
+                                     width="84"
+                                     height="84"
+                                     alt="{{ $product->name }} thumbnail"
+                                     loading="lazy"
+                                     decoding="async">
                             </button>
                         </div>
                     @endforeach
@@ -87,12 +97,19 @@
         overflow: hidden;
         background: #f8f9fa;
         cursor: zoom-in;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     .product-zoom-wrap img {
-        width: 100%;
-        height: 100%;
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: contain;
         transition: transform .25s ease;
+    }
+    .product-zoom-wrap.is-zooming img {
         will-change: transform;
     }
     .product-detail-gallery-prev,
@@ -209,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         new Swiper(mainEl, {
-            loop: true,
+            loop: false,
             spaceBetween: 0,
             effect: 'fade',
             fadeEffect: { crossFade: true },
@@ -229,11 +246,13 @@ document.addEventListener('DOMContentLoaded', function () {
             var rect = wrap.getBoundingClientRect();
             var x = ((e.clientX - rect.left) / rect.width) * 100;
             var y = ((e.clientY - rect.top) / rect.height) * 100;
+            wrap.classList.add('is-zooming');
             img.style.transformOrigin = x + '% ' + y + '%';
-            img.style.transform = 'scale(2)';
+            img.style.transform = 'scale(1.6)';
         });
 
         wrap.addEventListener('mouseleave', function () {
+            wrap.classList.remove('is-zooming');
             img.style.transform = 'scale(1)';
         });
     });
@@ -252,11 +271,13 @@ document.addEventListener('DOMContentLoaded', function () {
             var rect = wrap.getBoundingClientRect();
             var x = ((e.clientX - rect.left) / rect.width) * 100;
             var y = ((e.clientY - rect.top) / rect.height) * 100;
+            wrap.classList.add('is-zooming');
             img.style.transformOrigin = x + '% ' + y + '%';
-            img.style.transform = 'scale(2)';
+            img.style.transform = 'scale(1.6)';
         });
 
         wrap.addEventListener('mouseleave', function () {
+            wrap.classList.remove('is-zooming');
             img.style.transform = 'scale(1)';
         });
     });

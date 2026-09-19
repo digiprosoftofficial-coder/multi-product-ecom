@@ -203,7 +203,7 @@
                             @php
                                 $product = $item['product'];
                                 $qty = (int) $item['quantity'];
-                                $max = max(1, (int) $product->stock);
+                                $max = max(1, (int) ($item['max_stock'] ?? $product->stock));
                             @endphp
                             <div class="checkout-summary-item" data-product-id="{{ $product->id }}">
                                 <div class="checkout-summary-item-main">
@@ -212,9 +212,11 @@
                                     @endif
                                     <div class="min-w-0">
                                         <div class="checkout-summary-name">{{ $product->name }}</div>
+                                        @include('frontend.partials.cart-variant-picker', ['item' => $item, 'compact' => true])
                                         <form action="{{ route('cart.update', $product) }}" method="POST" class="checkout-qty-form mt-1" data-product-id="{{ $product->id }}">
                                             @csrf
                                             @method('PUT')
+                                            @include('frontend.partials.cart-variant-field', ['item' => $item])
                                             <div class="checkout-qty-control">
                                                 <button type="button" class="checkout-qty-btn js-checkout-qty-minus" aria-label="Decrease">−</button>
                                                 <input type="number"
@@ -620,7 +622,7 @@
     const totalEl          = document.querySelector('.js-checkout-total');
 
     function formatMoney(amount) {
-        let formatted = amount.toFixed(2).replace(/\.00$/, '');
+        let formatted = String(Math.round(Number(amount) || 0));
         return currencySymbol + formatted;
     }
 

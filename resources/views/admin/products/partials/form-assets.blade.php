@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var metaTouched = metaTitle && metaTitle.value.trim() !== '';
 
     function money(value) {
-        return @json(currency_symbol()) + (Number(value) || 0).toFixed(2);
+        return @json(currency_symbol()) + Math.round(Number(value) || 0);
     }
 
     function updatePriceSummary() {
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function () {
             finalPrice = price - (price * percent) / 100;
         }
         if (discountPriceHidden) {
-            discountPriceHidden.value = (percent > 0 && price > 0) ? finalPrice.toFixed(2) : '';
+            discountPriceHidden.value = (percent > 0 && price > 0) ? String(Math.round(finalPrice)) : '';
         }
         if (customerPays) {
             customerPays.textContent = money(finalPrice);
@@ -299,6 +299,107 @@ document.addEventListener('DOMContentLoaded', function () {
                 event.preventDefault();
             }
         });
+    }
+
+    var hasVariants = document.getElementById('has_variants');
+    var variantsFields = document.getElementById('variantsFields');
+    var option1Name = document.getElementById('option1_name');
+    var option2Name = document.getElementById('option2_name');
+    var option1Values = document.getElementById('option1_values');
+    var option2Values = document.getElementById('option2_values');
+    var variantGrid = document.getElementById('variantGrid');
+    var variantCol1 = document.getElementById('variantCol1');
+    var variantCol2 = document.getElementById('variantCol2');
+    var stockInput = document.getElementById('stock');
+    var variantStockHint = document.getElementById('variantStockHint');
+    var existingRows = [];
+    try {
+        var stockDataEl = document.getElementById('variantStockData');
+        existingRows = stockDataEl ? JSON.parse(stockDataEl.textContent || '[]') : [];
+    } catch (e) {
+        existingRows = [];
+    }
+
+    function parseOptionList(raw) {
+        var seen = {};
+        return String(raw || '').split(',').map(function (part) {
+            return part.trim();
+        }).filter(function (value) {
+            if (!value) return false;
+            var key = value.toLowerCase();
+            if (seen[key]) return false;
+            seen[key] = true;
+            return true;
+        }).slice(0, 12);
+    }
+
+    function stockLookup() {
+        var map = {};
+        (existingRows || []).forEach(function (row) {
+            var key = String(row.option1 || '').toLowerCase() + '|' + String(row.option2 || '').toLowerCase();
+            map[key] = Number(row.stock || 0);
+        });
+        if (variantGrid) {
+            variantGrid.querySelectorAll('tr').forEach(function (tr) {
+                var o1 = tr.getAttribute('data-option1') || '';
+                var o2 = tr.getAttribute('data-option2') || '';
+                var input = tr.querySelector('input[data-variant-stock]');
+                map[o1.toLowerCase() + '|' + o2.toLowerCase()] = Number(input && input.value ? input.value : 0);
+            });
+        }
+        return map;
+    }
+
+    function renderVariantGrid() {
+        if (!variantGrid) return;
+        var first = parseOptionList(option1Values && option1Values.value);
+        var second = parseOptionList(option2Values && option2Values.value);
+        var stocks = stockLookup();
+        if (variantCol1) variantCol1.textContent = (option1Name && option1Name.value.trim()) || 'Size';
+        if (variantCol2) {
+            variantCol2.textContent = (option2Name && option2Name.value.trim()) || 'Color';
+            variantCol2.style.display = second.length ? '' : 'none';
+        }
+        if (!first.length) first = ['Default'];
+        var seconds = second.length ? second : [''];
+        var html = '';
+        var index = 0;
+        first.forEach(function (one) {
+            seconds.forEach(function (two) {
+                if (index >= 48) return;
+                var key = one.toLowerCase() + '|' + two.toLowerCase();
+                var stock = stocks[key] != null ? stocks[key] : 0;
+                html += '<tr data-option1="' + one.replace(/"/g, '&quot;') + '" data-option2="' + two.replace(/"/g, '&quot;') + '">';
+                html += '<td>' + one.replace(/</g, '&lt;') + '</td>';
+                html += '<td class="variant-col-2"' + (second.length ? '' : ' style="display:none"') + '>' + (two ? two.replace(/</g, '&lt;') : '—') + '</td>';
+                html += '<td><input type="hidden" name="variants[' + index + '][option1]" value="' + one.replace(/"/g, '&quot;') + '">';
+                html += '<input type="hidden" name="variants[' + index + '][option2]" value="' + two.replace(/"/g, '&quot;') + '">';
+                html += '<input type="number" min="0" class="form-control form-control-sm" name="variants[' + index + '][stock]" value="' + stock + '" data-variant-stock></td></tr>';
+                index += 1;
+            });
+        });
+        variantGrid.innerHTML = html;
+    }
+
+    function toggleVariants() {
+        var enabled = !!(hasVariants && hasVariants.checked);
+        if (variantsFields) variantsFields.classList.toggle('d-none', !enabled);
+        if (stockInput) {
+            stockInput.required = !enabled;
+            stockInput.closest('#simpleStockField')?.classList.toggle('opacity-50', enabled);
+        }
+        if (variantStockHint) variantStockHint.classList.toggle('d-none', !enabled);
+        if (enabled) renderVariantGrid();
+    }
+
+    if (hasVariants) {
+        hasVariants.addEventListener('change', toggleVariants);
+        ['input', 'change'].forEach(function (eventName) {
+            [option1Name, option2Name, option1Values, option2Values].forEach(function (el) {
+                if (el) el.addEventListener(eventName, renderVariantGrid);
+            });
+        });
+        toggleVariants();
     }
 });
 </script>

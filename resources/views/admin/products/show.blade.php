@@ -108,6 +108,9 @@
                                     <span class="badge bg-{{ $product->stock > 0 ? 'success' : 'danger' }}">
                                         {{ $product->stock }} Units
                                     </span>
+                                    @if($product->has_variants)
+                                        <div class="small text-muted mt-1">Across {{ $product->variants->count() }} options</div>
+                                    @endif
                                 </p>
                             </div>
                             <div class="col-md-4">
@@ -123,6 +126,38 @@
                                 </p>
                             </div>
                         </div>
+
+                        @if($product->has_variants && $product->variants->count())
+                        <div class="mb-3">
+                            <p class="mb-2"><strong>Size &amp; color stock</strong></p>
+                            <div class="table-responsive">
+                                <table class="table table-sm mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ $product->option1_name ?: 'Size' }}</th>
+                                            @if($product->option2_name)
+                                                <th>{{ $product->option2_name }}</th>
+                                            @endif
+                                            <th>SKU</th>
+                                            <th>Stock</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($product->variants as $variant)
+                                            <tr>
+                                                <td>{{ $variant->option1 }}</td>
+                                                @if($product->option2_name)
+                                                    <td>{{ $variant->option2 ?: '—' }}</td>
+                                                @endif
+                                                <td><code class="small">{{ $variant->sku }}</code></td>
+                                                <td>{{ $variant->stock }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        @endif
 
                         @if($product->hasDescription())
                         <div class="mb-3">
