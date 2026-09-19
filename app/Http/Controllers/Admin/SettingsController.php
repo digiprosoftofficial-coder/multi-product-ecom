@@ -74,6 +74,7 @@ class SettingsController extends Controller
             'google_analytics_id' => Setting::get('google_analytics_id', ''),
             'google_tag_manager_id' => Setting::get('google_tag_manager_id', ''),
             'facebook_pixel_id' => Setting::get('facebook_pixel_id', ''),
+            'facebook_domain_verification' => Setting::get('facebook_domain_verification', ''),
             'shipping_inside_dhaka' => Setting::get('shipping_inside_dhaka', '60'),
             'shipping_outside_dhaka' => Setting::get('shipping_outside_dhaka', '120'),
         ];
@@ -145,6 +146,7 @@ class SettingsController extends Controller
             'google_analytics_id' => ['nullable', 'string', 'max:30', 'regex:/^G-[A-Z0-9]+$/'],
             'google_tag_manager_id' => ['nullable', 'string', 'max:30', 'regex:/^GTM-[A-Z0-9]+$/'],
             'facebook_pixel_id' => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
+            'facebook_domain_verification' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9]+$/'],
             'shipping_inside_dhaka' => 'nullable|numeric|min:0|max:99999',
             'shipping_outside_dhaka' => 'nullable|numeric|min:0|max:99999',
         ]);
@@ -212,6 +214,7 @@ class SettingsController extends Controller
         Setting::set('google_analytics_id', strtoupper(trim((string) ($validated['google_analytics_id'] ?? ''))));
         Setting::set('google_tag_manager_id', strtoupper(trim((string) ($validated['google_tag_manager_id'] ?? ''))));
         Setting::set('facebook_pixel_id', preg_replace('/\D+/', '', (string) ($validated['facebook_pixel_id'] ?? '')) ?: '');
+        Setting::set('facebook_domain_verification', strtolower(preg_replace('/[^A-Za-z0-9]+/', '', (string) ($validated['facebook_domain_verification'] ?? ''))) ?: '');
         Setting::set('shipping_inside_dhaka', (string) max(0, (float) ($validated['shipping_inside_dhaka'] ?? 0)));
         Setting::set('shipping_outside_dhaka', (string) max(0, (float) ($validated['shipping_outside_dhaka'] ?? 0)));
 

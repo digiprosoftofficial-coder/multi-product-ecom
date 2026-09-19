@@ -326,6 +326,16 @@
                     <div class="form-text">Numbers only.</div>
                     @error('facebook_pixel_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                <div class="col-md-6">
+                    <label for="facebook_domain_verification" class="form-label">Facebook domain verification</label>
+                    <input type="text" class="form-control @error('facebook_domain_verification') is-invalid @enderror"
+                           id="facebook_domain_verification" name="facebook_domain_verification"
+                           value="{{ old('facebook_domain_verification', $settings['facebook_domain_verification']) }}"
+                           placeholder="abc123def456..."
+                           autocomplete="off">
+                    <div class="form-text">From Meta: <code>&lt;meta name="facebook-domain-verification" content="..."&gt;</code> — paste only the <code>content</code> value.</div>
+                    @error('facebook_domain_verification')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
             </div>
         </div>
     </div>

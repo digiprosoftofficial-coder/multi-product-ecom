@@ -13,24 +13,28 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
+        $theme = setting('active_frontend_theme', 'organic-v1');
         $query = Product::where('status', 1)->with('category', 'images');
+        $boundCategory = null;
 
         if ($request->filled('category')) {
-            $category = Category::find($request->category);
-            if ($category) {
-                $query->whereIn('category_id', $category->subtreeIds());
+            $boundCategory = Category::find($request->category);
+            if ($boundCategory) {
+                $query->whereIn('category_id', $boundCategory->subtreeIds());
             }
         }
 
+        $priceBounds = $theme === 'organic-v1' ? $this->priceBounds($boundCategory) : null;
+
         $this->applySearch($query, $request);
+        $this->applyPriceRange($query, $request, $theme);
         $this->applySort($query, $request);
 
         $products = $query->paginate(12)->withQueryString();
         $categories = Storefront::shopCategories();
-        $theme = setting('active_frontend_theme', 'organic-v1');
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.shop") ? "frontend.{$theme}.shop" : 'frontend.products.index';
 
-        return view($view, compact('products', 'categories'));
+        return view($view, compact('products', 'categories', 'priceBounds'));
     }
 
     public function show(Product $product)
@@ -89,18 +93,21 @@ class ProductController extends Controller
             abort(404);
         }
 
+        $theme = setting('active_frontend_theme', 'organic-v1');
         $query = Product::whereIn('category_id', $category->subtreeIds())
             ->where('status', 1)
             ->with(['images', 'category']);
 
+        $priceBounds = $theme === 'organic-v1' ? $this->priceBounds($category) : null;
+
         $this->applySearch($query, $request);
+        $this->applyPriceRange($query, $request, $theme);
         $this->applySort($query, $request);
 
         $products = $query->paginate(12)->withQueryString();
         $children = $category->children()->where('status', 1)->orderBy('name')->get();
         $categories = Storefront::shopCategories();
 
-        $theme = setting('active_frontend_theme', 'organic-v1');
         if (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category")) {
             $view = "frontend.{$theme}.products.category";
         } elseif (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.shop")) {
@@ -109,7 +116,7 @@ class ProductController extends Controller
             $view = 'frontend.products.category';
         }
 
-        return view($view, compact('category', 'products', 'children', 'categories'));
+        return view($view, compact('category', 'products', 'children', 'categories', 'priceBounds'));
     }
 
     protected function applySearch(Builder $query, Request $request): void
@@ -133,5 +140,65 @@ class ProductController extends Controller
             'name' => $query->orderBy('name'),
             default => $query->latest(),
         };
+    }
+
+    protected function applyPriceRange(Builder $query, Request $request, string $theme): void
+    {
+        if ($theme !== 'organic-v1') {
+            return;
+        }
+
+        $min = $this->priceFilterValue($request, 'min_price');
+        $max = $this->priceFilterValue($request, 'max_price');
+
+        if ($min !== null && $max !== null && $min > $max) {
+            [$min, $max] = [$max, $min];
+        }
+
+        $priceSql = 'COALESCE(discount_price, price)';
+
+        if ($min !== null) {
+            $query->whereRaw($priceSql.' >= ?', [$min]);
+        }
+
+        if ($max !== null) {
+            $query->whereRaw($priceSql.' <= ?', [$max]);
+        }
+    }
+
+    protected function priceFilterValue(Request $request, string $key): ?int
+    {
+        if (! $request->has($key) || $request->input($key) === '' || $request->input($key) === null) {
+            return null;
+        }
+
+        return max(0, (int) $request->input($key));
+    }
+
+    /**
+     * Catalog min/max selling price, before the current price filter is applied.
+     *
+     * @return array{min: int, max: int}
+     */
+    protected function priceBounds(?Category $category = null): array
+    {
+        $query = Product::query()->where('status', 1);
+
+        if ($category) {
+            $query->whereIn('category_id', $category->subtreeIds());
+        }
+
+        $row = $query
+            ->selectRaw('MIN(COALESCE(discount_price, price)) as min_price, MAX(COALESCE(discount_price, price)) as max_price')
+            ->first();
+
+        $min = (int) floor((float) ($row->min_price ?? 0));
+        $max = (int) ceil((float) ($row->max_price ?? 0));
+
+        if ($max < $min) {
+            $max = $min;
+        }
+
+        return ['min' => $min, 'max' => $max];
     }
 }

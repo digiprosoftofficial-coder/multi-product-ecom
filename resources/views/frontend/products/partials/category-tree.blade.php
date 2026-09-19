@@ -4,7 +4,9 @@
         'category' => $category,
         'search' => $search ?? null,
         'sort' => (($sort ?? 'latest') !== 'latest') ? $sort : null,
-    ]);
+        'min_price' => $min_price ?? null,
+        'max_price' => $max_price ?? null,
+    ], fn ($value) => $value !== null && $value !== '');
     $children = $category->children ?? collect();
     $hasChildren = $children->isNotEmpty();
     $isOpen = false;
@@ -47,6 +49,8 @@
                     'currentCategory' => $currentCategory,
                     'search' => $search,
                     'sort' => $sort,
+                    'min_price' => $min_price ?? null,
+                    'max_price' => $max_price ?? null,
                 ])
             @endforeach
         </ul>

@@ -6,9 +6,27 @@
         : route('products.index');
     $sort = request('sort', 'latest');
     $search = request('search');
+    $minPrice = request()->has('min_price') && request('min_price') !== '' ? request('min_price') : null;
+    $maxPrice = request()->has('max_price') && request('max_price') !== '' ? request('max_price') : null;
     $from = $products->total() ? $products->firstItem() : 0;
     $to = $products->total() ? $products->lastItem() : 0;
     $sortQuery = $sort !== 'latest' ? $sort : null;
+    $priceBounds = $priceBounds ?? null;
+    $searchClearQuery = array_filter([
+        'sort' => $sortQuery,
+        'min_price' => $minPrice,
+        'max_price' => $maxPrice,
+    ], fn ($value) => $value !== null && $value !== '');
+    $priceClearQuery = array_filter([
+        'search' => $search,
+        'sort' => $sortQuery,
+    ], fn ($value) => $value !== null && $value !== '');
+    $shopQuery = array_filter([
+        'search' => $search,
+        'sort' => $sortQuery,
+        'min_price' => $minPrice,
+        'max_price' => $maxPrice,
+    ], fn ($value) => $value !== null && $value !== '');
 @endphp
 
 @include('frontend.components.page-banner', [
@@ -16,7 +34,7 @@
     'fallbackTitle' => $title ?? 'Shop',
 ])
 
-<section class="shop-page py-5">
+<section class="shop-page py-2">
     <div class="container-lg">
         @include('frontend.components.breadcrumb', ['items' => $breadcrumb])
 
@@ -30,7 +48,7 @@
         @if($children->isNotEmpty())
             <div class="shop-subcats d-flex flex-wrap gap-2 mb-4">
                 @foreach($children as $child)
-                    <a href="{{ route('products.category', $child) }}" class="shop-subcat">{{ $child->name }}</a>
+                    <a href="{{ route('products.category', $child) }}{{ $shopQuery ? '?'.http_build_query($shopQuery) : '' }}" class="shop-subcat">{{ $child->name }}</a>
                 @endforeach
             </div>
         @endif
@@ -42,6 +60,7 @@
                         'categories' => $categories,
                         'currentCategory' => $currentCategory,
                         'products' => $products,
+                        'priceBounds' => $priceBounds,
                     ])
                 </div>
             </div>
@@ -50,6 +69,12 @@
                 <form method="GET" action="{{ $shopAction }}" class="shop-search search-bar row bg-light p-2 rounded-4 mb-3 mx-0">
                     @if($sortQuery)
                         <input type="hidden" name="sort" value="{{ $sort }}">
+                    @endif
+                    @if($minPrice !== null)
+                        <input type="hidden" name="min_price" value="{{ $minPrice }}">
+                    @endif
+                    @if($maxPrice !== null)
+                        <input type="hidden" name="max_price" value="{{ $maxPrice }}">
                     @endif
                     <div class="col-11">
                         <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products..." value="{{ $search }}">
@@ -71,8 +96,14 @@
                             @endif
                         </span>
                         @if($search)
-                            <a href="{{ $shopAction }}{{ $sortQuery ? '?sort='.$sort : '' }}" class="shop-chip">
+                            <a href="{{ $shopAction }}{{ $searchClearQuery ? '?'.http_build_query($searchClearQuery) : '' }}" class="shop-chip">
                                 “{{ $search }}”
+                                <span aria-hidden="true">&times;</span>
+                            </a>
+                        @endif
+                        @if($minPrice !== null || $maxPrice !== null)
+                            <a href="{{ $shopAction }}{{ $priceClearQuery ? '?'.http_build_query($priceClearQuery) : '' }}" class="shop-chip">
+                                ৳{{ $minPrice ?? '0' }} – ৳{{ $maxPrice ?? '∞' }}
                                 <span aria-hidden="true">&times;</span>
                             </a>
                         @endif
@@ -80,6 +111,12 @@
                     <form method="GET" action="{{ $shopAction }}" class="d-flex align-items-center gap-2">
                         @if($search)
                             <input type="hidden" name="search" value="{{ $search }}">
+                        @endif
+                        @if($minPrice !== null)
+                            <input type="hidden" name="min_price" value="{{ $minPrice }}">
+                        @endif
+                        @if($maxPrice !== null)
+                            <input type="hidden" name="max_price" value="{{ $maxPrice }}">
                         @endif
                         <label for="shop-sort" class="small text-muted mb-0">Sort</label>
                         <select id="shop-sort" name="sort" class="form-select form-select-sm shop-sort" onchange="this.form.submit()">
@@ -127,6 +164,7 @@
             'categories' => $categories,
             'currentCategory' => $currentCategory,
             'products' => $products,
+            'priceBounds' => $priceBounds,
         ])
     </div>
 </div>
@@ -147,5 +185,73 @@ document.querySelectorAll('.shop-sidebar').forEach(function (sidebar) {
     btn.setAttribute('aria-label', open ? btn.getAttribute('aria-label').replace('Collapse', 'Expand') : btn.getAttribute('aria-label').replace('Expand', 'Collapse'));
     kids.classList.toggle('is-open', !open);
   });
+});
+
+document.querySelectorAll('.shop-price-filter').forEach(function (form) {
+  var boundMin = Number(form.dataset.min);
+  var boundMax = Number(form.dataset.max);
+  var minRange = form.querySelector('.shop-price-range-min');
+  var maxRange = form.querySelector('.shop-price-range-max');
+  var minInput = form.querySelector('input[name="min_price"]');
+  var maxInput = form.querySelector('input[name="max_price"]');
+  var fill = form.querySelector('.shop-price-range-fill');
+  var valueLabel = form.querySelector('.shop-price-value');
+  if (!minRange || !maxRange || !minInput || !maxInput) return;
+
+  function clamp(value) {
+    return Math.min(boundMax, Math.max(boundMin, Number(value) || boundMin));
+  }
+
+  function formatPrice(value) {
+    return '৳' + Number(value).toLocaleString('en-US');
+  }
+
+  function updateFill(min, max) {
+    if (!fill || boundMax === boundMin) {
+      if (fill) {
+        fill.style.left = '0%';
+        fill.style.right = '0%';
+      }
+      return;
+    }
+    var span = boundMax - boundMin;
+    fill.style.left = ((min - boundMin) / span * 100) + '%';
+    fill.style.right = ((boundMax - max) / span * 100) + '%';
+  }
+
+  function setValues(min, max, source) {
+    min = clamp(min);
+    max = clamp(max);
+    if (min > max) {
+      if (source === 'min') {
+        min = max;
+      } else {
+        max = min;
+      }
+    }
+    minRange.value = min;
+    maxRange.value = max;
+    minInput.value = min;
+    maxInput.value = max;
+    if (valueLabel) {
+      valueLabel.textContent = formatPrice(min) + ' – ' + formatPrice(max);
+    }
+    updateFill(min, max);
+  }
+
+  minRange.addEventListener('input', function () {
+    setValues(minRange.value, maxRange.value, 'min');
+  });
+  maxRange.addEventListener('input', function () {
+    setValues(minRange.value, maxRange.value, 'max');
+  });
+  minInput.addEventListener('change', function () {
+    setValues(minInput.value, maxInput.value, 'min');
+  });
+  maxInput.addEventListener('change', function () {
+    setValues(minInput.value, maxInput.value, 'max');
+  });
+
+  setValues(minInput.value, maxInput.value);
 });
 </script>

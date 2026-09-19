@@ -27,6 +27,10 @@
     @stack('head')
     @include('frontend.partials.theme-colors')
     @include('frontend.partials.form-styles')
+    @php $facebookDomainVerification = \App\Support\Tracking::facebookDomainVerification(); @endphp
+    @if($facebookDomainVerification)
+        <meta name="facebook-domain-verification" content="{{ $facebookDomainVerification }}">
+    @endif
     @include('frontend.partials.tracking-scripts')
     <style>
         html { height: auto; }

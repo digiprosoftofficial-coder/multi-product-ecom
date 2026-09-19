@@ -24,5 +24,6 @@
     'products' => $products,
     'categories' => $categories,
     'currentCategory' => null,
+    'priceBounds' => $priceBounds ?? null,
 ])
 @endsection
