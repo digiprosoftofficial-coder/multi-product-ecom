@@ -79,7 +79,7 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'customer_name' => 'required|string|max:255',
-            'customer_email' => 'required|email|max:255',
+            'customer_email' => 'nullable|email|max:255',
             'customer_phone' => ['required', 'string', 'max:20', new BangladeshPhone],
             'shipping_address' => 'required|string',
             'delivery_zone' => 'required|in:inside_dhaka,outside_dhaka',
@@ -157,7 +157,7 @@ class CheckoutController extends Controller
             $order = Order::create([
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
-                'customer_email' => $validated['customer_email'],
+                'customer_email' => $validated['customer_email'] ?? null,
                 'customer_phone' => BangladeshPhone::normalize($validated['customer_phone']) ?? $validated['customer_phone'],
                 'shipping_address' => $validated['shipping_address'],
                 'delivery_zone'   => $validated['delivery_zone'],
@@ -204,13 +204,15 @@ class CheckoutController extends Controller
 
             session(['cart' => [], 'placed_order_id' => $order->id]);
 
-            try {
-                Mail::to($order->customer_email)->send(new OrderConfirmation($order));
-            } catch (\Throwable $e) {
-                Log::warning('Order confirmation email failed', [
-                    'order_id' => $order->id,
-                    'error' => $e->getMessage(),
-                ]);
+            if ($order->customer_email) {
+                try {
+                    Mail::to($order->customer_email)->send(new OrderConfirmation($order));
+                } catch (\Throwable $e) {
+                    Log::warning('Order confirmation email failed', [
+                        'order_id' => $order->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             return redirect()->route('checkout.thank-you', $order)
