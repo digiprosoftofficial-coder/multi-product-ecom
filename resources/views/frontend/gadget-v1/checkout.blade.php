@@ -30,8 +30,8 @@
                 @error('customer_name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
               <div class="mb-3">
-                <label for="customer_email" class="form-label">Email <span class="text-danger">*</span></label>
-                <input type="email" class="form-control bg-dark border-secondary text-white" id="customer_email" name="customer_email" value="{{ old('customer_email', Auth::check() ? Auth::user()->email : '') }}" required>
+                <label for="customer_email" class="form-label">Email <small class="text-muted">(optional)</small></label>
+                <input type="email" class="form-control bg-dark border-secondary text-white" id="customer_email" name="customer_email" value="{{ old('customer_email', Auth::check() ? Auth::user()->email : '') }}">
                 @error('customer_email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
               <div class="mb-3">

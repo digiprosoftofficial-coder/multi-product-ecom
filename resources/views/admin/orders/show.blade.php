@@ -187,13 +187,15 @@
                             <span class="order-customer-value">{{ $order->customer_name }}</span>
                         </div>
                     </li>
-                    <li class="order-customer-item">
-                        <span class="order-customer-icon order-customer-icon--email"><i class="fas fa-envelope"></i></span>
-                        <div class="order-customer-body">
-                            <span class="order-customer-label">Email</span>
-                            <a href="mailto:{{ $order->customer_email }}" class="order-customer-value order-customer-link">{{ $order->customer_email }}</a>
-                        </div>
-                    </li>
+                    @if($order->customer_email)
+                        <li class="order-customer-item">
+                            <span class="order-customer-icon order-customer-icon--email"><i class="fas fa-envelope"></i></span>
+                            <div class="order-customer-body">
+                                <span class="order-customer-label">Email</span>
+                                <a href="mailto:{{ $order->customer_email }}" class="order-customer-value order-customer-link">{{ $order->customer_email }}</a>
+                            </div>
+                        </li>
+                    @endif
                     @if($order->customer_phone)
                         <li class="order-customer-item">
                             <span class="order-customer-icon order-customer-icon--phone"><i class="fas fa-phone"></i></span>

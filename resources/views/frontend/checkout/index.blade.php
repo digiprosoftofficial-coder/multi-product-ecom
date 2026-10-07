@@ -60,10 +60,10 @@
                                 @error('customer_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-12">
-                                <label for="customer_email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <label for="customer_email" class="form-label">Email <small class="text-muted">(optional)</small></label>
                                 <input type="email" class="form-control @error('customer_email') is-invalid @enderror"
                                        id="customer_email" name="customer_email"
-                                       value="{{ old('customer_email', Auth::check() ? Auth::user()->email : '') }}" required>
+                                       value="{{ old('customer_email', Auth::check() ? Auth::user()->email : '') }}">
                                 @error('customer_email')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                         </div>
