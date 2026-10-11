@@ -21,6 +21,7 @@
                 <a class="nav-link {{ request()->routeIs('admin.customers.*') ? 'is-active' : '' }}" href="{{ route('admin.customers.index') }}">
                     <i class="fas fa-users"></i> Customers
                 </a>
+                @if(Auth::user()->canAccessMessages())
                 <a class="nav-link d-flex justify-content-between align-items-center {{ request()->routeIs('admin.contact-messages.*') ? 'is-active' : '' }}" href="{{ route('admin.contact-messages.index') }}">
                     <span><i class="fas fa-inbox"></i> Messages</span>
                     @php $unreadContactMessages = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
@@ -28,6 +29,7 @@
                         <span class="badge rounded-pill bg-success">{{ $unreadContactMessages }}</span>
                     @endif
                 </a>
+                @endif
                 <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'is-active' : '' }}" href="{{ route('admin.reports.index') }}">
                     <i class="fas fa-chart-bar"></i> Reports
                 </a>

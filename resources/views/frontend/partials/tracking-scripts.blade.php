@@ -1,7 +1,8 @@
 @php
-    $gaId = \App\Support\Tracking::googleAnalyticsId();
     $gtmId = \App\Support\Tracking::googleTagManagerId();
-    $pixelId = \App\Support\Tracking::facebookPixelId();
+    // GTM owns GA4/Pixel when set; loading them directly too counts every event twice or more.
+    $gaId = $gtmId ? null : \App\Support\Tracking::googleAnalyticsId();
+    $pixelId = $gtmId ? null : \App\Support\Tracking::facebookPixelId();
     $trackingCurrency = \App\Support\Tracking::currency();
     $trackingEnabled = $gaId || $gtmId || $pixelId;
 @endphp
@@ -53,6 +54,9 @@
 window.StorefrontTracking = (function () {
     var defaultCurrency = @json($trackingCurrency);
     var useDataLayer = @json((bool) $gtmId);
+    // GTM's Pixel tag defines window.fbq too, so checking typeof alone is not enough.
+    var useGtag = !useDataLayer && typeof gtag === 'function';
+    var useFbq = !useDataLayer && typeof fbq === 'function';
 
     function gaItems(items) {
         return (items || []).map(function (item) {
@@ -115,14 +119,14 @@ window.StorefrontTracking = (function () {
                 items: mapped
             });
 
-            if (typeof gtag === 'function') {
+            if (useGtag) {
                 gtag('event', 'add_to_cart', {
                     currency: currency,
                     value: value,
                     items: mapped
                 });
             }
-            if (typeof fbq === 'function') {
+            if (useFbq) {
                 fbq('track', 'AddToCart', {
                     content_ids: pixelIds(items),
                     content_name: item.name,
@@ -146,14 +150,14 @@ window.StorefrontTracking = (function () {
                 items: mapped
             });
 
-            if (typeof gtag === 'function') {
+            if (useGtag) {
                 gtag('event', 'view_item', {
                     currency: currency,
                     value: value,
                     items: mapped
                 });
             }
-            if (typeof fbq === 'function') {
+            if (useFbq) {
                 fbq('track', 'ViewContent', {
                     content_ids: pixelIds(items),
                     content_name: item.name,
@@ -177,14 +181,14 @@ window.StorefrontTracking = (function () {
                 items: mapped
             });
 
-            if (typeof gtag === 'function') {
+            if (useGtag) {
                 gtag('event', 'begin_checkout', {
                     currency: currency,
                     value: value,
                     items: mapped
                 });
             }
-            if (typeof fbq === 'function') {
+            if (useFbq) {
                 fbq('track', 'InitiateCheckout', {
                     content_ids: pixelIds(items),
                     content_type: 'product',
@@ -214,7 +218,7 @@ window.StorefrontTracking = (function () {
                 items: mapped
             });
 
-            if (typeof gtag === 'function') {
+            if (useGtag) {
                 gtag('event', 'purchase', {
                     transaction_id: payload.transaction_id,
                     currency: currency,
@@ -223,7 +227,7 @@ window.StorefrontTracking = (function () {
                     items: mapped
                 });
             }
-            if (typeof fbq === 'function') {
+            if (useFbq) {
                 fbq('track', 'Purchase', {
                     content_ids: pixelIds(items),
                     content_type: 'product',

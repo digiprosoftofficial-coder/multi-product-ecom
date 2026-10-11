@@ -26,11 +26,13 @@ Route::middleware(['auth', 'role:super_admin|store_owner|admin'])->prefix('admin
 
     Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('customers.index');
 
-    Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('contact-messages.index');
-    Route::get('contact-messages/{contactMessage}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('contact-messages.show');
-    Route::delete('contact-messages/{contactMessage}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
-    Route::patch('contact-messages/{contactMessage}/read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markRead'])->name('contact-messages.read');
-    Route::patch('contact-messages/{contactMessage}/unread', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markUnread'])->name('contact-messages.unread');
+    Route::middleware('owner.access:messages')->group(function () {
+        Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('contact-messages.index');
+        Route::get('contact-messages/{contactMessage}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'show'])->name('contact-messages.show');
+        Route::delete('contact-messages/{contactMessage}', [\App\Http\Controllers\Admin\ContactMessageController::class, 'destroy'])->name('contact-messages.destroy');
+        Route::patch('contact-messages/{contactMessage}/read', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markRead'])->name('contact-messages.read');
+        Route::patch('contact-messages/{contactMessage}/unread', [\App\Http\Controllers\Admin\ContactMessageController::class, 'markUnread'])->name('contact-messages.unread');
+    });
 
     Route::middleware('owner.access:site_setting')->group(function () {
         Route::get('homepage', [\App\Http\Controllers\Admin\HomepageController::class, 'index'])->name('homepage.index');

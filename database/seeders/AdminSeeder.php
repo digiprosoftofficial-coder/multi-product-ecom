@@ -46,19 +46,6 @@ class AdminSeeder extends Seeder
         $storeOwner = Role::firstOrCreate(['name' => 'store_owner']);
         $storeOwner->syncPermissions($shopPermissions);
 
-        $admin = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
-            [
-                'name' => 'Admin User',
-                'password' => Hash::make('password'),
-                'email_verified_at' => now(),
-            ]
-        );
-
-        if (! $admin->hasAnyRole(['super_admin', 'admin'])) {
-            $admin->assignRole('super_admin');
-        }
-
         $superAdminUser = User::firstOrCreate(
             ['email' => 'superadmin@test.com'],
             [
@@ -67,10 +54,17 @@ class AdminSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $superAdminUser->syncRoles(['super_admin']);
 
-        if (! $superAdminUser->hasRole('super_admin')) {
-            $superAdminUser->assignRole('super_admin');
-        }
+        $ownerUser = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'Store Owner',
+                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
+            ]
+        );
+        $ownerUser->syncRoles(['store_owner']);
 
         User::role('admin')->each(function (User $user) {
             if (! $user->hasRole('super_admin')) {
@@ -79,7 +73,7 @@ class AdminSeeder extends Seeder
         });
 
         $this->command?->info('Roles ready: super_admin, store_owner, admin (legacy).');
-        $this->command?->info('Email: admin@example.com');
-        $this->command?->info('Email: superadmin@test.com');
+        $this->command?->info('Super Admin: superadmin@test.com / password');
+        $this->command?->info('Store Owner: admin@example.com / password');
     }
 }

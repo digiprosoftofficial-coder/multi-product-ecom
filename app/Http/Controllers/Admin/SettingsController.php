@@ -23,8 +23,12 @@ class SettingsController extends Controller
         $canEditContact = auth()->user()->canAccessContact();
         $canEditSeo = auth()->user()->canAccessSeo();
         $canEditPayment = auth()->user()->canAccessPayment();
+        $canEditStoreCatalog = auth()->user()->canAccessStoreCatalog();
+        $canEditDelivery = auth()->user()->canAccessDelivery();
+        $canEditColors = auth()->user()->canAccessColors();
+        $canEditSocial = auth()->user()->canAccessSocial();
 
-        $profileCardCount = (int) $canEditIdentity + (int) $canEditContact + (int) $canEditAllSettings;
+        $profileCardCount = (int) $canEditIdentity + (int) $canEditContact + (int) $canEditStoreCatalog;
         $profileColClass = match ($profileCardCount) {
             1 => 'col-12',
             2 => 'col-12 col-lg-6',
@@ -86,6 +90,10 @@ class SettingsController extends Controller
             'canEditContact',
             'canEditSeo',
             'canEditPayment',
+            'canEditStoreCatalog',
+            'canEditDelivery',
+            'canEditColors',
+            'canEditSocial',
             'profileColClass'
         ));
     }
@@ -278,13 +286,87 @@ class SettingsController extends Controller
                 'google_analytics_id' => ['nullable', 'string', 'max:30', 'regex:/^G-[A-Z0-9]+$/'],
                 'google_tag_manager_id' => ['nullable', 'string', 'max:30', 'regex:/^GTM-[A-Z0-9]+$/'],
                 'facebook_pixel_id' => ['nullable', 'string', 'max:30', 'regex:/^[0-9]+$/'],
+                'facebook_domain_verification' => ['nullable', 'string', 'max:64', 'regex:/^[A-Za-z0-9]+$/'],
             ]);
 
             Setting::set('seo_meta_description', $validated['seo_meta_description'] ?? '');
             Setting::set('google_analytics_id', strtoupper(trim((string) ($validated['google_analytics_id'] ?? ''))));
             Setting::set('google_tag_manager_id', strtoupper(trim((string) ($validated['google_tag_manager_id'] ?? ''))));
             Setting::set('facebook_pixel_id', preg_replace('/\D+/', '', (string) ($validated['facebook_pixel_id'] ?? '')) ?: '');
+            Setting::set('facebook_domain_verification', strtolower(preg_replace('/[^A-Za-z0-9]+/', '', (string) ($validated['facebook_domain_verification'] ?? ''))) ?: '');
             $this->storeBrandImage($request, 'seo_og_image', 'seo-og', 1200, 630);
+        }
+
+        if ($user->canAccessStoreCatalog()) {
+            $catalog = $request->validate([
+                'currency_symbol' => 'required|string|max:8',
+                'currency_code' => 'nullable|string|max:8',
+                'tax_rate' => 'nullable|numeric|min:0|max:100',
+                'vat_rate' => 'nullable|numeric|min:0|max:100',
+                'category_max_depth' => 'required|integer|in:0,2,3,4,5,6',
+                'enable_compare_price' => 'nullable|in:0,1',
+            ]);
+
+            $newMax = (int) $catalog['category_max_depth'];
+            $currentMax = Category::currentTreeMaxDepth();
+            if ($newMax > 0 && $newMax < $currentMax) {
+                return redirect()->route('admin.settings.index')
+                    ->withInput()
+                    ->withErrors([
+                        'category_max_depth' => "Cannot set max depth to {$newMax}. The current category tree already goes {$currentMax} levels deep.",
+                    ]);
+            }
+
+            Setting::set('currency_symbol', $catalog['currency_symbol']);
+            Setting::set('currency_code', strtoupper($catalog['currency_code'] ?? 'USD'));
+            Setting::set('tax_rate', $catalog['tax_rate'] ?? '0');
+            Setting::set('vat_rate', $catalog['vat_rate'] ?? '0');
+            Setting::set('enable_compare_price', $request->boolean('enable_compare_price') ? '1' : '0');
+            Setting::set('category_max_depth', (string) $newMax);
+        }
+
+        if ($user->canAccessDelivery()) {
+            $delivery = $request->validate([
+                'shipping_inside_dhaka' => 'nullable|numeric|min:0|max:99999',
+                'shipping_outside_dhaka' => 'nullable|numeric|min:0|max:99999',
+            ]);
+
+            Setting::set('shipping_inside_dhaka', (string) max(0, (float) ($delivery['shipping_inside_dhaka'] ?? 0)));
+            Setting::set('shipping_outside_dhaka', (string) max(0, (float) ($delivery['shipping_outside_dhaka'] ?? 0)));
+        }
+
+        if ($user->canAccessColors()) {
+            $colors = $request->validate([
+                'header_bg_color' => 'nullable|string|max:7',
+                'header_text_color' => 'nullable|string|max:7',
+                'footer_bg_color' => 'nullable|string|max:7',
+                'footer_text_color' => 'nullable|string|max:7',
+                'footer_bottom_bg_color' => 'nullable|string|max:7',
+                'footer_bottom_text_color' => 'nullable|string|max:7',
+            ]);
+
+            Setting::set('header_bg_color', \App\Support\Homepage::normalizeColor($colors['header_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
+            Setting::set('header_text_color', \App\Support\Homepage::normalizeColor($colors['header_text_color'] ?? '#ffffff', '#ffffff'));
+            Setting::set('footer_bg_color', \App\Support\Homepage::normalizeColor($colors['footer_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
+            Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($colors['footer_text_color'] ?? '#ffffff', '#ffffff'));
+            Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($colors['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));
+            Setting::set('footer_bottom_text_color', \App\Support\Homepage::normalizeColor($colors['footer_bottom_text_color'] ?? '#ffffff', '#ffffff'));
+        }
+
+        if ($user->canAccessSocial()) {
+            $social = $request->validate([
+                'social_facebook' => 'nullable|url|max:500',
+                'social_instagram' => 'nullable|url|max:500',
+                'social_youtube' => 'nullable|url|max:500',
+                'social_whatsapp' => ['nullable', 'string', 'max:30', new BangladeshPhone],
+                'social_tiktok' => 'nullable|url|max:500',
+            ]);
+
+            Setting::set('social_facebook', $social['social_facebook'] ?? '');
+            Setting::set('social_instagram', $social['social_instagram'] ?? '');
+            Setting::set('social_youtube', $social['social_youtube'] ?? '');
+            Setting::set('social_whatsapp', BangladeshPhone::toWhatsAppDigits($social['social_whatsapp'] ?? null) ?? '');
+            Setting::set('social_tiktok', $social['social_tiktok'] ?? '');
         }
 
         if ($user->canAccessPayment()) {

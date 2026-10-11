@@ -89,11 +89,45 @@ class User extends Authenticatable
             || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::PAYMENT));
     }
 
+    public function canAccessStoreCatalog(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::STORE_CATALOG));
+    }
+
+    public function canAccessDelivery(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::DELIVERY));
+    }
+
+    public function canAccessColors(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::COLORS));
+    }
+
+    public function canAccessSocial(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::SOCIAL));
+    }
+
+    public function canAccessMessages(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::MESSAGES));
+    }
+
     public function canAccessSettingsPage(): bool
     {
         return $this->canAccessIdentity()
             || $this->canAccessContact()
             || $this->canAccessSeo()
-            || $this->canAccessPayment();
+            || $this->canAccessPayment()
+            || $this->canAccessStoreCatalog()
+            || $this->canAccessDelivery()
+            || $this->canAccessColors()
+            || $this->canAccessSocial();
     }
 }

@@ -16,6 +16,16 @@ class OwnerAccess
 
     public const PAYMENT = 'payment';
 
+    public const STORE_CATALOG = 'store_catalog';
+
+    public const DELIVERY = 'delivery';
+
+    public const COLORS = 'colors';
+
+    public const SOCIAL = 'social';
+
+    public const MESSAGES = 'messages';
+
     public static function features(): array
     {
         return [
@@ -43,6 +53,31 @@ class OwnerAccess
                 'key' => 'owner_can_payment',
                 'label' => 'Payment methods',
                 'help' => 'Turn COD / bKash / Nagad / Rocket on or off and edit wallet numbers.',
+            ],
+            self::STORE_CATALOG => [
+                'key' => 'owner_can_store_catalog',
+                'label' => 'Store & catalog',
+                'help' => 'Currency, tax and VAT rates, compare price (MRP), and category depth.',
+            ],
+            self::DELIVERY => [
+                'key' => 'owner_can_delivery',
+                'label' => 'Delivery charges',
+                'help' => 'Inside Dhaka and outside Dhaka shipping charges.',
+            ],
+            self::COLORS => [
+                'key' => 'owner_can_colors',
+                'label' => 'Header & footer colors',
+                'help' => 'Storefront header, footer, and copyright bar colors.',
+            ],
+            self::SOCIAL => [
+                'key' => 'owner_can_social',
+                'label' => 'Social media',
+                'help' => 'Facebook, Instagram, YouTube, TikTok links and WhatsApp number.',
+            ],
+            self::MESSAGES => [
+                'key' => 'owner_can_messages',
+                'label' => 'Contact messages',
+                'help' => 'Read, mark, and delete messages sent from the contact form.',
             ],
         ];
     }
