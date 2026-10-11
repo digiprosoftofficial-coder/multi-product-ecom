@@ -307,7 +307,7 @@
             <h5 class="mb-0">Analytics &amp; pixel</h5>
         </div>
         <div class="card-body">
-            <p class="text-muted small">Add your tracking IDs to enable Google Tag Manager, Google Analytics 4, and Facebook Pixel site-wide. If you load GA4 inside GTM, leave the Measurement ID empty to avoid double counting.</p>
+            <p class="text-muted small">Add your tracking IDs to enable Google Tag Manager, Google Analytics 4, and Facebook Pixel site-wide. When a GTM Container ID is set, GTM handles everything: the GA4 and Pixel IDs below are ignored, so add those tags inside GTM.</p>
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="google_tag_manager_id" class="form-label">Google Tag Manager Container ID</label>
@@ -324,7 +324,7 @@
                            id="google_analytics_id" name="google_analytics_id"
                            value="{{ old('google_analytics_id', $settings['google_analytics_id']) }}"
                            placeholder="G-XXXXXXXXXX">
-                    <div class="form-text">Direct gtag.js (optional if GA4 is loaded via GTM). Format: <code>G-XXXXXXXXXX</code></div>
+                    <div class="form-text">Direct gtag.js. Ignored when GTM is set. Format: <code>G-XXXXXXXXXX</code></div>
                     @error('google_analytics_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
@@ -333,7 +333,7 @@
                            id="facebook_pixel_id" name="facebook_pixel_id"
                            value="{{ old('facebook_pixel_id', $settings['facebook_pixel_id']) }}"
                            placeholder="123456789012345">
-                    <div class="form-text">Numbers only.</div>
+                    <div class="form-text">Numbers only. Ignored when GTM is set.</div>
                     @error('facebook_pixel_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
