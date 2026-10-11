@@ -27,6 +27,7 @@ class OwnerAccessMiddleware
             'seo' => $user->canAccessSeo(),
             'payment' => $user->canAccessPayment(),
             'messages' => $user->canAccessMessages(),
+            'delete_records' => $user->canDeleteRecords(),
             default => OwnerAccess::enabled($feature) && $user->hasRole('store_owner'),
         };
 

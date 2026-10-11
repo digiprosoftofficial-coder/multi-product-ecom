@@ -23,8 +23,14 @@ Route::middleware(['auth', 'role:super_admin|store_owner|admin'])->prefix('admin
     Route::get('orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::patch('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
+    Route::delete('orders/{order}', [OrderController::class, 'destroy'])
+        ->middleware('owner.access:delete_records')
+        ->name('orders.destroy');
 
     Route::get('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'index'])->name('customers.index');
+    Route::delete('customers', [\App\Http\Controllers\Admin\CustomerController::class, 'destroy'])
+        ->middleware('owner.access:delete_records')
+        ->name('customers.destroy');
 
     Route::middleware('owner.access:messages')->group(function () {
         Route::get('contact-messages', [\App\Http\Controllers\Admin\ContactMessageController::class, 'index'])->name('contact-messages.index');

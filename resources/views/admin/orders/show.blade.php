@@ -12,6 +12,16 @@
                     <i class="fas fa-print me-1"></i> Print invoice
                 </a>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Back to Orders</a>
+                @if(auth()->user()?->canDeleteRecords())
+                    <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" class="d-inline"
+                          onsubmit="return confirm('Delete this order? This cannot be undone. Stock will not be restored.');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fas fa-trash me-1"></i> Delete order
+                        </button>
+                    </form>
+                @endif
             </div>
             <form action="{{ route('admin.orders.update-status', $order) }}" method="POST" class="order-status-form d-flex flex-wrap align-items-end gap-2">
                 @csrf

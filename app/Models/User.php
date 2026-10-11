@@ -119,6 +119,12 @@ class User extends Authenticatable
             || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::MESSAGES));
     }
 
+    public function canDeleteRecords(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::DELETE_RECORDS));
+    }
+
     public function canAccessSettingsPage(): bool
     {
         return $this->canAccessIdentity()

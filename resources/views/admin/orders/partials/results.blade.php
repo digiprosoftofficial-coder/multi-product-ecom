@@ -55,6 +55,14 @@
                             <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-sm btn-outline-secondary">
                                 Invoice
                             </a>
+                            @if(auth()->user()?->canDeleteRecords())
+                                <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" class="d-inline"
+                                      onsubmit="return confirm('Delete this order? This cannot be undone. Stock will not be restored.');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            @endif
                         </div>
                     </td>
                 </tr>

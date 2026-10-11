@@ -76,6 +76,19 @@
                                 <i class="fas fa-shopping-bag"></i>
                             </a>
                         @endif
+                        @if(auth()->user()?->canDeleteRecords() && empty($customer['is_staff']))
+                            <form action="{{ route('admin.customers.destroy') }}" method="POST" class="d-inline"
+                                  onsubmit="return confirm(@js($customer['is_registered']
+                                      ? 'Delete this customer and all their orders? This cannot be undone.'
+                                      : 'Delete this guest and all their orders? This cannot be undone.'));">
+                                @csrf
+                                @method('DELETE')
+                                <input type="hidden" name="email" value="{{ $customer['email'] }}">
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        @endif
                     </td>
                 </tr>
             @empty

@@ -26,6 +26,8 @@ class OwnerAccess
 
     public const MESSAGES = 'messages';
 
+    public const DELETE_RECORDS = 'delete_records';
+
     public static function features(): array
     {
         return [
@@ -78,6 +80,11 @@ class OwnerAccess
                 'key' => 'owner_can_messages',
                 'label' => 'Contact messages',
                 'help' => 'Read, mark, and delete messages sent from the contact form.',
+            ],
+            self::DELETE_RECORDS => [
+                'key' => 'owner_can_delete_records',
+                'label' => 'Delete customers & orders',
+                'help' => 'Delete a customer (and their orders) or a single order. Stock is not restored.',
             ],
         ];
     }
