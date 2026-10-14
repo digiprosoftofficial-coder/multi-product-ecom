@@ -30,6 +30,7 @@ class ThemeController extends Controller
             return view('admin.themes.index', [
                 'themes' => [],
                 'activeTheme' => setting('active_frontend_theme', 'organic-v1'),
+                'adminThemeColor' => Setting::get('admin_theme_color', '#16a34a'),
             ]);
         }
 
@@ -49,8 +50,24 @@ class ThemeController extends Controller
 
         ksort($themes);
         $activeTheme = setting('active_frontend_theme', 'organic-v1');
+        $adminThemeColor = Setting::get('admin_theme_color', '#16a34a');
 
-        return view('admin.themes.index', compact('themes', 'activeTheme'));
+        return view('admin.themes.index', compact('themes', 'activeTheme', 'adminThemeColor'));
+    }
+
+    public function updateAdminColor(Request $request)
+    {
+        $validated = $request->validate([
+            'admin_theme_color' => ['required', 'string', 'max:7', 'regex:/^#([0-9a-fA-F]{6})$/'],
+        ]);
+
+        Setting::set(
+            'admin_theme_color',
+            \App\Support\Homepage::normalizeColor($validated['admin_theme_color'], '#16a34a')
+        );
+
+        return redirect()->route('admin.themes.index')
+            ->with('success', 'Admin theme color updated.');
     }
 
     private function readThemeJson(string $path): array

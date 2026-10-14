@@ -503,6 +503,40 @@
     </div>
     @endif
 
+    @if($canEditAllSettings)
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Button colors</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Storefront primary buttons on both themes. Admin panel buttons stay the same.</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="button_bg_color" class="form-label">Button background</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('button_bg_color') is-invalid @enderror"
+                           id="button_bg_color" name="button_bg_color"
+                           value="{{ old('button_bg_color', $settings['button_bg_color']) }}">
+                    @error('button_bg_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="button_text_color" class="form-label">Button text</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('button_text_color') is-invalid @enderror"
+                           id="button_text_color" name="button_text_color"
+                           value="{{ old('button_text_color', $settings['button_text_color']) }}">
+                    @error('button_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="button_hover_color" class="form-label">Button hover</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('button_hover_color') is-invalid @enderror"
+                           id="button_hover_color" name="button_hover_color"
+                           value="{{ old('button_hover_color', $settings['button_hover_color']) }}">
+                    @error('button_hover_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
     @if($canEditSocial)
     <div class="card mb-4">
         <div class="card-header">

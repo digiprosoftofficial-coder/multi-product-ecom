@@ -30,6 +30,7 @@
     <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     @endif
     <link rel="stylesheet" href="{{ asset('css/admin-themes/default.css') }}">
+    @include('admin.partials.admin-theme-color')
 </head>
 <body class="admin-panel admin-theme-{{ setting('active_frontend_theme', 'organic-v1') }}">
     <div class="wrapper d-flex">

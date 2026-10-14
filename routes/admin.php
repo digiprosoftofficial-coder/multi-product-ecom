@@ -76,6 +76,7 @@ Route::middleware(['auth', 'role:super_admin|store_owner|admin'])->prefix('admin
         Route::put('owner-access', [\App\Http\Controllers\Admin\OwnerAccessController::class, 'update'])->name('owner-access.update');
 
         Route::get('themes', [ThemeController::class, 'index'])->name('themes.index');
+        Route::put('themes/admin-color', [ThemeController::class, 'updateAdminColor'])->name('themes.admin-color');
         Route::get('themes/preview/{slug}', [ThemeController::class, 'preview'])->name('themes.preview');
         Route::post('themes/activate', [ThemeController::class, 'activate'])->name('themes.activate');
         Route::delete('themes', [ThemeController::class, 'destroy'])->name('themes.destroy');

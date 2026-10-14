@@ -66,6 +66,9 @@ class SettingsController extends Controller
             'footer_text_color' => Setting::get('footer_text_color', '#ffffff'),
             'footer_bottom_bg_color' => Setting::get('footer_bottom_bg_color', '#6bb252'),
             'footer_bottom_text_color' => Setting::get('footer_bottom_text_color', '#ffffff'),
+            'button_bg_color' => Setting::get('button_bg_color', '#6bb252'),
+            'button_text_color' => Setting::get('button_text_color', '#ffffff'),
+            'button_hover_color' => Setting::get('button_hover_color', '#f7a422'),
             'payment_cod_enabled' => Setting::get('payment_cod_enabled', '1'),
             'payment_bkash_enabled' => Setting::get('payment_bkash_enabled', '1'),
             'payment_nagad_enabled' => Setting::get('payment_nagad_enabled', '1'),
@@ -141,6 +144,9 @@ class SettingsController extends Controller
             'footer_text_color' => 'nullable|string|max:7',
             'footer_bottom_bg_color' => 'nullable|string|max:7',
             'footer_bottom_text_color' => 'nullable|string|max:7',
+            'button_bg_color' => 'nullable|string|max:7',
+            'button_text_color' => 'nullable|string|max:7',
+            'button_hover_color' => 'nullable|string|max:7',
             'payment_cod_enabled' => 'nullable|boolean',
             'payment_bkash_enabled' => 'nullable|boolean',
             'payment_nagad_enabled' => 'nullable|boolean',
@@ -196,6 +202,9 @@ class SettingsController extends Controller
         Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($validated['footer_text_color'] ?? '#ffffff', '#ffffff'));
         Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));
         Setting::set('footer_bottom_text_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_text_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('button_bg_color', \App\Support\Homepage::normalizeColor($validated['button_bg_color'] ?? '#6bb252', '#6bb252'));
+        Setting::set('button_text_color', \App\Support\Homepage::normalizeColor($validated['button_text_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('button_hover_color', \App\Support\Homepage::normalizeColor($validated['button_hover_color'] ?? '#f7a422', '#f7a422'));
         $paymentEnabled = [
             'payment_cod_enabled' => $request->boolean('payment_cod_enabled'),
             'payment_bkash_enabled' => $request->boolean('payment_bkash_enabled'),

@@ -151,4 +151,59 @@
         opacity: .85;
         text-decoration: underline;
     }
+    @php
+        $buttonBg = \App\Support\Homepage::normalizeColor(
+            \App\Models\Setting::query()->where('key', 'button_bg_color')->value('value'),
+            ''
+        );
+        $buttonText = \App\Support\Homepage::normalizeColor(
+            \App\Models\Setting::query()->where('key', 'button_text_color')->value('value'),
+            '#ffffff'
+        );
+        $buttonHover = \App\Support\Homepage::normalizeColor(
+            \App\Models\Setting::query()->where('key', 'button_hover_color')->value('value'),
+            $buttonBg !== '' ? $buttonBg : '#f7a422'
+        );
+    @endphp
+    @if($buttonBg !== '')
+    .btn-primary {
+        --bs-btn-color: {{ $buttonText }};
+        --bs-btn-bg: {{ $buttonBg }};
+        --bs-btn-border-color: {{ $buttonBg }};
+        --bs-btn-hover-color: {{ $buttonText }};
+        --bs-btn-hover-bg: {{ $buttonHover }};
+        --bs-btn-hover-border-color: {{ $buttonHover }};
+        --bs-btn-active-color: {{ $buttonText }};
+        --bs-btn-active-bg: {{ $buttonHover }};
+        --bs-btn-active-border-color: {{ $buttonHover }};
+        --bs-btn-disabled-color: {{ $buttonText }};
+        background-color: {{ $buttonBg }};
+        border-color: {{ $buttonBg }};
+        color: {{ $buttonText }};
+    }
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active {
+        background-color: {{ $buttonHover }};
+        border-color: {{ $buttonHover }};
+        color: {{ $buttonText }};
+    }
+    .gadget-v1 .btn-primary,
+    .gadget-v1 .btn-accent {
+        background: {{ $buttonBg }};
+        border-color: {{ $buttonBg }};
+        color: {{ $buttonText }};
+    }
+    .gadget-v1 .btn-primary:hover,
+    .gadget-v1 .btn-primary:focus,
+    .gadget-v1 .btn-primary:active,
+    .gadget-v1 .btn-accent:hover,
+    .gadget-v1 .btn-accent:focus,
+    .gadget-v1 .btn-accent:active {
+        background: {{ $buttonHover }};
+        border-color: {{ $buttonHover }};
+        color: {{ $buttonText }};
+        box-shadow: none;
+    }
+    @endif
 </style>
