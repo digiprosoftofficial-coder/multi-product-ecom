@@ -23,6 +23,43 @@
     </div>
 </div>
 
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+        <h5 class="mb-1">Login page</h5>
+        <p class="text-muted small mb-3">Color and side image for the login and registration pages. Those pages have no store header or footer.</p>
+        <form action="{{ route('admin.themes.auth-design') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="row g-3 align-items-end">
+                <div class="col-md-4">
+                    <label for="auth_page_color" class="form-label">Design color</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('auth_page_color') is-invalid @enderror"
+                           id="auth_page_color" name="auth_page_color"
+                           value="{{ old('auth_page_color', $authPageColor ?? '#8d6b78') }}">
+                    @error('auth_page_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-8">
+                    <label for="auth_page_image" class="form-label">Side image</label>
+                    @if(!empty($authPageImage))
+                        <div class="mb-2">
+                            <img src="{{ $authPageImage }}" alt="Login page image" style="height: 72px; width: 120px; object-fit: cover; border-radius: 8px;">
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" name="remove_auth_page_image" id="remove_auth_page_image" value="1">
+                            <label class="form-check-label" for="remove_auth_page_image">Remove current image</label>
+                        </div>
+                    @endif
+                    <input type="file" class="form-control @error('auth_page_image') is-invalid @enderror"
+                           id="auth_page_image" name="auth_page_image" accept="image/jpeg,image/png,image/webp,image/gif">
+                    <div class="form-text">Shown on the right of login and registration. JPG, PNG, or WEBP.</div>
+                    @error('auth_page_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-3">Save login design</button>
+        </form>
+    </div>
+</div>
+
 <div class="mb-4">
     <p class="text-muted mb-0">Frontend themes are scanned from <code>resources/views/frontend</code>. A folder is a valid theme only if it contains <code>index.blade.php</code> and <code>theme.json</code>.</p>
 </div>

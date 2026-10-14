@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 use Symfony\Component\HttpFoundation\Response;
 
 class ThemeController extends Controller
@@ -27,11 +31,11 @@ class ThemeController extends Controller
         $themes = [];
 
         if (!is_dir($basePath)) {
-            return view('admin.themes.index', [
+            return view('admin.themes.index', array_merge([
                 'themes' => [],
                 'activeTheme' => setting('active_frontend_theme', 'organic-v1'),
                 'adminThemeColor' => Setting::get('admin_theme_color', '#16a34a'),
-            ]);
+            ], $this->authDesign()));
         }
 
         foreach (scandir($basePath) as $name) {
@@ -52,7 +56,86 @@ class ThemeController extends Controller
         $activeTheme = setting('active_frontend_theme', 'organic-v1');
         $adminThemeColor = Setting::get('admin_theme_color', '#16a34a');
 
-        return view('admin.themes.index', compact('themes', 'activeTheme', 'adminThemeColor'));
+        return view('admin.themes.index', array_merge(
+            compact('themes', 'activeTheme', 'adminThemeColor'),
+            $this->authDesign()
+        ));
+    }
+
+    public function updateAuthDesign(Request $request)
+    {
+        $validated = $request->validate([
+            'auth_page_color' => ['required', 'string', 'max:7', 'regex:/^#([0-9a-fA-F]{6})$/'],
+            'auth_page_image' => image_upload_rules(),
+            'remove_auth_page_image' => 'nullable|boolean',
+        ]);
+
+        Setting::set(
+            'auth_page_color',
+            \App\Support\Homepage::normalizeColor($validated['auth_page_color'], '#8d6b78')
+        );
+
+        $this->storeAuthImage($request);
+
+        return redirect()->route('admin.themes.index')
+            ->with('success', 'Login page design updated.');
+    }
+
+    private function authDesign(): array
+    {
+        return [
+            'authPageColor' => Setting::get('auth_page_color', '#8d6b78'),
+            'authPageImage' => setting_image_url(Setting::get('auth_page_image')),
+        ];
+    }
+
+    private function storeAuthImage(Request $request): void
+    {
+        $current = Setting::get('auth_page_image');
+
+        if ($request->boolean('remove_auth_page_image') && ! $request->hasFile('auth_page_image')) {
+            $this->deleteAuthImage($current);
+            Setting::set('auth_page_image', '');
+
+            return;
+        }
+
+        if (! $request->hasFile('auth_page_image')) {
+            return;
+        }
+
+        $this->deleteAuthImage($current);
+
+        $file = $request->file('auth_page_image');
+        $extension = strtolower($file->getClientOriginalExtension() ?: 'jpg');
+        $filename = 'auth_page_'.time().'.'.$extension;
+
+        if (! Storage::disk('public')->exists('uploads/settings')) {
+            Storage::disk('public')->makeDirectory('uploads/settings');
+        }
+
+        if ($file instanceof UploadedFile && $file->getRealPath() && ! in_array($extension, ['svg'], true)) {
+            $manager = new ImageManager(new Driver());
+            $img = $manager->read($file->getRealPath());
+            $img->scaleDown(width: 1400, height: 1600);
+            Storage::disk('public')->put('uploads/settings/'.$filename, $img->encode());
+        } else {
+            Storage::disk('public')->putFileAs('uploads/settings', $file, $filename);
+        }
+
+        Setting::set('auth_page_image', $filename);
+    }
+
+    private function deleteAuthImage(?string $filename): void
+    {
+        if (! $filename) {
+            return;
+        }
+
+        $path = 'uploads/settings/'.$filename;
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 
     public function updateAdminColor(Request $request)
