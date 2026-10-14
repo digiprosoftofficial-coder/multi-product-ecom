@@ -471,6 +471,20 @@
                     @error('header_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
+                    <label for="menu_active_color" class="form-label">Menu active</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('menu_active_color') is-invalid @enderror"
+                           id="menu_active_color" name="menu_active_color"
+                           value="{{ old('menu_active_color', $settings['menu_active_color'] ?? '#ffffff') }}">
+                    @error('menu_active_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="menu_hover_color" class="form-label">Menu hover &amp; focus</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('menu_hover_color') is-invalid @enderror"
+                           id="menu_hover_color" name="menu_hover_color"
+                           value="{{ old('menu_hover_color', $settings['menu_hover_color'] ?? '#ffffff') }}">
+                    @error('menu_hover_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
                     <label for="footer_bg_color" class="form-label">Footer background</label>
                     <input type="color" class="form-control form-control-color w-100 @error('footer_bg_color') is-invalid @enderror"
                            id="footer_bg_color" name="footer_bg_color"

@@ -296,8 +296,8 @@
         width: 42px;
         height: 42px;
         border-radius: 12px;
-        background: rgba(107, 178, 82, 0.12);
-        color: #6BB252;
+        background: rgba(var(--store-accent-rgb), 0.12);
+        color: var(--store-accent);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -344,16 +344,16 @@
     }
     .payment-option.is-selected .payment-option-body,
     .payment-option-input:checked + .payment-option-body {
-        border-color: #6BB252;
-        background: #f6fbf3;
-        box-shadow: 0 0 0 0.18rem rgba(107, 178, 82, 0.14);
+        border-color: var(--store-accent);
+        background: color-mix(in srgb, var(--store-accent) 8%, #fff);
+        box-shadow: 0 0 0 0.18rem rgba(var(--store-accent-rgb), 0.14);
     }
     .payment-option-icon {
         width: 42px;
         height: 42px;
         border-radius: 12px;
-        background: color-mix(in srgb, var(--payment-color) 14%, white);
-        color: var(--payment-color);
+        background: rgba(var(--store-accent-rgb), 0.12);
+        color: var(--store-accent);
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -463,7 +463,7 @@
     }
     .checkout-qty-btn:hover {
         background: #eef2ea;
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .checkout-qty-input {
         width: 42px;
@@ -513,7 +513,7 @@
     }
     .checkout-summary-total strong {
         font-size: 1.2rem;
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .checkout-submit-btn {
         border-radius: 12px;
@@ -562,16 +562,16 @@
     }
     .delivery-zone-option.is-selected .delivery-zone-body,
     .delivery-zone-input:checked + .delivery-zone-body {
-        border-color: #6BB252;
-        background: #f6fbf3;
-        box-shadow: 0 0 0 0.18rem rgba(107, 178, 82, 0.14);
+        border-color: var(--store-accent);
+        background: color-mix(in srgb, var(--store-accent) 8%, #fff);
+        box-shadow: 0 0 0 0.18rem rgba(var(--store-accent-rgb), 0.14);
     }
     .delivery-zone-icon {
         width: 38px;
         height: 38px;
         border-radius: 10px;
-        background: rgba(107, 178, 82, 0.12);
-        color: #6BB252;
+        background: rgba(var(--store-accent-rgb), 0.12);
+        color: var(--store-accent);
         display: inline-flex;
         align-items: center;
         justify-content: center;

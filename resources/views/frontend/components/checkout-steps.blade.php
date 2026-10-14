@@ -35,10 +35,10 @@
         color: #94a3b8;
     }
     .checkout-step.is-active {
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .checkout-step.is-complete:not(.is-active) {
-        color: #86b574;
+        color: color-mix(in srgb, var(--store-accent) 62%, #94a3b8);
     }
     .checkout-step-divider {
         width: 36px;

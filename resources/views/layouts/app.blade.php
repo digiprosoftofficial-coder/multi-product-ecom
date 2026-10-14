@@ -134,7 +134,7 @@
         }
         .cart-qty-btn:hover {
             background: #eef2ea;
-            color: #6BB252;
+            color: var(--store-accent);
         }
         .cart-qty-input {
             width: 48px;

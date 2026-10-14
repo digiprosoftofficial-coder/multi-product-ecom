@@ -62,6 +62,8 @@ class SettingsController extends Controller
             'social_tiktok' => Setting::get('social_tiktok', ''),
             'header_bg_color' => Setting::get('header_bg_color', '#1f3b2c'),
             'header_text_color' => Setting::get('header_text_color', '#ffffff'),
+            'menu_active_color' => Setting::get('menu_active_color', Setting::get('header_text_color', '#ffffff')),
+            'menu_hover_color' => Setting::get('menu_hover_color', Setting::get('header_text_color', '#ffffff')),
             'footer_bg_color' => Setting::get('footer_bg_color', '#1f3b2c'),
             'footer_text_color' => Setting::get('footer_text_color', '#ffffff'),
             'footer_bottom_bg_color' => Setting::get('footer_bottom_bg_color', '#6bb252'),
@@ -140,6 +142,8 @@ class SettingsController extends Controller
             'social_tiktok' => 'nullable|url|max:500',
             'header_bg_color' => 'nullable|string|max:7',
             'header_text_color' => 'nullable|string|max:7',
+            'menu_active_color' => 'nullable|string|max:7',
+            'menu_hover_color' => 'nullable|string|max:7',
             'footer_bg_color' => 'nullable|string|max:7',
             'footer_text_color' => 'nullable|string|max:7',
             'footer_bottom_bg_color' => 'nullable|string|max:7',
@@ -198,6 +202,8 @@ class SettingsController extends Controller
         Setting::set('social_tiktok', $validated['social_tiktok'] ?? '');
         Setting::set('header_bg_color', \App\Support\Homepage::normalizeColor($validated['header_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
         Setting::set('header_text_color', \App\Support\Homepage::normalizeColor($validated['header_text_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('menu_active_color', \App\Support\Homepage::normalizeColor($validated['menu_active_color'] ?? '#ffffff', '#ffffff'));
+        Setting::set('menu_hover_color', \App\Support\Homepage::normalizeColor($validated['menu_hover_color'] ?? '#ffffff', '#ffffff'));
         Setting::set('footer_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
         Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($validated['footer_text_color'] ?? '#ffffff', '#ffffff'));
         Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($validated['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));
@@ -348,6 +354,8 @@ class SettingsController extends Controller
             $colors = $request->validate([
                 'header_bg_color' => 'nullable|string|max:7',
                 'header_text_color' => 'nullable|string|max:7',
+                'menu_active_color' => 'nullable|string|max:7',
+                'menu_hover_color' => 'nullable|string|max:7',
                 'footer_bg_color' => 'nullable|string|max:7',
                 'footer_text_color' => 'nullable|string|max:7',
                 'footer_bottom_bg_color' => 'nullable|string|max:7',
@@ -356,6 +364,8 @@ class SettingsController extends Controller
 
             Setting::set('header_bg_color', \App\Support\Homepage::normalizeColor($colors['header_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
             Setting::set('header_text_color', \App\Support\Homepage::normalizeColor($colors['header_text_color'] ?? '#ffffff', '#ffffff'));
+            Setting::set('menu_active_color', \App\Support\Homepage::normalizeColor($colors['menu_active_color'] ?? '#ffffff', '#ffffff'));
+            Setting::set('menu_hover_color', \App\Support\Homepage::normalizeColor($colors['menu_hover_color'] ?? '#ffffff', '#ffffff'));
             Setting::set('footer_bg_color', \App\Support\Homepage::normalizeColor($colors['footer_bg_color'] ?? '#1f3b2c', '#1f3b2c'));
             Setting::set('footer_text_color', \App\Support\Homepage::normalizeColor($colors['footer_text_color'] ?? '#ffffff', '#ffffff'));
             Setting::set('footer_bottom_bg_color', \App\Support\Homepage::normalizeColor($colors['footer_bottom_bg_color'] ?? '#6bb252', '#6bb252'));

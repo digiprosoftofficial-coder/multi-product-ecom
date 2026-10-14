@@ -50,7 +50,7 @@
           <li class="header-search-item d-flex align-items-center">
             {{-- Desktop: always-visible search bar --}}
             <form action="{{ route('products.index') }}" method="GET"
-                  class="header-inline-search d-none d-lg-flex align-items-center"
+                  class="header-inline-search d-none d-xl-flex align-items-center"
                   id="desktop-search-form"
                   role="search">
               <input type="text"
@@ -65,7 +65,7 @@
               </button>
             </form>
             <button type="button"
-                    class="p-2 mx-1 border-0 bg-transparent header-search-toggle d-lg-none"
+                    class="p-2 mx-1 border-0 bg-transparent header-search-toggle d-xl-none"
                     id="headerSearchToggle"
                     title="Search"
                     aria-label="Search"
@@ -111,7 +111,7 @@
     </div>
 
     {{-- Mobile expandable search only --}}
-    <div class="collapse d-lg-none" id="headerSearchPanel">
+    <div class="collapse d-xl-none" id="headerSearchPanel">
       <div class="header-search-panel py-2">
         <form action="{{ route('products.index') }}" method="GET" class="search-bar d-flex align-items-center bg-light p-2 rounded-4 gap-2" id="mobile-search-form">
           <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products" value="{{ request('search') }}" id="mobile-search-input" autocomplete="off">

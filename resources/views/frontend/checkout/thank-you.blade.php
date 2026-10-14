@@ -14,7 +14,7 @@
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4 p-md-5 text-center">
-                    <div class="mb-3 text-success">
+                    <div class="mb-3 store-accent">
                         <i class="fas fa-check-circle fa-4x"></i>
                     </div>
                     <h1 class="h3 mb-2">Thank you for your order</h1>

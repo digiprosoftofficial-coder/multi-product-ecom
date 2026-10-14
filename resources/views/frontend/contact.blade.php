@@ -30,7 +30,7 @@
     }
     .contact-info-card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 14px 32px rgba(107, 178, 82, 0.12);
+        box-shadow: 0 14px 32px rgba(var(--store-accent-rgb), 0.12);
     }
     .contact-info-icon {
         width: 46px;
@@ -39,8 +39,8 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        background: rgba(107, 178, 82, 0.12);
-        color: #6BB252;
+        background: rgba(var(--store-accent-rgb), 0.12);
+        color: var(--store-accent);
         font-size: 1.05rem;
         margin-bottom: .85rem;
     }
@@ -56,7 +56,7 @@
         text-decoration: none;
     }
     .contact-info-card a:hover {
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .contact-panel {
         border: 1px solid #eef1ea;
@@ -87,8 +87,8 @@
         min-height: 46px;
     }
     .contact-form .form-control:focus {
-        border-color: #6BB252;
-        box-shadow: 0 0 0 0.2rem rgba(107, 178, 82, 0.18);
+        border-color: var(--store-accent);
+        box-shadow: 0 0 0 0.2rem rgba(var(--store-accent-rgb), 0.18);
     }
     .contact-form textarea.form-control {
         min-height: 140px;

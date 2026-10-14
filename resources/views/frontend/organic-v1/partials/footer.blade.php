@@ -119,7 +119,7 @@
         font-size: 1rem;
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
     }
-    .footer-contact-icon--phone { background: #6BB252; }
+    .footer-contact-icon--phone { background: var(--store-accent); }
     .footer-contact-icon--email { background: #2563eb; }
     .footer-contact-icon--address { background: #ea580c; }
     .footer-contact-value {

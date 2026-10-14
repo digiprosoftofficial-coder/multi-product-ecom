@@ -1,7 +1,7 @@
 <style>
     :root {
         --form-border: #cfd5cc;
-        --form-border-focus: #6BB252;
+        --form-border-focus: var(--store-accent);
         --form-bg: #ffffff;
         --form-bg-focus: #fafff8;
     }
@@ -41,7 +41,7 @@
     body.auth-page textarea.form-control:focus {
         background-color: var(--form-bg-focus);
         border-color: var(--form-border-focus) !important;
-        box-shadow: 0 0 0 0.22rem rgba(107, 178, 82, 0.22) !important;
+        box-shadow: 0 0 0 0.22rem rgba(var(--store-accent-rgb), 0.22) !important;
         outline: none;
         color: #1f2937;
     }
