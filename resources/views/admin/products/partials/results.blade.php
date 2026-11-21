@@ -23,7 +23,7 @@
                              class="rounded"
                              style="width: 50px; height: 50px; object-fit: cover; background: #e2e8f0;">
                     </td>
-                    <td>{{ $product->name }}</td>
+                    <td class="product-list-name">{{ $product->name }}</td>
                     <td>{{ $product->sku }}</td>
                     <td>{{ $product->category->name ?? '-' }}</td>
                     <td>{{ money($product->price) }}</td>
@@ -33,15 +33,15 @@
                             {{ $product->status ? 'Active' : 'Inactive' }}
                         </span>
                     </td>
-                    <td>
-                        <div class="d-flex flex-wrap gap-2">
-                            <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info text-white">
+                    <td class="product-list-actions">
+                        <div class="d-flex flex-nowrap gap-1">
+                            <a href="{{ route('admin.products.show', $product) }}" class="btn btn-sm btn-info text-white" title="View" aria-label="View">
                                 <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary">
+                            <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-sm btn-primary" title="Edit" aria-label="Edit">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}">
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ $product->id }}" title="Delete" aria-label="Delete">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </div>

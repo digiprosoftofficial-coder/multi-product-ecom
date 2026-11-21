@@ -49,18 +49,20 @@
                     <td>{{ $order->created_at->format('M d, Y H:i') }}</td>
                     <td>
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-primary">
-                                View
+                            <a href="{{ route('admin.orders.show', $order) }}" class="btn btn-sm btn-primary order-icon-btn" title="View" aria-label="View">
+                                <i class="fas fa-eye"></i>
                             </a>
-                            <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-sm btn-outline-secondary">
-                                Invoice
+                            <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-sm btn-outline-secondary order-icon-btn" title="Invoice" aria-label="Invoice">
+                                <i class="fas fa-print"></i>
                             </a>
                             @if(auth()->user()?->canDeleteRecords())
                                 <form action="{{ route('admin.orders.destroy', $order) }}" method="POST" class="d-inline"
                                       onsubmit="return confirm('Delete this order? This cannot be undone. Stock will not be restored.');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger order-icon-btn" title="Delete" aria-label="Delete">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
                             @endif
                         </div>

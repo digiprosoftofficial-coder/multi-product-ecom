@@ -47,6 +47,14 @@
     .order-product-line + .order-product-line {
         margin-top: .25rem;
     }
+    .order-icon-btn {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 </style>
 @endpush
 

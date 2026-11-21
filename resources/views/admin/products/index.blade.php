@@ -52,6 +52,28 @@
 </div>
 @endsection
 
+@push('styles')
+<style>
+    .product-list-name {
+        font-size: 0.8125rem;
+        line-height: 1.35;
+        max-width: 240px;
+    }
+    .product-list-actions {
+        white-space: nowrap;
+        width: 1%;
+    }
+    .product-list-actions .btn {
+        width: 32px;
+        height: 32px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+@endpush
+
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {

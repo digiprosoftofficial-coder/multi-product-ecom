@@ -166,6 +166,45 @@ class Order extends Model
         }
     }
 
+    /**
+     * Move reserved stock when an open order's line quantity changes.
+     * A positive delta takes more stock. A negative delta returns stock.
+     */
+    public function adjustReservedStock(OrderItem $item, int $delta): void
+    {
+        if ($delta === 0 || $this->order_status === 'cancelled') {
+            return;
+        }
+
+        $name = $item->product_name ?: 'this product';
+
+        if ($item->product_variant_id) {
+            $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
+            if ($delta > 0 && (! $variant || $variant->stock < $delta)) {
+                throw ValidationException::withMessages([
+                    'items' => "Not enough stock for {$name}.",
+                ]);
+            }
+            if ($variant) {
+                $delta > 0
+                    ? $variant->decrement('stock', $delta)
+                    : $variant->increment('stock', abs($delta));
+            }
+        }
+
+        $product = Product::whereKey($item->product_id)->lockForUpdate()->first();
+        if ($delta > 0 && (! $product || $product->stock < $delta)) {
+            throw ValidationException::withMessages([
+                'items' => "Not enough stock for {$name}.",
+            ]);
+        }
+        if ($product) {
+            $delta > 0
+                ? $product->decrement('stock', $delta)
+                : $product->increment('stock', abs($delta));
+        }
+    }
+
     protected function restoreStock(): void
     {
         $this->loadMissing('items');

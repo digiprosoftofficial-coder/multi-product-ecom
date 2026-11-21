@@ -8,7 +8,10 @@
     <div class="card-body py-3">
         <div class="d-flex flex-wrap align-items-end justify-content-between gap-3">
             <div class="d-flex flex-wrap gap-2">
-                <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-primary">
+                <a href="{{ route('admin.orders.edit', $order) }}" class="btn btn-primary">
+                    <i class="fas fa-pen me-1"></i> Edit order
+                </a>
+                <a href="{{ route('admin.orders.invoice', $order) }}" class="btn btn-outline-primary">
                     <i class="fas fa-print me-1"></i> Print invoice
                 </a>
                 <a href="{{ route('admin.orders.index') }}" class="btn btn-secondary">Back to Orders</a>
@@ -28,7 +31,7 @@
                 @method('PATCH')
                 <div>
                     <label for="order_status" class="form-label small mb-1">Order status</label>
-                    <select name="order_status" id="order_status" class="form-select form-select-sm @error('order_status') is-invalid @enderror" required>
+                    <select name="order_status" id="order_status" class="form-select @error('order_status') is-invalid @enderror" required>
                         <option value="pending" {{ $order->order_status == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="processing" {{ $order->order_status == 'processing' ? 'selected' : '' }}>Processing</option>
                         <option value="shipped" {{ $order->order_status == 'shipped' ? 'selected' : '' }}>Shipped</option>
@@ -41,7 +44,7 @@
                 </div>
                 <div>
                     <label for="payment_status" class="form-label small mb-1">Payment status</label>
-                    <select name="payment_status" id="payment_status" class="form-select form-select-sm @error('payment_status') is-invalid @enderror" required>
+                    <select name="payment_status" id="payment_status" class="form-select @error('payment_status') is-invalid @enderror" required>
                         <option value="pending" {{ $order->payment_status == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="paid" {{ $order->payment_status == 'paid' ? 'selected' : '' }}>Paid</option>
                         <option value="cancelled" {{ $order->payment_status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
@@ -51,7 +54,7 @@
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm">Update Status</button>
+                <button type="submit" class="btn btn-primary">Update Status</button>
             </form>
         </div>
     </div>
@@ -230,9 +233,6 @@
     }
     .order-status-form select {
         min-width: 140px;
-    }
-    .order-status-form .btn {
-        height: 31px;
     }
     .order-customer-card {
         border-color: #dbeafe;
