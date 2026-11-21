@@ -155,6 +155,7 @@
 
                         <div id="wallet-payment-fields" class="wallet-payment-fields {{ $selectedMethod && \App\Support\PaymentMethod::isMobileWallet($selectedMethod) ? '' : 'd-none' }}">
                             <div class="wallet-payment-note" id="wallet-payment-note"></div>
+                            <p class="text-muted small mb-0">{{ __('storefront.wallet_pending_hint') }}</p>
                             <div class="row g-3 mt-1">
                                 <div class="col-md-6">
                                     <label for="payment_reference" class="form-label">{{ __('storefront.transaction_id') }} <span class="text-danger">*</span></label>
@@ -190,6 +191,11 @@
                                   id="notes" name="notes" rows="3"
                                   placeholder="Any special instructions for delivery">{{ old('notes') }}</textarea>
                         @error('notes')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                </div>
+                <div class="checkout-panel mb-4 mb-lg-0">
+                    <div class="checkout-panel-body">
+                        @include('frontend.partials.checkout-guard')
                     </div>
                 </div>
                 </form>

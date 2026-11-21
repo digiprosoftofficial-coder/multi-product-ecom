@@ -69,6 +69,7 @@
               <div class="mb-0">
                 <label for="notes" class="form-label">Notes</label>
                 <textarea class="form-control bg-dark border-secondary text-white" id="notes" name="notes" rows="2">{{ old('notes') }}</textarea>
+                @include('frontend.partials.checkout-guard')
               </div>
             </div>
           </div>

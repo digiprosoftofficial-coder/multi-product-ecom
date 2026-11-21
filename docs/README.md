@@ -11,5 +11,6 @@ Start here:
 5. [onboarding-checklist.md](onboarding-checklist.md) — how you launch a new store
 6. [owner-guide.md](owner-guide.md) — one-page guide to give the client
 7. [roadmap.md](roadmap.md) — implementation order
+8. [checkout-order-protection.md](checkout-order-protection.md) — fake-order checks, when stock is cut, wallet payments
 
 Do not start coding until Phase 1 on the roadmap is explicitly started. Existing live stores (for example shohojkenakata) stay as they are until roles are implemented carefully.

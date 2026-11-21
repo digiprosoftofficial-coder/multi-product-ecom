@@ -174,6 +174,11 @@
                         <span>{{ $order->payment_reference }}</span>
                     </div>
                 @endif
+                @if(\App\Support\PaymentMethod::isMobileWallet((string) $order->payment_method) && $order->payment_status === 'pending')
+                    <div class="alert alert-warning mt-3 mb-0">
+                        This bKash, Nagad, or Rocket payment is not confirmed. A transaction ID does not mean it was paid. Mark it paid only after you check the payment.
+                    </div>
+                @endif
                 @if($order->payment_sender_phone)
                     <div class="d-flex justify-content-between mb-2">
                         <span>Sender number:</span>

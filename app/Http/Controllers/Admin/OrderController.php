@@ -183,6 +183,7 @@ class OrderController extends Controller
                     : null,
                 'payment_status' => $validated['payment_status'],
                 'order_status' => 'pending',
+                'stock_held' => true,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'vat' => $vat,

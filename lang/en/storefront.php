@@ -114,4 +114,9 @@ return [
     'map_hint' => 'Visit our store or get directions below.',
     'map_empty' => 'Add your address in Site settings to show a map here.',
     'free_delivery' => 'Free delivery',
+    'captcha_label' => 'What is :question?',
+    'captcha_failed' => 'The check answer is wrong. Please try again.',
+    'order_limit' => 'Too many orders from this phone. Please try again in an hour.',
+    'duplicate_order' => 'You already have a pending order for this product. We will call you on this number.',
+    'wallet_pending_hint' => 'The shop confirms this payment after checking the transaction. The order stays unpaid until then.',
 ];
