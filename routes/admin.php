@@ -20,6 +20,8 @@ Route::middleware(['auth', 'role:super_admin|store_owner|admin'])->prefix('admin
     Route::delete('products/images/{productImage}', [ProductController::class, 'deleteImage'])->name('products.images.destroy');
 
     Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/create', [OrderController::class, 'create'])->name('orders.create');
+    Route::post('orders', [OrderController::class, 'store'])->name('orders.store');
     Route::get('orders/{order}/invoice', [OrderController::class, 'invoice'])->name('orders.invoice');
     Route::get('orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     Route::put('orders/{order}', [OrderController::class, 'update'])->name('orders.update');
