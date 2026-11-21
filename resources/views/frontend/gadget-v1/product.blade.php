@@ -50,8 +50,8 @@
   <main class="container py-4">
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb text-muted">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="link-accent">Home</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('products.index') }}" class="link-accent">Shop</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="link-accent">{{ __('storefront.home') }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('products.index') }}" class="link-accent">{{ __('storefront.shop') }}</a></li>
         <li class="breadcrumb-item active">{{ $product->name }}</li>
       </ol>
     </nav>
@@ -131,11 +131,11 @@
             <div class="product-card-actions product-card-actions--lg flex-grow-1">
               <button type="submit" class="btn btn-cart-action">
                 <i class="fa-solid fa-cart-shopping"></i>
-                <span>Add to Cart</span>
+                <span>{{ __('storefront.add_to_cart') }}</span>
               </button>
               <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
                 <i class="fa-solid fa-bolt"></i>
-                <span>Order Now</span>
+                <span>{{ __('storefront.order_now') }}</span>
               </button>
             </div>
           </div>

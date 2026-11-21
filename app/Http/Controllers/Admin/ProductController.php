@@ -60,9 +60,11 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
             'sku' => 'nullable|string|unique:products,sku',
             'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
             'description' => 'nullable|string|max:20000',
+            'description_bn' => 'nullable|string|max:20000',
             'price' => 'required|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
@@ -71,7 +73,9 @@ class ProductController extends Controller
             'stock' => $request->boolean('has_variants') ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'has_variants' => 'nullable|boolean',
             'option1_name' => 'nullable|string|max:40',
+            'option1_name_bn' => 'nullable|string|max:40',
             'option2_name' => 'nullable|string|max:40',
+            'option2_name_bn' => 'nullable|string|max:40',
             'option1_values' => $request->boolean('has_variants') ? 'required|string|max:500' : 'nullable|string|max:500',
             'option2_values' => 'nullable|string|max:500',
             'variants' => 'nullable|array|max:48',
@@ -87,7 +91,9 @@ class ProductController extends Controller
             'images' => 'nullable|array|max:20',
             'images.*' => image_upload_rules(),
             'meta_title' => 'nullable|string|max:255',
+            'meta_title_bn' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+            'meta_description_bn' => 'nullable|string',
         ], [
             'images.max' => 'You can upload at most 20 gallery images at once.',
             'images.*.max' => 'Each gallery image must be 10MB or smaller.',
@@ -136,6 +142,9 @@ class ProductController extends Controller
 
         if (array_key_exists('description', $validated)) {
             $validated['description'] = sanitize_rich_text($validated['description'] ?? null);
+        }
+        if (array_key_exists('description_bn', $validated)) {
+            $validated['description_bn'] = sanitize_rich_text($validated['description_bn'] ?? null);
         }
 
         if (! compare_price_enabled()) {
@@ -202,9 +211,11 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
             'sku' => 'nullable|string|unique:products,sku,' . $product->id,
             'category_id' => ['required', 'exists:categories,id', $this->leafCategoryRule()],
             'description' => 'nullable|string|max:20000',
+            'description_bn' => 'nullable|string|max:20000',
             'price' => 'required|numeric|min:0',
             'cost_price' => 'nullable|numeric|min:0',
             'compare_price' => 'nullable|numeric|min:0',
@@ -213,7 +224,9 @@ class ProductController extends Controller
             'stock' => $request->boolean('has_variants') ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'has_variants' => 'nullable|boolean',
             'option1_name' => 'nullable|string|max:40',
+            'option1_name_bn' => 'nullable|string|max:40',
             'option2_name' => 'nullable|string|max:40',
+            'option2_name_bn' => 'nullable|string|max:40',
             'option1_values' => $request->boolean('has_variants') ? 'required|string|max:500' : 'nullable|string|max:500',
             'option2_values' => 'nullable|string|max:500',
             'variants' => 'nullable|array|max:48',
@@ -229,7 +242,9 @@ class ProductController extends Controller
             'images' => 'nullable|array|max:20',
             'images.*' => image_upload_rules(),
             'meta_title' => 'nullable|string|max:255',
+            'meta_title_bn' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string',
+            'meta_description_bn' => 'nullable|string',
         ], [
             'images.max' => 'You can upload at most 20 gallery images at once.',
             'images.*.max' => 'Each gallery image must be 10MB or smaller.',
@@ -277,6 +292,9 @@ class ProductController extends Controller
 
         if (array_key_exists('description', $validated)) {
             $validated['description'] = sanitize_rich_text($validated['description'] ?? null);
+        }
+        if (array_key_exists('description_bn', $validated)) {
+            $validated['description_bn'] = sanitize_rich_text($validated['description_bn'] ?? null);
         }
 
         if (! compare_price_enabled()) {
@@ -382,7 +400,9 @@ class ProductController extends Controller
     {
         ProductVariants::sync($product, $request->boolean('has_variants'), [
             'option1_name' => $request->input('option1_name'),
+            'option1_name_bn' => $request->input('option1_name_bn'),
             'option2_name' => $request->input('option2_name'),
+            'option2_name_bn' => $request->input('option2_name_bn'),
             'option1_values' => $request->input('option1_values'),
             'option2_values' => $request->input('option2_values'),
             'variants' => $request->input('variants', []),

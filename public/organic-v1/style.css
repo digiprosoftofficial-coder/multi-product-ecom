@@ -1255,6 +1255,10 @@ a.btn-link.text-light:after {
   white-space: nowrap;
 }
 
+html[lang="bn"] body {
+  font-family: "Noto Sans Bengali", "Nunito", "Open Sans", sans-serif;
+}
+
 /* Desktop inline search — always visible */
 .header-search-item {
   position: relative;

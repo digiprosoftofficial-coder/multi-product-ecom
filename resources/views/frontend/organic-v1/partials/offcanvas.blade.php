@@ -1,7 +1,7 @@
 <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasCart">
   <div class="offcanvas-header">
     <button type="button" class="btn-close ms-0 me-2" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    <h4 class="offcanvas-title flex-grow-1 text-center text-uppercase fs-6 mb-0">Your Cart</h4>
+    <h4 class="offcanvas-title flex-grow-1 text-center text-uppercase fs-6 mb-0">{{ __('storefront.your_cart') }}</h4>
   </div>
   <div class="offcanvas-body">
     <div class="order-md-last" id="cart-sidebar-content">
@@ -21,19 +21,19 @@
   <div class="offcanvas-body">
     <ul class="navbar-nav list-unstyled d-flex flex-column gap-1 mb-3 pb-3 border-bottom d-lg-none">
       <li class="nav-item">
-        <a href="{{ route('home') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+        <a href="{{ route('home') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('home') ? 'active' : '' }}">{{ __('storefront.home') }}</a>
       </li>
       <li class="nav-item">
-        <a href="{{ route('products.index') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('products.*') ? 'active' : '' }}">Shop</a>
+        <a href="{{ route('products.index') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('products.*') ? 'active' : '' }}">{{ __('storefront.shop') }}</a>
       </li>
       <li class="nav-item">
-        <a href="{{ route('about') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
+        <a href="{{ route('about') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('storefront.about') }}</a>
       </li>
       <li class="nav-item">
-        <a href="{{ route('contact') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+        <a href="{{ route('contact') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('storefront.contact') }}</a>
       </li>
     </ul>
-    <p class="text-uppercase text-muted small mb-2 px-2">Categories</p>
+    <p class="text-uppercase text-muted small mb-2 px-2">{{ __('storefront.categories') }}</p>
     <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex flex-column gap-2 mb-0">
       @foreach($navCategories ?? collect() as $navCategory)
         @if($navCategory->children->count())

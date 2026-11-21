@@ -31,6 +31,9 @@
                     <input type="text" name="product_banner_subtitle" class="form-control"
                            value="{{ old('product_banner_subtitle', $pages['product_banner_subtitle'] ?? '') }}"
                            placeholder="Shown when the product has no category">
+                    <input type="text" name="product_banner_subtitle_bn" class="form-control mt-1" lang="bn"
+                           value="{{ old('product_banner_subtitle_bn', $pages['product_banner_subtitle_bn'] ?? '') }}"
+                           placeholder="বাংলা সাবটাইটেল">
                     <div class="form-text">If the product belongs to a category, the category name is used instead.</div>
                 </div>
                 <div class="col-12">

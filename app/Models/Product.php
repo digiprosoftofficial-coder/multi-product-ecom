@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LocalizesAttributes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,13 +12,15 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory, LocalizesAttributes;
     protected $fillable = [
         'name',
+        'name_bn',
         'slug',
         'sku',
         'category_id',
         'description',
+        'description_bn',
         'price',
         'cost_price',
         'compare_price',
@@ -29,11 +33,65 @@ class Product extends Model
         'is_best_selling',
         'has_variants',
         'option1_name',
+        'option1_name_bn',
         'option2_name',
+        'option2_name_bn',
         'thumbnail',
         'meta_title',
+        'meta_title_bn',
         'meta_description',
+        'meta_description_bn',
     ];
+
+    protected function name(): Attribute
+    {
+        return $this->localizedAttribute('name');
+    }
+
+    protected function description(): Attribute
+    {
+        return $this->localizedAttribute('description');
+    }
+
+    protected function metaTitle(): Attribute
+    {
+        return $this->localizedAttribute('meta_title');
+    }
+
+    protected function metaDescription(): Attribute
+    {
+        return $this->localizedAttribute('meta_description');
+    }
+
+    protected function option1Name(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value) {
+                $bangla = $this->attributes['option1_name_bn'] ?? null;
+                $picked = \App\Support\LocaleText::pick($value, is_string($bangla) ? $bangla : null);
+                if (\App\Support\LocaleText::shouldLocalize() && trim((string) $bangla) === '' && in_array($value, ['Size', '', null], true)) {
+                    return __('storefront.size');
+                }
+
+                return $picked;
+            },
+        );
+    }
+
+    protected function option2Name(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value) {
+                $bangla = $this->attributes['option2_name_bn'] ?? null;
+                $picked = \App\Support\LocaleText::pick($value, is_string($bangla) ? $bangla : null);
+                if (\App\Support\LocaleText::shouldLocalize() && trim((string) $bangla) === '' && in_array($value, ['Color', '', null], true)) {
+                    return __('storefront.color');
+                }
+
+                return $picked;
+            },
+        );
+    }
 
     protected $casts = [
         'price' => 'decimal:2',

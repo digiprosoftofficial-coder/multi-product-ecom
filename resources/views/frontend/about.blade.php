@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'About – '.site_name())
+@section('title', __('storefront.about').' – '.site_name())
 
 @section('seo')
 @include('frontend.partials.seo-meta', [
@@ -8,7 +8,7 @@
     'description' => \App\Support\Seo::excerpt($content ?? '', 'Learn more about '.site_name().'.'),
     'url' => route('about'),
     'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
-        ['name' => 'Home', 'url' => route('home')],
+        ['name' => __('storefront.home'), 'url' => route('home')],
         ['name' => 'About', 'url' => route('about')],
     ]),
 ])

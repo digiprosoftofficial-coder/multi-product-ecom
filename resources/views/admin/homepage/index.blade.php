@@ -102,6 +102,7 @@
                         <label class="form-label">Stat {{ $i }} value</label>
                         <input type="text" name="home_stat{{ $i }}_value" class="form-control" value="{{ old('home_stat'.$i.'_value', $settings['home_stat'.$i.'_value']) }}">
                         <input type="text" name="home_stat{{ $i }}_label" class="form-control mt-2" value="{{ old('home_stat'.$i.'_label', $settings['home_stat'.$i.'_label']) }}" placeholder="Label">
+                        <input type="text" name="home_stat{{ $i }}_label_bn" class="form-control mt-1" lang="bn" value="{{ old('home_stat'.$i.'_label_bn', $settings['home_stat'.$i.'_label_bn'] ?? '') }}" placeholder="বাংলা লেবেল">
                     </div>
                 @endforeach
             </div>
@@ -136,6 +137,7 @@
                     <div class="col-md-6">
                         @if($meta[1])
                             <input type="text" name="{{ $meta[1] }}" class="form-control" value="{{ old($meta[1], $settings[$meta[1]]) }}" placeholder="Section title">
+                            <input type="text" name="{{ $meta[1] }}_bn" class="form-control mt-1" lang="bn" value="{{ old($meta[1].'_bn', $settings[$meta[1].'_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
                         @endif
                     </div>
                     <div class="col-md-3">
@@ -156,7 +158,9 @@
                     <div class="col-md-4">
                         <label class="form-label">Banner {{ $i }} title</label>
                         <input type="text" name="home_banner{{ $i }}_title" class="form-control" value="{{ old('home_banner'.$i.'_title', $settings['home_banner'.$i.'_title']) }}">
+                        <input type="text" name="home_banner{{ $i }}_title_bn" class="form-control mt-1" lang="bn" value="{{ old('home_banner'.$i.'_title_bn', $settings['home_banner'.$i.'_title_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
                         <input type="text" name="home_banner{{ $i }}_text" class="form-control mt-2" value="{{ old('home_banner'.$i.'_text', $settings['home_banner'.$i.'_text']) }}" placeholder="Subtitle">
+                        <input type="text" name="home_banner{{ $i }}_text_bn" class="form-control mt-1" lang="bn" value="{{ old('home_banner'.$i.'_text_bn', $settings['home_banner'.$i.'_text_bn'] ?? '') }}" placeholder="বাংলা সাবটাইটেল">
                         <input type="text" name="home_banner{{ $i }}_url" class="form-control mt-2" value="{{ old('home_banner'.$i.'_url', $settings['home_banner'.$i.'_url']) }}" placeholder="Link">
                     </div>
                 @endforeach
@@ -170,10 +174,12 @@
             <div class="mb-3">
                 <label class="form-label">Title</label>
                 <input type="text" name="home_newsletter_title" class="form-control" value="{{ old('home_newsletter_title', $settings['home_newsletter_title']) }}">
+                <input type="text" name="home_newsletter_title_bn" class="form-control mt-1" lang="bn" value="{{ old('home_newsletter_title_bn', $settings['home_newsletter_title_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
             </div>
             <div>
                 <label class="form-label">Text</label>
                 <input type="text" name="home_newsletter_text" class="form-control" value="{{ old('home_newsletter_text', $settings['home_newsletter_text']) }}">
+                <input type="text" name="home_newsletter_text_bn" class="form-control mt-1" lang="bn" value="{{ old('home_newsletter_text_bn', $settings['home_newsletter_text_bn'] ?? '') }}" placeholder="বাংলা লেখা">
             </div>
         </div>
     </div>
@@ -186,7 +192,9 @@
                     <div class="col-md">
                         <label class="form-label">Card {{ $i }} title</label>
                         <input type="text" name="home_feature_{{ $i }}_title" class="form-control" value="{{ old('home_feature_'.$i.'_title', $settings['home_feature_'.$i.'_title']) }}">
+                        <input type="text" name="home_feature_{{ $i }}_title_bn" class="form-control mt-1" lang="bn" value="{{ old('home_feature_'.$i.'_title_bn', $settings['home_feature_'.$i.'_title_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
                         <textarea name="home_feature_{{ $i }}_text" class="form-control mt-2" rows="3">{{ old('home_feature_'.$i.'_text', $settings['home_feature_'.$i.'_text']) }}</textarea>
+                        <textarea name="home_feature_{{ $i }}_text_bn" class="form-control mt-1" rows="2" lang="bn" placeholder="বাংলা লেখা">{{ old('home_feature_'.$i.'_text_bn', $settings['home_feature_'.$i.'_text_bn'] ?? '') }}</textarea>
                     </div>
                 @endforeach
             </div>

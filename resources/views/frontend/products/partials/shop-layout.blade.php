@@ -31,7 +31,7 @@
 
 @include('frontend.components.page-banner', [
     'page' => 'shop',
-    'fallbackTitle' => $title ?? 'Shop',
+    'fallbackTitle' => $title ?? __('storefront.shop'),
 ])
 
 <section class="shop-page py-2">
@@ -41,7 +41,7 @@
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
             <h1 class="section-title mb-0">{{ $title }}</h1>
             <button class="btn btn-outline-dark d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#shopFilters" aria-controls="shopFilters">
-                <i class="fa-solid fa-sliders me-1"></i> Filters
+                <i class="fa-solid fa-sliders me-1"></i> {{ __('storefront.filters') }}
             </button>
         </div>
 
@@ -77,10 +77,10 @@
                         <input type="hidden" name="max_price" value="{{ $maxPrice }}">
                     @endif
                     <div class="col-11">
-                        <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products..." value="{{ $search }}">
+                        <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="{{ __('storefront.search_products') }}" value="{{ $search }}">
                     </div>
                     <div class="col-1 d-flex align-items-center justify-content-end">
-                        <button type="submit" class="btn p-0 border-0 bg-transparent" aria-label="Search">
+                        <button type="submit" class="btn p-0 border-0 bg-transparent" aria-label="{{ __('storefront.search') }}">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </div>
@@ -90,9 +90,9 @@
                     <div class="d-flex flex-wrap align-items-center gap-2">
                         <span class="text-muted small">
                             @if($products->total())
-                                Showing {{ $from }}–{{ $to }} of {{ $products->total() }} products
+                                {{ __('storefront.showing', ['from' => $from, 'to' => $to, 'total' => $products->total()]) }}
                             @else
-                                No products found
+                                {{ __('storefront.no_products') }}
                             @endif
                         </span>
                         @if($search)
@@ -118,12 +118,12 @@
                         @if($maxPrice !== null)
                             <input type="hidden" name="max_price" value="{{ $maxPrice }}">
                         @endif
-                        <label for="shop-sort" class="small text-muted mb-0">Sort</label>
+                        <label for="shop-sort" class="small text-muted mb-0">{{ __('storefront.sort') }}</label>
                         <select id="shop-sort" name="sort" class="form-select form-select-sm shop-sort" onchange="this.form.submit()">
-                            <option value="latest" @selected($sort === 'latest')>Latest</option>
-                            <option value="price_asc" @selected($sort === 'price_asc')>Price: low to high</option>
-                            <option value="price_desc" @selected($sort === 'price_desc')>Price: high to low</option>
-                            <option value="name" @selected($sort === 'name')>Name</option>
+                            <option value="latest" @selected($sort === 'latest')>{{ __('storefront.latest') }}</option>
+                            <option value="price_asc" @selected($sort === 'price_asc')>{{ __('storefront.price_low') }}</option>
+                            <option value="price_desc" @selected($sort === 'price_desc')>{{ __('storefront.price_high') }}</option>
+                            <option value="name" @selected($sort === 'name')>{{ __('storefront.name') }}</option>
                         </select>
                     </form>
                 </div>
@@ -137,8 +137,8 @@
                         <div class="col-12">
                             <div class="shop-empty text-center py-5">
                                 <i class="fa-solid fa-bag-shopping fa-2x text-muted mb-3"></i>
-                                <p class="text-muted mb-3">No products found{{ $search ? ' for this search.' : '.' }}</p>
-                                <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1">Browse all products</a>
+                                <p class="text-muted mb-3">{{ $search ? __('storefront.no_products_search') : __('storefront.no_products') }}</p>
+                                <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1">{{ __('storefront.browse_all') }}</a>
                             </div>
                         </div>
                     @endforelse
@@ -156,7 +156,7 @@
 
 <div class="offcanvas offcanvas-start" tabindex="-1" id="shopFilters" aria-labelledby="shopFiltersLabel">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="shopFiltersLabel">Filters</h5>
+        <h5 class="offcanvas-title" id="shopFiltersLabel">{{ __('storefront.filters') }}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">

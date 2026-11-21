@@ -54,6 +54,9 @@
                                data-preview-title="{{ $pageKey }}"
                                value="{{ old($pageKey.'_banner_title', $pages[$pageKey.'_banner_title'] ?? '') }}"
                                placeholder="{{ $label }}">
+                        <input type="text" name="{{ $pageKey }}_banner_title_bn" class="form-control mt-1" lang="bn"
+                               value="{{ old($pageKey.'_banner_title_bn', $pages[$pageKey.'_banner_title_bn'] ?? '') }}"
+                               placeholder="বাংলা শিরোনাম">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Subtitle</label>
@@ -61,6 +64,9 @@
                                data-preview-subtitle="{{ $pageKey }}"
                                value="{{ old($pageKey.'_banner_subtitle', $pages[$pageKey.'_banner_subtitle'] ?? '') }}"
                                placeholder="Short description for visitors">
+                        <input type="text" name="{{ $pageKey }}_banner_subtitle_bn" class="form-control mt-1" lang="bn"
+                               value="{{ old($pageKey.'_banner_subtitle_bn', $pages[$pageKey.'_banner_subtitle_bn'] ?? '') }}"
+                               placeholder="বাংলা সাবটাইটেল">
                     </div>
                     <div>
                         <label class="form-label">Background image</label>
@@ -83,6 +89,8 @@
                     <span class="text-muted small">Rich text editor</span>
                 </div>
                 <textarea class="form-control js-page-editor" name="{{ $pageKey }}_content" id="{{ $pageKey }}_content" rows="12">{{ old($pageKey.'_content', $pages[$pageKey.'_content'] ?? '') }}</textarea>
+                <label class="form-label mt-3" for="{{ $pageKey }}_content_bn">বাংলা কনটেন্ট</label>
+                <textarea class="form-control js-page-editor" name="{{ $pageKey }}_content_bn" id="{{ $pageKey }}_content_bn" rows="8" lang="bn">{{ old($pageKey.'_content_bn', $pages[$pageKey.'_content_bn'] ?? '') }}</textarea>
             </div>
         </div>
     </div>

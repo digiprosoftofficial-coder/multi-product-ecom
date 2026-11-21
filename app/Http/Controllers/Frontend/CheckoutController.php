@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Rules\BangladeshPhone;
+use App\Support\DeliveryZone;
 use App\Support\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +21,7 @@ use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $cart = session('cart', []);
 
@@ -62,8 +63,7 @@ class CheckoutController extends Controller
         $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
         $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
 
-        // Default zone: inside_dhaka
-        $selectedZone   = old('delivery_zone', 'inside_dhaka');
+        $selectedZone   = old('delivery_zone', DeliveryZone::suggest($request->ip()));
         $shippingCost   = $selectedZone === 'outside_dhaka' ? $shippingOutside : $shippingInside;
         $total          = $baseTotal + $shippingCost;
 

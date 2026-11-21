@@ -22,7 +22,7 @@
       <div class="container-lg">
         <div class="section-header d-flex flex-wrap align-items-center justify-content-between mb-3">
           <h2 class="section-title mb-0">{{ \App\Support\Homepage::get('home_categories_title') }}</h2>
-          <a href="{{ route('products.index') }}" class="btn btn-primary">View All</a>
+          <a href="{{ route('products.index') }}" class="btn btn-primary">{{ __('storefront.view_all') }}</a>
         </div>
         <div class="category-list d-flex flex-wrap justify-content-center">
           @foreach($categories as $category)
@@ -41,7 +41,7 @@
       <div class="container-lg">
         <div class="section-header d-flex flex-wrap align-items-center justify-content-between mb-3">
           <h2 class="section-title mb-0">{{ \App\Support\Homepage::get('home_best_selling_title') }}</h2>
-          <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1">View All</a>
+          <a href="{{ route('products.index') }}" class="btn btn-primary rounded-1">{{ __('storefront.view_all') }}</a>
         </div>
         <div class="product-grid row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-3 g-md-4">
           @foreach($bestSellingProducts as $product)

@@ -46,21 +46,21 @@
                 @error('shipping_address')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
               </div>
               <div class="mb-3">
-                <label class="form-label">Delivery area <span class="text-danger">*</span></label>
-                @php $selZone = old('delivery_zone', 'inside_dhaka'); @endphp
+                <label class="form-label">{{ __('storefront.delivery_area') }} <span class="text-danger">*</span></label>
+                @php $selZone = $selectedZone ?? old('delivery_zone', 'inside_dhaka'); @endphp
                 <div class="d-flex gap-2">
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="delivery_zone" id="zone_inside" value="inside_dhaka"
                            {{ $selZone === 'inside_dhaka' ? 'checked' : '' }} required>
                     <label class="form-check-label" for="zone_inside">
-                      Inside Dhaka – {{ money($shippingInside ?? 60) }}
+                      {{ __('storefront.inside_dhaka') }} – {{ money($shippingInside ?? 60) }}
                     </label>
                   </div>
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="delivery_zone" id="zone_outside" value="outside_dhaka"
                            {{ $selZone === 'outside_dhaka' ? 'checked' : '' }}>
                     <label class="form-check-label" for="zone_outside">
-                      Outside Dhaka – {{ money($shippingOutside ?? 120) }}
+                      {{ __('storefront.outside_dhaka') }} – {{ money($shippingOutside ?? 120) }}
                     </label>
                   </div>
                 </div>
@@ -75,7 +75,7 @@
         </div>
         <div class="col-lg-4">
           <div class="card gadget-card border-secondary sticky-top">
-            <div class="card-header border-secondary">Order summary</div>
+            <div class="card-header border-secondary">{{ __('storefront.order_summary') }}</div>
             <div class="card-body">
               @foreach($cartItems ?? [] as $item)
               <div class="d-flex justify-content-between small mb-2">
@@ -84,18 +84,18 @@
               </div>
               @endforeach
               <hr class="border-secondary">
-              <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ money($subtotal ?? 0) }}</span></div>
+              <div class="d-flex justify-content-between"><span>{{ __('storefront.subtotal') }}</span><span>{{ money($subtotal ?? 0) }}</span></div>
               @if(($tax ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>Tax</span><span>{{ money($tax) }}</span></div>@endif
               @if(($vat ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>VAT</span><span>{{ money($vat) }}</span></div>@endif
               <div class="d-flex justify-content-between small text-muted">
-                <span>Delivery</span>
+                <span>{{ __('storefront.delivery_charge') }}</span>
                 <span id="gadget-shipping">{{ money($shippingCost ?? 60) }}</span>
               </div>
               <hr class="border-secondary">
-              <div class="d-flex justify-content-between fw-bold"><span>Total</span><span id="gadget-total">{{ money($total ?? 0) }}</span></div>
+              <div class="d-flex justify-content-between fw-bold"><span>{{ __('storefront.total') }}</span><span id="gadget-total">{{ money($total ?? 0) }}</span></div>
             </div>
             <div class="card-footer border-secondary">
-              <button type="submit" class="btn btn-primary w-100">Place order</button>
+              <button type="submit" class="btn btn-primary w-100">{{ __('storefront.place_order') }}</button>
             </div>
           </div>
         </div>

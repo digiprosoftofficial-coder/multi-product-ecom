@@ -75,7 +75,9 @@ class ProductVariants
             $product->forceFill([
                 'has_variants' => false,
                 'option1_name' => null,
+                'option1_name_bn' => null,
                 'option2_name' => null,
+                'option2_name_bn' => null,
             ])->save();
 
             return;
@@ -133,7 +135,9 @@ class ProductVariants
         $product->forceFill([
             'has_variants' => true,
             'option1_name' => $option1Name,
+            'option1_name_bn' => trim((string) ($payload['option1_name_bn'] ?? '')) ?: null,
             'option2_name' => $option2 === [] ? null : $option2Name,
+            'option2_name_bn' => $option2 === [] ? null : (trim((string) ($payload['option2_name_bn'] ?? '')) ?: null),
             'stock' => $total,
         ])->save();
     }

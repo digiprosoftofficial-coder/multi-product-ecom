@@ -13,7 +13,11 @@
   @endif
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ asset('gadget-v1/style.css') }}">
+  @if(app()->getLocale() === 'bn')
+  <style>body{font-family:"Noto Sans Bengali",sans-serif}</style>
+  @endif
   @include('frontend.partials.theme-colors')
   @include('frontend.partials.tracking-scripts')
   @stack('head')

@@ -186,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var initialTab = params.get('tab') || hashTab || 'privacy';
     activateTab(initialTab);
     initEditor(initialTab + '_content');
+    initEditor(initialTab + '_content_bn');
 
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach(function (tab) {
         tab.addEventListener('shown.bs.tab', function (e) {
@@ -195,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function () {
             var activeInput = document.getElementById('activeTabInput');
             if (activeInput) activeInput.value = pageKey;
             initEditor(pageKey + '_content');
+            initEditor(pageKey + '_content_bn');
             var editor = tinymce.get(pageKey + '_content');
             if (editor) editor.fire('ResizeEditor');
         });

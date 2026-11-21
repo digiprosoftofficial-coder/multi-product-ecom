@@ -44,8 +44,8 @@ class Order extends Model
     public function deliveryZoneLabel(): string
     {
         return match ($this->delivery_zone) {
-            'inside_dhaka'  => 'Inside Dhaka',
-            'outside_dhaka' => 'Outside Dhaka',
+            'inside_dhaka'  => __('storefront.inside_dhaka'),
+            'outside_dhaka' => __('storefront.outside_dhaka'),
             default         => '—',
         };
     }

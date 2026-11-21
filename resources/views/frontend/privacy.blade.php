@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Privacy policy – '.site_name())
+@section('title', __('storefront.privacy_policy').' – '.site_name())
 
 @section('seo')
 @include('frontend.partials.seo-meta', [
@@ -8,7 +8,7 @@
     'description' => \App\Support\Seo::excerpt($content ?? '', 'Privacy policy for '.site_name().'.'),
     'url' => route('privacy'),
     'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
-        ['name' => 'Home', 'url' => route('home')],
+        ['name' => __('storefront.home'), 'url' => route('home')],
         ['name' => 'Privacy Policy', 'url' => route('privacy')],
     ]),
 ])

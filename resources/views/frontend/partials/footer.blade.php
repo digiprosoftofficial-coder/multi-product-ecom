@@ -26,7 +26,7 @@
                     <a href="{{ route('privacy') }}" class="link-light link-underline-opacity-0 me-3">Privacy</a>
                     <a href="{{ route('terms') }}" class="link-light link-underline-opacity-0">Terms</a>
                 </div>
-                <p class="text-muted mb-0">&copy; {{ date('Y') }} {{ site_name() }}. All rights reserved.</p>
+                <p class="text-muted mb-0">&copy; {{ date('Y') }} {{ site_name() }}. {{ __('storefront.rights') }}</p>
             </div>
         </div>
     </div>

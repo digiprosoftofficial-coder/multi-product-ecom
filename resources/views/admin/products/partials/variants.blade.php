@@ -35,6 +35,8 @@
                     <label for="option1_name" class="form-label">First option</label>
                     <input type="text" class="form-control @error('option1_name') is-invalid @enderror"
                            id="option1_name" name="option1_name" value="{{ $option1Name }}" placeholder="Size">
+                    <input type="text" class="form-control mt-1" id="option1_name_bn" name="option1_name_bn" lang="bn"
+                           value="{{ old('option1_name_bn', $isEdit ? $product->option1_name_bn : '') }}" placeholder="বাংলা, যেমন সাইজ">
                     @error('option1_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">
@@ -49,6 +51,8 @@
                     <label for="option2_name" class="form-label">Second option</label>
                     <input type="text" class="form-control @error('option2_name') is-invalid @enderror"
                            id="option2_name" name="option2_name" value="{{ $option2Name }}" placeholder="Color">
+                    <input type="text" class="form-control mt-1" id="option2_name_bn" name="option2_name_bn" lang="bn"
+                           value="{{ old('option2_name_bn', $isEdit ? $product->option2_name_bn : '') }}" placeholder="বাংলা, যেমন রঙ">
                     @error('option2_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-6">

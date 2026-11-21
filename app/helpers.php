@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Storage;
 if (!function_exists('setting')) {
     function setting(string $key, $default = null)
     {
-        return Setting::get($key, $default);
+        $value = Setting::get($key, $default);
+
+        return \App\Support\LocaleText::setting($key, $value, $default);
     }
 }
 

@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!field) return;
 
     tinymce.init({
-        selector: '#description',
+        selector: '#description, #description_bn',
         license_key: 'gpl',
         menubar: false,
         branding: false,
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
         table_toolbar: 'tabledelete | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
         content_style: 'body { font-family: Figtree, Segoe UI, sans-serif; font-size: 14px; line-height: 1.6; }',
         setup: function (editor) {
-            var form = field.closest('form');
+            var form = editor.getElement().closest('form');
             if (!form) return;
             form.addEventListener('submit', function () {
                 editor.save();

@@ -135,8 +135,10 @@ class CategoryController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'name_bn' => 'nullable|string|max:255',
             'parent_id' => 'nullable|exists:categories,id',
             'description' => 'nullable|string',
+            'description_bn' => 'nullable|string',
             'status' => 'required|in:0,1',
             'image' => image_upload_rules(),
         ]);

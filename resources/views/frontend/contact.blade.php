@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Contact – '.site_name())
+@section('title', __('storefront.contact').' – '.site_name())
 
 @section('seo')
 @include('frontend.partials.seo-meta', [
@@ -8,7 +8,7 @@
     'description' => \App\Support\Seo::excerpt(setting('contact_intro'), 'Contact '.site_name().'. Reach us by phone, email, or send a message.'),
     'url' => route('contact'),
     'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
-        ['name' => 'Home', 'url' => route('home')],
+        ['name' => __('storefront.home'), 'url' => route('home')],
         ['name' => 'Contact', 'url' => route('contact')],
     ]),
 ])
@@ -128,7 +128,7 @@
 
 @include('frontend.components.page-banner', [
     'page' => 'contact',
-    'fallbackTitle' => 'Contact Us',
+    'fallbackTitle' => __('storefront.contact'),
 ])
 
 <section class="contact-page">
@@ -139,7 +139,7 @@
                     <div class="col-sm-6 col-xl-3">
                         <div class="contact-info-card">
                             <div class="contact-info-icon"><i class="fa-solid fa-phone"></i></div>
-                            <h2>Phone</h2>
+                            <h2>{{ __('storefront.phone') }}</h2>
                             <p><a href="tel:{{ preg_replace('/\s+/', '', $phone) }}">{{ $phone }}</a></p>
                         </div>
                     </div>
@@ -148,7 +148,7 @@
                     <div class="col-sm-6 col-xl-3">
                         <div class="contact-info-card">
                             <div class="contact-info-icon"><i class="fa-solid fa-envelope"></i></div>
-                            <h2>Email</h2>
+                            <h2>{{ __('storefront.email') }}</h2>
                             <p><a href="mailto:{{ $email }}">{{ $email }}</a></p>
                         </div>
                     </div>
@@ -157,7 +157,7 @@
                     <div class="col-sm-6 col-xl-3">
                         <div class="contact-info-card">
                             <div class="contact-info-icon"><i class="fa-solid fa-location-dot"></i></div>
-                            <h2>Address</h2>
+                            <h2>{{ __('storefront.address') }}</h2>
                             <p>{!! nl2br(e($address)) !!}</p>
                         </div>
                     </div>
@@ -166,7 +166,7 @@
                     <div class="col-sm-6 col-xl-3">
                         <div class="contact-info-card">
                             <div class="contact-info-icon"><i class="fa-solid fa-clock"></i></div>
-                            <h2>Business hours</h2>
+                            <h2>{{ __('storefront.business_hours') }}</h2>
                             <p>{{ $hours }}</p>
                         </div>
                     </div>
@@ -178,8 +178,8 @@
             <div class="col-lg-6">
                 <div class="contact-panel">
                     <div class="contact-panel-header">
-                        <h2>Send us a message</h2>
-                        <p>Fill out the form and we will respond within 1–2 business days.</p>
+                        <h2>{{ __('storefront.send_message') }}</h2>
+                        <p>{{ __('storefront.contact_form_hint') }}</p>
                     </div>
                     <div class="contact-panel-body">
                         <form method="POST" action="{{ route('contact.submit') }}" class="contact-form">
@@ -187,7 +187,7 @@
 
                             <div class="row g-3">
                                 <div class="col-md-6">
-                                    <label for="contact_name" class="form-label">Full name</label>
+                                    <label for="contact_name" class="form-label">{{ __('storefront.full_name') }}</label>
                                     <input type="text" class="form-control @error('name') is-invalid @enderror"
                                            id="contact_name" name="name"
                                            value="{{ old('name', auth()->user()?->name ?? '') }}" required>
@@ -196,7 +196,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="contact_email" class="form-label">Email</label>
+                                    <label for="contact_email" class="form-label">{{ __('storefront.email') }}</label>
                                     <input type="email" class="form-control @error('email') is-invalid @enderror"
                                            id="contact_email" name="email"
                                            value="{{ old('email', auth()->user()?->email ?? '') }}" required>
@@ -205,7 +205,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="contact_phone" class="form-label">Phone <span class="text-danger">*</span></label>
+                                    <label for="contact_phone" class="form-label">{{ __('storefront.phone') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('phone') is-invalid @enderror"
                                            id="contact_phone" name="phone" value="{{ old('phone') }}"
                                            placeholder="01XXXXXXXXX" required>
@@ -214,7 +214,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="contact_subject" class="form-label">Subject <span class="text-muted">(optional)</span></label>
+                                    <label for="contact_subject" class="form-label">{{ __('storefront.subject') }} <span class="text-muted">({{ __('storefront.optional') }})</span></label>
                                     <input type="text" class="form-control @error('subject') is-invalid @enderror"
                                            id="contact_subject" name="subject" value="{{ old('subject') }}">
                                     @error('subject')
@@ -222,7 +222,7 @@
                                     @enderror
                                 </div>
                                 <div class="col-12">
-                                    <label for="contact_message" class="form-label">Message</label>
+                                    <label for="contact_message" class="form-label">{{ __('storefront.message') }}</label>
                                     <textarea class="form-control @error('message') is-invalid @enderror"
                                               id="contact_message" name="message" required>{{ old('message') }}</textarea>
                                     @error('message')
@@ -231,7 +231,7 @@
                                 </div>
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-primary rounded-1 px-4">
-                                        <i class="fa-solid fa-paper-plane me-2"></i>Send message
+                                        <i class="fa-solid fa-paper-plane me-2"></i>{{ __('storefront.send') }}
                                     </button>
                                 </div>
                             </div>
@@ -243,8 +243,8 @@
             <div class="col-lg-6">
                 <div class="contact-panel h-100 d-flex flex-column">
                     <div class="contact-panel-header">
-                        <h2>Find us on the map</h2>
-                        <p>{{ $address ? 'Visit our store or get directions below.' : 'Add your address in Site settings to show a map here.' }}</p>
+                        <h2>{{ __('storefront.find_on_map') }}</h2>
+                        <p>{{ $address ? __('storefront.map_hint') : __('storefront.map_empty') }}</p>
                     </div>
                     <div class="contact-map-wrap flex-grow-1">
                         @if($mapUrl)

@@ -4,8 +4,8 @@
 
 @php
     $crumbs = [
-        ['name' => 'Home', 'url' => route('home')],
-        ['name' => 'Shop', 'url' => route('products.index')],
+        ['name' => __('storefront.home'), 'url' => route('home')],
+        ['name' => __('storefront.shop'), 'url' => route('products.index')],
     ];
     if ($product->category) {
         $nodes = [];
@@ -102,7 +102,7 @@
                         @if($callUrl)
                             <a href="{{ $callUrl }}" class="btn product-contact-btn product-contact-btn--call">
                                 <i class="fa-solid fa-phone" aria-hidden="true"></i>
-                                <span>Call Now</span>
+                                <span>{{ __('storefront.call_now') }}</span>
                             </a>
                         @endif
                     </div>
@@ -111,21 +111,21 @@
                 <aside class="product-delivery-card mt-4">
                     <h2 class="product-delivery-title">
                         <span aria-hidden="true">🚚</span>
-                        Delivery information
+                        {{ __('storefront.delivery_information_card') }}
                     </h2>
                     <ul class="product-delivery-list">
                         <li>
                             <i class="fa-solid fa-city" aria-hidden="true"></i>
-                            <span>Inside Dhaka: {{ money($shippingInside) }} (1–2 days)</span>
+                            <span>{{ __('storefront.delivery_inside', ['cost' => money($shippingInside)]) }}</span>
                         </li>
                         <li>
                             <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
-                            <span>Outside Dhaka: {{ money($shippingOutside) }} (2–4 days)</span>
+                            <span>{{ __('storefront.delivery_outside', ['cost' => money($shippingOutside)]) }}</span>
                         </li>
                         @if($helpline)
                             <li>
                                 <i class="fa-solid fa-phone" aria-hidden="true"></i>
-                                <a href="tel:{{ preg_replace('/\s+/', '', $helpline) }}">Helpline: {{ $helpline }}</a>
+                                <a href="tel:{{ preg_replace('/\s+/', '', $helpline) }}">{{ __('storefront.helpline') }}: {{ $helpline }}</a>
                             </li>
                         @endif
                     </ul>
@@ -137,14 +137,14 @@
             <section class="product-details-block" data-details>
                 <h2 class="product-details-heading">
                     <i class="fa-regular fa-file-lines" aria-hidden="true"></i>
-                    Product details
+                    {{ __('storefront.product_details') }}
                 </h2>
                 <div class="product-description is-clamped" data-details-body>
                     {!! $product->description_html !!}
                 </div>
                 <div class="product-details-toggle-wrap">
                     <button type="button" class="product-details-toggle" data-details-toggle aria-expanded="false" hidden>
-                        See more details
+                        {{ __('storefront.see_more') }}
                     </button>
                 </div>
             </section>
@@ -153,7 +153,7 @@
         @if($relatedProducts->count() > 0)
             <div class="mt-5 pt-4">
                 <div class="section-header d-flex flex-wrap align-items-center justify-content-between mb-3">
-                    <h2 class="section-title mb-0">You may also like</h2>
+                    <h2 class="section-title mb-0">{{ __('storefront.you_may_like') }}</h2>
                 </div>
                 <div class="product-grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                     @foreach($relatedProducts as $relatedProduct)

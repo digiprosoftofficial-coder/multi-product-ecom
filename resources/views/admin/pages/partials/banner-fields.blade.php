@@ -21,11 +21,15 @@
                 <label class="form-label">Banner title</label>
                 <input type="text" name="{{ $pageKey }}_banner_title" class="form-control"
                        value="{{ old($pageKey.'_banner_title', $pages[$pageKey.'_banner_title'] ?? '') }}">
+                <input type="text" name="{{ $pageKey }}_banner_title_bn" class="form-control mt-1" lang="bn"
+                       value="{{ old($pageKey.'_banner_title_bn', $pages[$pageKey.'_banner_title_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
             </div>
             <div class="col-md-6">
                 <label class="form-label">Banner subtitle</label>
                 <input type="text" name="{{ $pageKey }}_banner_subtitle" class="form-control"
                        value="{{ old($pageKey.'_banner_subtitle', $pages[$pageKey.'_banner_subtitle'] ?? '') }}">
+                <input type="text" name="{{ $pageKey }}_banner_subtitle_bn" class="form-control mt-1" lang="bn"
+                       value="{{ old($pageKey.'_banner_subtitle_bn', $pages[$pageKey.'_banner_subtitle_bn'] ?? '') }}" placeholder="বাংলা সাবটাইটেল">
             </div>
             <div class="col-12">
                 <label class="form-label">Banner image</label>

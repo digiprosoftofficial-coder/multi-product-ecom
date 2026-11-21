@@ -31,16 +31,16 @@
       <div class="col-lg-6 d-none d-lg-flex justify-content-center header-nav-col">
         <ul class="navbar-nav list-unstyled d-flex flex-row gap-3 gap-xl-4 justify-content-center flex-wrap align-items-center mb-0 fw-bold text-uppercase">
           <li class="nav-item">
-            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Home</a>
+            <a href="{{ route('home') }}" class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}">{{ __('storefront.home') }}</a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">Shop</a>
+            <a href="{{ route('products.index') }}" class="nav-link {{ request()->routeIs('products.*') ? 'active' : '' }}">{{ __('storefront.shop') }}</a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">About</a>
+            <a href="{{ route('about') }}" class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}">{{ __('storefront.about') }}</a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+            <a href="{{ route('contact') }}" class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('storefront.contact') }}</a>
           </li>
         </ul>
       </div>
@@ -56,31 +56,34 @@
               <input type="text"
                      name="search"
                      class="form-control header-inline-search-input"
-                     placeholder="Search products"
+                     placeholder="{{ __('storefront.search_products') }}"
                      value="{{ request('search') }}"
                      id="desktop-search-input"
                      autocomplete="off">
-              <button type="submit" class="btn header-inline-search-submit p-0 border-0 bg-transparent" aria-label="Search">
+              <button type="submit" class="btn header-inline-search-submit p-0 border-0 bg-transparent" aria-label="{{ __('storefront.search') }}">
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </form>
             <button type="button"
                     class="p-2 mx-1 border-0 bg-transparent header-search-toggle d-xl-none"
                     id="headerSearchToggle"
-                    title="Search"
-                    aria-label="Search"
+                    title="{{ __('storefront.search') }}"
+                    aria-label="{{ __('storefront.search') }}"
                     aria-expanded="false"
                     aria-controls="headerSearchPanel">
               <i class="fa-solid fa-magnifying-glass fa-lg"></i>
             </button>
           </li>
+          <li class="d-flex align-items-center">
+            @include('frontend.partials.lang-switch')
+          </li>
           <li>
             @auth
-              <a href="{{ route('dashboard') }}" class="p-2 mx-1" title="My account">
+              <a href="{{ route('dashboard') }}" class="p-2 mx-1" title="{{ __('storefront.account') }}">
                 <i class="fa-regular fa-user fa-lg"></i>
               </a>
             @else
-              <a href="{{ route('login') }}" class="p-2 mx-1" title="Login">
+              <a href="{{ route('login') }}" class="p-2 mx-1" title="{{ __('storefront.login') }}">
                 <i class="fa-regular fa-user fa-lg"></i>
               </a>
             @endauth
@@ -100,7 +103,7 @@
             <li class="d-none d-lg-inline-flex">
               <form method="POST" action="{{ route('logout') }}" class="m-0">
                 @csrf
-                <button type="submit" class="p-2 mx-1 border-0 bg-transparent" title="Logout" aria-label="Logout">
+                <button type="submit" class="p-2 mx-1 border-0 bg-transparent" title="{{ __('storefront.logout') }}" aria-label="{{ __('storefront.logout') }}">
                   <i class="fa-solid fa-right-from-bracket fa-lg"></i>
                 </button>
               </form>
@@ -114,8 +117,8 @@
     <div class="collapse d-xl-none" id="headerSearchPanel">
       <div class="header-search-panel py-2">
         <form action="{{ route('products.index') }}" method="GET" class="search-bar d-flex align-items-center bg-light p-2 rounded-4 gap-2" id="mobile-search-form">
-          <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="Search products" value="{{ request('search') }}" id="mobile-search-input" autocomplete="off">
-          <button type="submit" class="btn p-1 border-0 bg-transparent" aria-label="Search">
+          <input type="text" name="search" class="form-control border-0 bg-transparent" placeholder="{{ __('storefront.search_products') }}" value="{{ request('search') }}" id="mobile-search-input" autocomplete="off">
+          <button type="submit" class="btn p-1 border-0 bg-transparent" aria-label="{{ __('storefront.search') }}">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         </form>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Checkout')
+@section('title', __('storefront.checkout'))
 
 @section('seo')
 @include('frontend.partials.seo-meta', ['robots' => 'noindex, nofollow'])
@@ -9,7 +9,7 @@
 @section('content')
 @include('frontend.components.page-banner', [
     'page' => 'checkout',
-    'fallbackTitle' => 'Checkout',
+    'fallbackTitle' => __('storefront.checkout'),
 ])
 
 @php
@@ -38,21 +38,21 @@
                     <div class="checkout-panel-head">
                         <span class="checkout-panel-icon"><i class="fa-solid fa-user"></i></span>
                         <div>
-                            <h2 class="checkout-panel-title mb-0">Customer details</h2>
-                            <p class="checkout-panel-sub mb-0">Who should we contact about this order?</p>
+                            <h2 class="checkout-panel-title mb-0">{{ __('storefront.customer_details') }}</h2>
+                            <p class="checkout-panel-sub mb-0">{{ __('storefront.customer_details_hint') }}</p>
                         </div>
                     </div>
                     <div class="checkout-panel-body">
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <label for="customer_name" class="form-label">Full name <span class="text-danger">*</span></label>
+                                <label for="customer_name" class="form-label">{{ __('storefront.full_name') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('customer_name') is-invalid @enderror"
                                        id="customer_name" name="customer_name"
                                        value="{{ old('customer_name', Auth::check() ? Auth::user()->name : '') }}" required>
                                 @error('customer_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-md-6">
-                                <label for="customer_phone" class="form-label">Phone <span class="text-danger">*</span></label>
+                                <label for="customer_phone" class="form-label">{{ __('storefront.phone') }} <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control @error('customer_phone') is-invalid @enderror"
                                        id="customer_phone" name="customer_phone"
                                        value="{{ old('customer_phone', Auth::check() ? Auth::user()->phone : '') }}"
@@ -60,7 +60,7 @@
                                 @error('customer_phone')<div class="invalid-feedback">{{ $message }}</div>@enderror
                             </div>
                             <div class="col-12">
-                                <label for="customer_email" class="form-label">Email <small class="text-muted">(optional)</small></label>
+                                <label for="customer_email" class="form-label">{{ __('storefront.email_optional') }}</label>
                                 <input type="email" class="form-control @error('customer_email') is-invalid @enderror"
                                        id="customer_email" name="customer_email"
                                        value="{{ old('customer_email', Auth::check() ? Auth::user()->email : '') }}">
@@ -74,20 +74,20 @@
                     <div class="checkout-panel-head">
                         <span class="checkout-panel-icon"><i class="fa-solid fa-truck"></i></span>
                         <div>
-                            <h2 class="checkout-panel-title mb-0">Shipping address</h2>
-                            <p class="checkout-panel-sub mb-0">Where should we deliver your order?</p>
+                            <h2 class="checkout-panel-title mb-0">{{ __('storefront.shipping_address') }}</h2>
+                            <p class="checkout-panel-sub mb-0">{{ __('storefront.shipping_address_hint') }}</p>
                         </div>
                     </div>
                     <div class="checkout-panel-body">
-                        <label for="shipping_address" class="form-label">Full address <span class="text-danger">*</span></label>
+                        <label for="shipping_address" class="form-label">{{ __('storefront.full_address') }} <span class="text-danger">*</span></label>
                         <textarea class="form-control @error('shipping_address') is-invalid @enderror"
                                   id="shipping_address" name="shipping_address" rows="3" required
-                                  placeholder="House, road, area, district">{{ old('shipping_address') }}</textarea>
+                                  placeholder="{{ __('storefront.address_placeholder') }}">{{ old('shipping_address') }}</textarea>
                         @error('shipping_address')<div class="invalid-feedback">{{ $message }}</div>@enderror
 
                         {{-- Delivery zone --}}
                         <div class="mt-3">
-                            <label class="form-label fw-semibold">Delivery area <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">{{ __('storefront.delivery_area') }} <span class="text-danger">*</span></label>
                             <div class="delivery-zone-options">
                                 <label class="delivery-zone-option {{ ($selectedZone ?? 'inside_dhaka') === 'inside_dhaka' ? 'is-selected' : '' }}">
                                     <input type="radio" name="delivery_zone" value="inside_dhaka"
@@ -96,7 +96,7 @@
                                     <span class="delivery-zone-body">
                                         <span class="delivery-zone-icon"><i class="fa-solid fa-city"></i></span>
                                         <span class="delivery-zone-text">
-                                            <strong>Inside Dhaka</strong>
+                                            <strong>{{ __('storefront.inside_dhaka') }}</strong>
                                             <small class="js-zone-price-inside">{{ money($shippingInside ?? 60) }}</small>
                                         </span>
                                     </span>
@@ -108,7 +108,7 @@
                                     <span class="delivery-zone-body">
                                         <span class="delivery-zone-icon"><i class="fa-solid fa-map-location-dot"></i></span>
                                         <span class="delivery-zone-text">
-                                            <strong>Outside Dhaka</strong>
+                                            <strong>{{ __('storefront.outside_dhaka') }}</strong>
                                             <small class="js-zone-price-outside">{{ money($shippingOutside ?? 120) }}</small>
                                         </span>
                                     </span>
@@ -123,13 +123,13 @@
                     <div class="checkout-panel-head">
                         <span class="checkout-panel-icon"><i class="fa-solid fa-wallet"></i></span>
                         <div>
-                            <h2 class="checkout-panel-title mb-0">Payment method</h2>
-                            <p class="checkout-panel-sub mb-0">Choose how you want to pay</p>
+                            <h2 class="checkout-panel-title mb-0">{{ __('storefront.payment_method') }}</h2>
+                            <p class="checkout-panel-sub mb-0">{{ __('storefront.payment_method_hint') }}</p>
                         </div>
                     </div>
                     <div class="checkout-panel-body">
                         @if(count($paymentMethods) === 0)
-                            <div class="alert alert-warning mb-0">No payment methods are available. Please contact the store.</div>
+                            <div class="alert alert-warning mb-0">{{ __('storefront.no_payment') }}</div>
                         @else
                         <div class="payment-options">
                             @foreach($paymentMethods as $value => $method)
@@ -157,7 +157,7 @@
                             <div class="wallet-payment-note" id="wallet-payment-note"></div>
                             <div class="row g-3 mt-1">
                                 <div class="col-md-6">
-                                    <label for="payment_reference" class="form-label">Transaction ID <span class="text-danger">*</span></label>
+                                    <label for="payment_reference" class="form-label">{{ __('storefront.transaction_id') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('payment_reference') is-invalid @enderror"
                                            id="payment_reference" name="payment_reference"
                                            value="{{ old('payment_reference') }}"
@@ -165,7 +165,7 @@
                                     @error('payment_reference')<div class="invalid-feedback">{{ $message }}</div>@enderror
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="payment_sender_phone" class="form-label">Sender number <span class="text-danger">*</span></label>
+                                    <label for="payment_sender_phone" class="form-label">{{ __('storefront.sender_number') }} <span class="text-danger">*</span></label>
                                     <input type="text" class="form-control @error('payment_sender_phone') is-invalid @enderror"
                                            id="payment_sender_phone" name="payment_sender_phone"
                                            value="{{ old('payment_sender_phone') }}"
@@ -181,8 +181,8 @@
                     <div class="checkout-panel-head">
                         <span class="checkout-panel-icon"><i class="fa-solid fa-note-sticky"></i></span>
                         <div>
-                            <h2 class="checkout-panel-title mb-0">Order notes</h2>
-                            <p class="checkout-panel-sub mb-0">Optional delivery instructions</p>
+                            <h2 class="checkout-panel-title mb-0">{{ __('storefront.order_notes') }}</h2>
+                            <p class="checkout-panel-sub mb-0">{{ __('storefront.order_notes_hint') }}</p>
                         </div>
                     </div>
                     <div class="checkout-panel-body">
@@ -197,7 +197,7 @@
 
             <div class="col-lg-4">
                 <div class="checkout-summary">
-                    <h3 class="checkout-summary-title">Order summary</h3>
+                    <h3 class="checkout-summary-title">{{ __('storefront.order_summary') }}</h3>
                     <div class="checkout-summary-items">
                         @foreach($cartItems as $item)
                             @php
@@ -237,7 +237,7 @@
                     </div>
 
                     <div class="checkout-summary-row">
-                        <span>Subtotal</span>
+                        <span>{{ __('storefront.subtotal') }}</span>
                         <span class="js-checkout-subtotal">{{ money($subtotal) }}</span>
                     </div>
                     @if($tax > 0)
@@ -253,16 +253,16 @@
                         </div>
                     @endif
                     <div class="checkout-summary-row" id="js-shipping-row">
-                        <span>Delivery charge</span>
+                        <span>{{ __('storefront.delivery_charge') }}</span>
                         <span id="js-shipping-amount">{{ money($shippingCost ?? 0) }}</span>
                     </div>
                     <div class="checkout-summary-total">
-                        <span>Total</span>
+                        <span>{{ __('storefront.total') }}</span>
                         <strong class="js-checkout-total">{{ money($total) }}</strong>
                     </div>
 
                     <button type="submit" form="checkout-form" class="btn btn-primary btn-lg w-100 checkout-submit-btn">
-                        <i class="fa-solid fa-bag-shopping me-2"></i> Place order
+                        <i class="fa-solid fa-bag-shopping me-2"></i> {{ __('storefront.place_order') }}
                     </button>
 
                     <div class="checkout-trust">

@@ -21,9 +21,21 @@
                 <label for="site_name" class="form-label">Site name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('site_name') is-invalid @enderror"
                        id="site_name" name="site_name" value="{{ old('site_name', $settings['site_name']) }}" required>
+                <input type="text" class="form-control mt-1 @error('site_name_bn') is-invalid @enderror"
+                       id="site_name_bn" name="site_name_bn" lang="bn"
+                       value="{{ old('site_name_bn', $settings['site_name_bn'] ?? '') }}" placeholder="বাংলা নাম">
                 @error('site_name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
+            </div>
+            <div class="mb-3">
+                <label for="default_locale" class="form-label">Default language</label>
+                <select class="form-select @error('default_locale') is-invalid @enderror" id="default_locale" name="default_locale">
+                    <option value="en" {{ old('default_locale', $settings['default_locale'] ?? 'en') === 'en' ? 'selected' : '' }}>English (EN)</option>
+                    <option value="bn" {{ old('default_locale', $settings['default_locale'] ?? 'en') === 'bn' ? 'selected' : '' }}>বাংলা (BN)</option>
+                </select>
+                <div class="form-text">Used until a visitor picks EN or BN in the top bar.</div>
+                @error('default_locale')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
             @php
@@ -98,6 +110,9 @@
                 <label for="footer_text" class="form-label">Footer tagline</label>
                 <textarea class="form-control @error('footer_text') is-invalid @enderror"
                           id="footer_text" name="footer_text" rows="2">{{ old('footer_text', $settings['footer_text']) }}</textarea>
+                <textarea class="form-control mt-1 @error('footer_text_bn') is-invalid @enderror"
+                          id="footer_text_bn" name="footer_text_bn" rows="2" lang="bn"
+                          placeholder="বাংলা ট্যাগলাইন">{{ old('footer_text_bn', $settings['footer_text_bn'] ?? '') }}</textarea>
                 @error('footer_text')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -136,6 +151,9 @@
                 <label for="contact_address" class="form-label">Address</label>
                 <textarea class="form-control @error('contact_address') is-invalid @enderror"
                           id="contact_address" name="contact_address" rows="3">{{ old('contact_address', $settings['contact_address']) }}</textarea>
+                <textarea class="form-control mt-1 @error('contact_address_bn') is-invalid @enderror"
+                          id="contact_address_bn" name="contact_address_bn" rows="2" lang="bn"
+                          placeholder="বাংলা ঠিকানা">{{ old('contact_address_bn', $settings['contact_address_bn'] ?? '') }}</textarea>
                 @error('contact_address')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -145,6 +163,8 @@
                 <input type="text" class="form-control @error('contact_hours') is-invalid @enderror"
                        id="contact_hours" name="contact_hours" value="{{ old('contact_hours', $settings['contact_hours']) }}"
                        placeholder="Sat–Thu, 10:00–20:00">
+                <input type="text" class="form-control mt-1" id="contact_hours_bn" name="contact_hours_bn" lang="bn"
+                       value="{{ old('contact_hours_bn', $settings['contact_hours_bn'] ?? '') }}" placeholder="বাংলা সময়">
                 @error('contact_hours')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -153,6 +173,8 @@
                 <label for="contact_intro" class="form-label">Contact page intro</label>
                 <textarea class="form-control @error('contact_intro') is-invalid @enderror"
                           id="contact_intro" name="contact_intro" rows="2">{{ old('contact_intro', $settings['contact_intro']) }}</textarea>
+                <textarea class="form-control mt-1" id="contact_intro_bn" name="contact_intro_bn" rows="2" lang="bn"
+                          placeholder="বাংলা ভূমিকা">{{ old('contact_intro_bn', $settings['contact_intro_bn'] ?? '') }}</textarea>
                 @error('contact_intro')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror

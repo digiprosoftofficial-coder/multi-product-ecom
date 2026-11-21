@@ -17,12 +17,15 @@
     </button>
     <div class="collapse navbar-collapse" id="gadgetNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">Shop</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('home') }}">{{ __('storefront.home') }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('products.index') }}">{{ __('storefront.shop') }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('about') }}">{{ __('storefront.about') }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="{{ route('contact') }}">{{ __('storefront.contact') }}</a></li>
       </ul>
       <ul class="navbar-nav align-items-center">
+        <li class="nav-item me-2">
+          @include('frontend.partials.lang-switch')
+        </li>
         <li class="nav-item me-2">
           <button type="button" class="btn btn-sm btn-outline-secondary border-0 p-2 gadget-theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
             <i class="fas fa-moon theme-icon-dark d-none" aria-hidden="true"></i>
@@ -39,17 +42,17 @@
         </li>
         @auth
           <li class="nav-item">
-            <a class="nav-link" href="{{ route('dashboard') }}">Account</a>
+            <a class="nav-link" href="{{ route('dashboard') }}">{{ __('storefront.account') }}</a>
           </li>
           <li class="nav-item">
             <form method="POST" action="{{ route('logout') }}">
               @csrf
-              <button type="submit" class="nav-link border-0 bg-transparent">Logout</button>
+              <button type="submit" class="nav-link border-0 bg-transparent">{{ __('storefront.logout') }}</button>
             </form>
           </li>
         @else
           <li class="nav-item">
-            <a class="nav-link" href="{{ route('login') }}">Login</a>
+            <a class="nav-link" href="{{ route('login') }}">{{ __('storefront.login') }}</a>
           </li>
         @endauth
       </ul>
@@ -82,7 +85,7 @@
 
 <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="gadgetCartOffcanvas" aria-labelledby="gadgetCartOffcanvasLabel">
   <div class="offcanvas-header border-secondary">
-    <h5 class="offcanvas-title" id="gadgetCartOffcanvasLabel">Your Cart</h5>
+    <h5 class="offcanvas-title" id="gadgetCartOffcanvasLabel">{{ __('storefront.your_cart') }}</h5>
     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body" id="gadget-cart-sidebar-content">

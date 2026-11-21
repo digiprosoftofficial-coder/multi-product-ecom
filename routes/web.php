@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
 
+Route::get('/locale/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, ['en', 'bn'], true), 404);
+    session(['locale' => $locale]);
+
+    return redirect()->back(fallback: route('home'));
+})->name('locale.switch');
+
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [\App\Http\Controllers\Frontend\SitemapController::class, 'index'])->name('sitemap');

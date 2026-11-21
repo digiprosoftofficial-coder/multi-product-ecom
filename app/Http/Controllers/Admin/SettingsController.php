@@ -37,17 +37,23 @@ class SettingsController extends Controller
 
         $settings = [
             'site_name' => Setting::get('site_name', config('app.name')),
+            'site_name_bn' => Setting::get('site_name_bn', ''),
+            'default_locale' => Setting::get('default_locale', 'en'),
             'site_logo' => Setting::get('site_logo'),
             'footer_logo' => Setting::get('footer_logo'),
             'favicon' => Setting::get('favicon'),
             'logo_height_desktop' => Setting::get('logo_height_desktop', '48'),
             'logo_height_mobile' => Setting::get('logo_height_mobile', '50'),
             'footer_text' => Setting::get('footer_text', ''),
+            'footer_text_bn' => Setting::get('footer_text_bn', ''),
             'contact_phone' => Setting::get('contact_phone', ''),
             'contact_email' => Setting::get('contact_email', ''),
             'contact_address' => Setting::get('contact_address', ''),
+            'contact_address_bn' => Setting::get('contact_address_bn', ''),
             'contact_hours' => Setting::get('contact_hours', ''),
+            'contact_hours_bn' => Setting::get('contact_hours_bn', ''),
             'contact_intro' => Setting::get('contact_intro', ''),
+            'contact_intro_bn' => Setting::get('contact_intro_bn', ''),
             'contact_map_url' => Setting::get('contact_map_url', ''),
             'currency_symbol' => Setting::get('currency_symbol', '$'),
             'currency_code' => Setting::get('currency_code', 'USD'),
@@ -114,6 +120,8 @@ class SettingsController extends Controller
 
         $validated = $request->validate([
             'site_name' => 'required|string|max:255',
+            'site_name_bn' => 'nullable|string|max:255',
+            'default_locale' => 'required|in:en,bn',
             'site_logo' => image_upload_rules(),
             'footer_logo' => image_upload_rules(),
             'favicon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,ico|max:1024',
@@ -123,11 +131,15 @@ class SettingsController extends Controller
             'logo_height_desktop' => 'required|integer|min:24|max:96',
             'logo_height_mobile' => 'required|integer|min:24|max:80',
             'footer_text' => 'nullable|string|max:2000',
+            'footer_text_bn' => 'nullable|string|max:2000',
             'contact_phone' => ['nullable', 'string', 'max:50', new BangladeshPhone],
             'contact_email' => 'nullable|email|max:255',
             'contact_address' => 'nullable|string|max:2000',
+            'contact_address_bn' => 'nullable|string|max:2000',
             'contact_hours' => 'nullable|string|max:255',
+            'contact_hours_bn' => 'nullable|string|max:255',
             'contact_intro' => 'nullable|string|max:2000',
+            'contact_intro_bn' => 'nullable|string|max:2000',
             'contact_map_url' => 'nullable|url|max:2000',
             'currency_symbol' => 'required|string|max:8',
             'currency_code' => 'nullable|string|max:8',
@@ -180,14 +192,20 @@ class SettingsController extends Controller
         }
 
         Setting::set('site_name', $validated['site_name']);
+        Setting::set('site_name_bn', $validated['site_name_bn'] ?? '');
+        Setting::set('default_locale', $validated['default_locale']);
         Setting::set('logo_height_desktop', (string) (int) $validated['logo_height_desktop']);
         Setting::set('logo_height_mobile', (string) (int) $validated['logo_height_mobile']);
         Setting::set('footer_text', $validated['footer_text'] ?? '');
+        Setting::set('footer_text_bn', $validated['footer_text_bn'] ?? '');
         Setting::set('contact_phone', BangladeshPhone::normalize($validated['contact_phone'] ?? null) ?? '');
         Setting::set('contact_email', $validated['contact_email'] ?? '');
         Setting::set('contact_address', $validated['contact_address'] ?? '');
+        Setting::set('contact_address_bn', $validated['contact_address_bn'] ?? '');
         Setting::set('contact_hours', $validated['contact_hours'] ?? '');
+        Setting::set('contact_hours_bn', $validated['contact_hours_bn'] ?? '');
         Setting::set('contact_intro', $validated['contact_intro'] ?? '');
+        Setting::set('contact_intro_bn', $validated['contact_intro_bn'] ?? '');
         Setting::set('contact_map_url', $validated['contact_map_url'] ?? '');
         Setting::set('currency_symbol', $validated['currency_symbol']);
         Setting::set('currency_code', strtoupper($validated['currency_code'] ?? 'USD'));
@@ -255,6 +273,8 @@ class SettingsController extends Controller
         if ($user->canAccessIdentity()) {
             $profile = $request->validate([
                 'site_name' => 'required|string|max:255',
+                'site_name_bn' => 'nullable|string|max:255',
+                'default_locale' => 'required|in:en,bn',
                 'site_logo' => image_upload_rules(),
                 'footer_logo' => image_upload_rules(),
                 'favicon' => 'nullable|file|mimes:jpeg,png,jpg,gif,webp,ico|max:1024',
@@ -264,12 +284,16 @@ class SettingsController extends Controller
                 'logo_height_desktop' => 'required|integer|min:24|max:96',
                 'logo_height_mobile' => 'required|integer|min:24|max:80',
                 'footer_text' => 'nullable|string|max:2000',
+                'footer_text_bn' => 'nullable|string|max:2000',
             ]);
 
             Setting::set('site_name', $profile['site_name']);
+            Setting::set('site_name_bn', $profile['site_name_bn'] ?? '');
+            Setting::set('default_locale', $profile['default_locale']);
             Setting::set('logo_height_desktop', (string) (int) $profile['logo_height_desktop']);
             Setting::set('logo_height_mobile', (string) (int) $profile['logo_height_mobile']);
             Setting::set('footer_text', $profile['footer_text'] ?? '');
+            Setting::set('footer_text_bn', $profile['footer_text_bn'] ?? '');
             $this->storeBrandImage($request, 'site_logo', 'logo', 400, 160);
             $this->storeBrandImage($request, 'footer_logo', 'footer-logo', 480, 160);
             $this->storeBrandImage($request, 'favicon', 'favicon', 64, 64);
@@ -280,16 +304,22 @@ class SettingsController extends Controller
                 'contact_phone' => ['nullable', 'string', 'max:50', new BangladeshPhone],
                 'contact_email' => 'nullable|email|max:255',
                 'contact_address' => 'nullable|string|max:2000',
+                'contact_address_bn' => 'nullable|string|max:2000',
                 'contact_hours' => 'nullable|string|max:255',
+                'contact_hours_bn' => 'nullable|string|max:255',
                 'contact_intro' => 'nullable|string|max:2000',
+                'contact_intro_bn' => 'nullable|string|max:2000',
                 'contact_map_url' => 'nullable|url|max:2000',
             ]);
 
             Setting::set('contact_phone', BangladeshPhone::normalize($contact['contact_phone'] ?? null) ?? '');
             Setting::set('contact_email', $contact['contact_email'] ?? '');
             Setting::set('contact_address', $contact['contact_address'] ?? '');
+            Setting::set('contact_address_bn', $contact['contact_address_bn'] ?? '');
             Setting::set('contact_hours', $contact['contact_hours'] ?? '');
+            Setting::set('contact_hours_bn', $contact['contact_hours_bn'] ?? '');
             Setting::set('contact_intro', $contact['contact_intro'] ?? '');
+            Setting::set('contact_intro_bn', $contact['contact_intro_bn'] ?? '');
             Setting::set('contact_map_url', $contact['contact_map_url'] ?? '');
         }
 
