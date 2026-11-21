@@ -16,14 +16,32 @@
         @include('frontend.partials.seo-meta')
     @endif
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" type="text/css" href="{{ asset('organic-v1/css/vendor.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('organic-v1/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    @if(request()->routeIs('home', 'products.show'))
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    @endif
+    @if(request()->routeIs('home'))
+        @php
+            $preloadSlide = \App\Support\Homepage::slides()[0] ?? null;
+            $preloadDesktop = $preloadSlide ? \App\Support\Homepage::slideImageUrl($preloadSlide['image'] ?? null) : null;
+            $preloadMobile = $preloadSlide && ! empty($preloadSlide['image_mobile'])
+                ? \App\Support\Homepage::slideImageUrl($preloadSlide['image_mobile'])
+                : $preloadDesktop;
+        @endphp
+        @if($preloadDesktop)
+            @if($preloadMobile && $preloadMobile !== $preloadDesktop)
+                <link rel="preload" as="image" href="{{ $preloadMobile }}" media="(max-width: 767.98px)" fetchpriority="high">
+                <link rel="preload" as="image" href="{{ $preloadDesktop }}" media="(min-width: 768px)" fetchpriority="high">
+            @else
+                <link rel="preload" as="image" href="{{ $preloadDesktop }}" fetchpriority="high">
+            @endif
+        @endif
+    @endif
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('organic-v1/css/icons.css') }}?v={{ filemtime(public_path('organic-v1/css/icons.css')) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('organic-v1/style.css') }}">
     @stack('head')
     @include('frontend.partials.theme-colors')
     @include('frontend.partials.form-styles')
@@ -48,7 +66,6 @@
         .header-menu-toggle:focus {
             box-shadow: none;
         }
-        .preloader-wrapper { z-index: 2000; }
         #footer-bottom { margin-top: auto; text-align: center; padding: 14px 0; }
         #footer-bottom p { margin: 0; }
         .product-item { width: 100%; max-width: 100%; overflow: hidden; }
@@ -307,9 +324,6 @@
     'has-mobile-bottom-nav' => true,
 ])>
     @include('frontend.partials.tracking-noscript')
-    <div class="preloader-wrapper">
-        <div class="preloader"></div>
-    </div>
 
     @include('frontend.organic-v1.partials.offcanvas')
     @include('frontend.organic-v1.partials.header')

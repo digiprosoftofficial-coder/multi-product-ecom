@@ -1306,7 +1306,7 @@ a.btn-link.text-light:after {
 }
 
 html[lang="bn"] body {
-  font-family: "Noto Sans Bengali", "Nunito", "Open Sans", sans-serif;
+  font-family: "Noto Sans Bengali", sans-serif;
 }
 
 /* Desktop inline search — always visible */

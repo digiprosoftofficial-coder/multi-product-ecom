@@ -27,7 +27,7 @@
         <div class="category-list d-flex flex-wrap justify-content-center">
           @foreach($categories as $category)
             <a href="{{ route('products.category', $category->slug) }}" class="category-list-item text-decoration-none text-dark">
-              <img src="{{ $category->image_url ?? asset('organic-v1/images/category-thumb-1.jpg') }}" class="rounded-circle" alt="{{ $category->name }}">
+              <img src="{{ $category->image_url ?? asset('organic-v1/images/category-thumb-1.jpg') }}" class="rounded-circle" alt="{{ $category->name }}" loading="lazy" decoding="async">
               <h4 class="fs-6 mt-3 mb-0 fw-normal category-title">{{ $category->name }}</h4>
             </a>
           @endforeach
