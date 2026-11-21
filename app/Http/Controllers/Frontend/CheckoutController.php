@@ -60,8 +60,9 @@ class CheckoutController extends Controller
         $vat = taka(($subtotal * $vatRate) / 100);
         $baseTotal = $subtotal + $tax + $vat;
 
-        $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
-        $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
+        $rates = DeliveryZone::ratesFor(array_column($cartItems, 'product'));
+        $shippingInside  = $rates['inside'];
+        $shippingOutside = $rates['outside'];
 
         $selectedZone   = old('delivery_zone', DeliveryZone::suggest($request->ip()));
         $shippingCost   = $selectedZone === 'outside_dhaka' ? $shippingOutside : $shippingInside;
@@ -148,9 +149,8 @@ class CheckoutController extends Controller
             $tax = taka(($subtotal * $taxRate) / 100);
             $vat = taka(($subtotal * $vatRate) / 100);
 
-            $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
-            $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
-            $shippingCost    = $validated['delivery_zone'] === 'outside_dhaka' ? $shippingOutside : $shippingInside;
+            $rates = DeliveryZone::ratesFor(array_column($cartItems, 'product'));
+            $shippingCost = $validated['delivery_zone'] === 'outside_dhaka' ? $rates['outside'] : $rates['inside'];
 
             $total = $subtotal + $tax + $vat + $shippingCost;
 

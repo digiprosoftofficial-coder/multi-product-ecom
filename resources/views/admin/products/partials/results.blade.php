@@ -29,9 +29,14 @@
                     <td>{{ money($product->price) }}</td>
                     <td>{{ $product->stock }}@if($product->has_variants) <span class="text-muted small">options</span>@endif</td>
                     <td>
-                        <span class="badge bg-{{ $product->status ? 'success' : 'danger' }}">
-                            {{ $product->status ? 'Active' : 'Inactive' }}
-                        </span>
+                        <div class="d-flex flex-column gap-1 align-items-start">
+                            <span class="badge bg-{{ $product->status ? 'success' : 'danger' }}">
+                                {{ $product->status ? 'Active' : 'Inactive' }}
+                            </span>
+                            @if($product->free_delivery)
+                                <span class="badge bg-success">Free delivery</span>
+                            @endif
+                        </div>
                     </td>
                     <td class="product-list-actions">
                         <div class="d-flex flex-nowrap gap-1">

@@ -60,21 +60,21 @@
         }
         .product-discount-badge {
             position: absolute;
-            top: -10px;
-            right: -10px;
+            top: 8px;
+            right: 8px;
             z-index: 2;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-width: 2.6rem;
-            padding: 0.20rem 0.2rem;
+            padding: 0.28rem 0.5rem;
             border-radius: 999px;
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: #fff;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.02em;
-            line-height: 1;
+            line-height: 1.15;
             box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
             pointer-events: none;
         }
@@ -91,6 +91,56 @@
             box-shadow: none;
             font-size: 0.85rem;
             padding: 0.4rem 0.7rem;
+        }
+        .product-free-delivery-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            max-width: calc(100% - 16px);
+            padding: 0.28rem 0.5rem;
+            border-radius: 999px;
+            background: #16a34a;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1.15;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+        }
+        .product-free-delivery-badge--lg {
+            top: 14px;
+            left: 14px;
+            font-size: 0.85rem;
+            padding: 0.45rem 0.7rem;
+        }
+        .product-free-delivery-badge--inline {
+            position: static;
+            max-width: none;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            padding: 0.45rem 0.85rem;
+            pointer-events: auto;
+        }
+        .product-card-media > .product-discount-badge,
+        .product-card-media > .product-free-delivery-badge {
+            top: 8px;
+            height: 20px;
+            box-sizing: border-box;
+            font-size: 0.58rem;
+            line-height: 1;
+            padding: 0 0.35rem;
+            white-space: nowrap;
+        }
+        .product-card-media > .product-discount-badge {
+            right: 6px;
+        }
+        .product-card-media > .product-free-delivery-badge {
+            left: 6px;
+            max-width: none;
         }
         .product-card-prices {
             display: flex;

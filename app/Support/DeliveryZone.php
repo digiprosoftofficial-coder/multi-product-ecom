@@ -2,12 +2,42 @@
 
 namespace App\Support;
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliveryZone
 {
+    /**
+     * Zone rates for a cart. Shipping is 0 only when every product is free delivery.
+     * A mix of free and charged products keeps the store zone rate, charged once.
+     *
+     * @param  iterable<int, object>  $products
+     * @return array{inside: int, outside: int}
+     */
+    public static function ratesFor(iterable $products): array
+    {
+        $count = 0;
+        $allFree = true;
+
+        foreach ($products as $product) {
+            $count++;
+            if (! ($product->free_delivery ?? false)) {
+                $allFree = false;
+            }
+        }
+
+        if ($count > 0 && $allFree) {
+            return ['inside' => 0, 'outside' => 0];
+        }
+
+        return [
+            'inside' => taka(Setting::get('shipping_inside_dhaka', 60)),
+            'outside' => taka(Setting::get('shipping_outside_dhaka', 120)),
+        ];
+    }
+
     /**
      * Suggest inside_dhaka or outside_dhaka from the visitor IP.
      * Falls back to inside_dhaka when the address is private or the lookup fails.

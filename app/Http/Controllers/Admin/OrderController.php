@@ -65,6 +65,7 @@ class OrderController extends Controller
                     'sku' => $product->sku,
                     'price' => taka($product->final_price),
                     'stock' => (int) $product->stock,
+                    'free_delivery' => (bool) $product->free_delivery,
                     'has_variants' => $product->hasVariants(),
                     'variants' => $product->variants->map(fn (ProductVariant $variant) => [
                         'id' => $variant->id,

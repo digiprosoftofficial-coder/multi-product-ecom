@@ -34,6 +34,15 @@
     }
     .product-discount-badge--lg { top: 14px; right: 14px; min-width: 3.25rem; padding: .5rem .75rem; font-size: .95rem; }
     .product-discount-badge--inline { position: static; pointer-events: auto; box-shadow: none; font-size: .85rem; padding: .4rem .7rem; }
+    .product-free-delivery-badge {
+      position: absolute; top: 10px; left: 10px; z-index: 2;
+      display: inline-flex; align-items: center; max-width: calc(100% - 20px);
+      padding: .35rem .55rem; border-radius: 999px; background: #16a34a; color: #fff;
+      font-size: .72rem; font-weight: 700; line-height: 1.15; pointer-events: none;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, .35);
+    }
+    .product-free-delivery-badge--lg { top: 14px; left: 14px; font-size: .85rem; padding: .45rem .7rem; }
+    .product-free-delivery-badge--inline { position: static; max-width: none; gap: .4rem; margin-bottom: 1rem; font-size: .95rem; padding: .45rem .85rem; pointer-events: auto; }
     .product-detail-pricing { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .75rem 1rem; }
     .product-detail-prices { display: flex; flex-direction: column; gap: .2rem; line-height: 1.25; }
     .product-detail-price-old { color: #94a3b8; font-size: 1.05rem; }
@@ -80,6 +89,7 @@
           @if($discountPercent)
             <span class="product-discount-badge product-discount-badge--lg">−{{ $discountPercent }}%</span>
           @endif
+          @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
           @if($product->images->count() > 1)
           <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon"></span>
@@ -95,6 +105,7 @@
           @if($discountPercent)
             <span class="product-discount-badge product-discount-badge--lg">−{{ $discountPercent }}%</span>
           @endif
+          @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
         </div>
         @endif
       </div>
@@ -113,6 +124,7 @@
             <span class="product-discount-badge product-discount-badge--inline">−{{ $discountPercent }}% OFF</span>
           @endif
         </div>
+        @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--inline', 'showIcon' => true])
         @if($product->hasDescription())
         <div class="product-description text-muted">{!! $product->description_html !!}</div>
         @endif

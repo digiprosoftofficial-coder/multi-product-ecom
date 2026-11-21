@@ -23,6 +23,7 @@
       @if($discountPercent)
         <span class="product-discount-badge">−{{ $discountPercent }}%</span>
       @endif
+      @include('frontend.partials.free-delivery-badge', ['product' => $product])
     </div>
     <div class="card-body">
       <h6 class="card-title text-truncate">{{ $name }}</h6>

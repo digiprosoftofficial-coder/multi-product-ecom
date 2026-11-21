@@ -31,6 +31,7 @@ class Product extends Model
         'is_popular',
         'is_new_arrival',
         'is_best_selling',
+        'free_delivery',
         'has_variants',
         'option1_name',
         'option1_name_bn',
@@ -104,6 +105,7 @@ class Product extends Model
         'is_popular' => 'boolean',
         'is_new_arrival' => 'boolean',
         'is_best_selling' => 'boolean',
+        'free_delivery' => 'boolean',
         'has_variants' => 'boolean',
     ];
 

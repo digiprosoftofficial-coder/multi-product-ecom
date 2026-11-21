@@ -296,7 +296,19 @@
                 render();
             });
         });
+        syncDefaultShipping();
         refreshTotals(subtotal);
+    }
+
+    function allFreeDelivery() {
+        return lines.length > 0 && lines.every(function (line) { return line.product.free_delivery; });
+    }
+
+    function syncDefaultShipping() {
+        if (shippingTouched) return;
+        shipping.value = allFreeDelivery()
+            ? 0
+            : (zone.value === 'outside_dhaka' ? shippingOutside : shippingInside);
     }
 
     function refreshTotals(subtotal) {
@@ -326,9 +338,7 @@
         refreshTotals();
     });
     zone.addEventListener('change', function () {
-        if (!shippingTouched) {
-            shipping.value = zone.value === 'outside_dhaka' ? shippingOutside : shippingInside;
-        }
+        syncDefaultShipping();
         refreshTotals();
     });
     method.addEventListener('change', toggleWallet);

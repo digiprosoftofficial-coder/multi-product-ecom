@@ -82,6 +82,8 @@
                     @endif
                 </div>
 
+                @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--inline', 'showIcon' => true])
+
                 @if($product->isInStock())
                     @include('frontend.partials.add-to-cart-actions', ['product' => $product, 'showQty' => true])
                 @else
@@ -114,14 +116,21 @@
                         {{ __('storefront.delivery_information_card') }}
                     </h2>
                     <ul class="product-delivery-list">
-                        <li>
-                            <i class="fa-solid fa-city" aria-hidden="true"></i>
-                            <span>{{ __('storefront.delivery_inside', ['cost' => money($shippingInside)]) }}</span>
-                        </li>
-                        <li>
-                            <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
-                            <span>{{ __('storefront.delivery_outside', ['cost' => money($shippingOutside)]) }}</span>
-                        </li>
+                        @if($product->free_delivery)
+                            <li>
+                                <i class="fa-solid fa-truck" aria-hidden="true"></i>
+                                <span>{{ __('storefront.free_delivery') }}</span>
+                            </li>
+                        @else
+                            <li>
+                                <i class="fa-solid fa-city" aria-hidden="true"></i>
+                                <span>{{ __('storefront.delivery_inside', ['cost' => money($shippingInside)]) }}</span>
+                            </li>
+                            <li>
+                                <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                                <span>{{ __('storefront.delivery_outside', ['cost' => money($shippingOutside)]) }}</span>
+                            </li>
+                        @endif
                         @if($helpline)
                             <li>
                                 <i class="fa-solid fa-phone" aria-hidden="true"></i>

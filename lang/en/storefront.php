@@ -113,4 +113,5 @@ return [
     'find_on_map' => 'Find us on the map',
     'map_hint' => 'Visit our store or get directions below.',
     'map_empty' => 'Add your address in Site settings to show a map here.',
+    'free_delivery' => 'Free delivery',
 ];

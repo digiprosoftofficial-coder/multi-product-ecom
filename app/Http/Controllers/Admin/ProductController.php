@@ -87,6 +87,7 @@ class ProductController extends Controller
             'is_popular' => 'nullable|boolean',
             'is_new_arrival' => 'nullable|boolean',
             'is_best_selling' => 'nullable|boolean',
+            'free_delivery' => 'nullable|boolean',
             'thumbnail' => image_upload_rules(),
             'images' => 'nullable|array|max:20',
             'images.*' => image_upload_rules(),
@@ -136,7 +137,7 @@ class ProductController extends Controller
 
         $validated = $this->roundMoneyFields($validated);
 
-        foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
+        foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling', 'free_delivery'] as $flag) {
             $validated[$flag] = $request->boolean($flag);
         }
 
@@ -238,6 +239,7 @@ class ProductController extends Controller
             'is_popular' => 'nullable|boolean',
             'is_new_arrival' => 'nullable|boolean',
             'is_best_selling' => 'nullable|boolean',
+            'free_delivery' => 'nullable|boolean',
             'thumbnail' => image_upload_rules(),
             'images' => 'nullable|array|max:20',
             'images.*' => image_upload_rules(),
@@ -286,7 +288,7 @@ class ProductController extends Controller
 
         $validated = $this->roundMoneyFields($validated);
 
-        foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling'] as $flag) {
+        foreach (['is_featured', 'is_popular', 'is_new_arrival', 'is_best_selling', 'free_delivery'] as $flag) {
             $validated[$flag] = $request->boolean($flag);
         }
 

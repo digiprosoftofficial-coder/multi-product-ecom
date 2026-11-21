@@ -252,6 +252,14 @@
                                name="status" value="1" {{ $status === '1' ? 'checked' : '' }}>
                         <label class="form-check-label" for="status">Active</label>
                     </div>
+                    <div class="form-check form-switch mt-3">
+                        <input type="hidden" name="free_delivery" value="0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="free_delivery"
+                               name="free_delivery" value="1"
+                               {{ (string) old('free_delivery', $isEdit && $product->free_delivery ? '1' : '0') === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="free_delivery">Free delivery</label>
+                        <div class="form-text">No delivery charge for this product. A Free delivery badge shows on the storefront.</div>
+                    </div>
                     <hr>
                     <h6 class="fw-semibold mb-3">Homepage</h6>
                     <p class="text-muted small">Tick where this product should appear.</p>
