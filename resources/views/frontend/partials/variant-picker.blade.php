@@ -74,11 +74,7 @@
                     var inStock = !!(row && row.stock > 0);
                     if (stockEl) {
                         var showOos = !!(row && row.stock < 1);
-<<<<<<< HEAD
-                        stockEl.textContent = showOos ? 'Out of stock' : '';
-=======
                         stockEl.textContent = showOos ? @json(__('storefront.out_of_stock')) : '';
->>>>>>> main
                         stockEl.hidden = !showOos;
                     }
                     if (skuEl && row && row.sku) skuEl.textContent = row.sku;

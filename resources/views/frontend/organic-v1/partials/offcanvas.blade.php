@@ -33,11 +33,7 @@
         <a href="{{ route('contact') }}" class="nav-link text-dark p-2 fw-semibold {{ request()->routeIs('contact') ? 'active' : '' }}">{{ __('storefront.contact') }}</a>
       </li>
     </ul>
-<<<<<<< HEAD
-    <p class="text-uppercase text-muted small mb-2 px-2">Categories</p>
-=======
     <p class="text-uppercase text-muted small mb-2 px-2">{{ __('storefront.categories') }}</p>
->>>>>>> main
     <ul class="navbar-nav justify-content-end menu-list list-unstyled d-flex flex-column gap-2 mb-0">
       @foreach($navCategories ?? collect() as $navCategory)
         @if($navCategory->children->count())

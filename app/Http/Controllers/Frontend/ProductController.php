@@ -107,9 +107,6 @@ class ProductController extends Controller
         $products = $query->paginate(12)->withQueryString();
         $children = $category->children()->where('status', 1)->orderBy('name')->get();
         $categories = Storefront::shopCategories();
-<<<<<<< HEAD
-        $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category") ? "frontend.{$theme}.products.category" : 'frontend.products.category';
-=======
 
         if (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category")) {
             $view = "frontend.{$theme}.products.category";
@@ -118,7 +115,6 @@ class ProductController extends Controller
         } else {
             $view = 'frontend.products.category';
         }
->>>>>>> main
 
         return view($view, compact('category', 'products', 'children', 'categories', 'priceBounds'));
     }

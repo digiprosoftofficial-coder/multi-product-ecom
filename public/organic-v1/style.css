@@ -1305,28 +1305,20 @@ a.btn-link.text-light:after {
   white-space: nowrap;
 }
 
-<<<<<<< HEAD
-=======
 html[lang="bn"] body {
   font-family: "Noto Sans Bengali", sans-serif;
 }
 
->>>>>>> main
 /* Desktop inline search — always visible */
 .header-search-item {
   position: relative;
   gap: 0;
 }
 .header-inline-search {
-<<<<<<< HEAD
-  width: 280px;
-  max-width: 280px;
-=======
   width: 100%;
   max-width: 240px;
   min-width: 0;
   flex: 1 1 auto;
->>>>>>> main
   overflow: hidden;
   opacity: 1;
   pointer-events: auto;
@@ -1367,11 +1359,6 @@ html[lang="bn"] body {
 }
 
 @media (min-width: 1200px) {
-<<<<<<< HEAD
-  .header-inline-search {
-    width: 320px;
-    max-width: 320px;
-=======
   .site-header .header-main-row {
     flex-wrap: nowrap;
   }
@@ -1403,7 +1390,6 @@ html[lang="bn"] body {
   .header-inline-search {
     width: 100%;
     max-width: 280px;
->>>>>>> main
   }
 }
 

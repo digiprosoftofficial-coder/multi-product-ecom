@@ -50,11 +50,7 @@
           <li class="header-search-item d-flex align-items-center">
             {{-- Desktop: always-visible search bar --}}
             <form action="{{ route('products.index') }}" method="GET"
-<<<<<<< HEAD
-                  class="header-inline-search d-none d-lg-flex align-items-center"
-=======
                   class="header-inline-search d-none d-xl-flex align-items-center"
->>>>>>> main
                   id="desktop-search-form"
                   role="search">
               <input type="text"
@@ -64,26 +60,15 @@
                      value="{{ request('search') }}"
                      id="desktop-search-input"
                      autocomplete="off">
-<<<<<<< HEAD
-              <button type="submit" class="btn header-inline-search-submit p-0 border-0 bg-transparent" aria-label="Search">
-=======
               <button type="submit" class="btn header-inline-search-submit p-0 border-0 bg-transparent" aria-label="{{ __('storefront.search') }}">
->>>>>>> main
                 <i class="fa-solid fa-magnifying-glass"></i>
               </button>
             </form>
             <button type="button"
-<<<<<<< HEAD
-                    class="p-2 mx-1 border-0 bg-transparent header-search-toggle d-lg-none"
-                    id="headerSearchToggle"
-                    title="Search"
-                    aria-label="Search"
-=======
                     class="p-2 mx-1 border-0 bg-transparent header-search-toggle d-xl-none"
                     id="headerSearchToggle"
                     title="{{ __('storefront.search') }}"
                     aria-label="{{ __('storefront.search') }}"
->>>>>>> main
                     aria-expanded="false"
                     aria-controls="headerSearchPanel">
               <i class="fa-solid fa-magnifying-glass fa-lg"></i>

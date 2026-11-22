@@ -33,11 +33,7 @@
                 <input type="hidden" name="sort" value="{{ $sort }}">
             @endif
 
-<<<<<<< HEAD
-            <h5 class="widget-title mb-2">Price</h5>
-=======
             <h5 class="widget-title mb-2">{{ __('storefront.price') }}</h5>
->>>>>>> main
             <p class="shop-price-value mb-2" aria-live="polite">৳{{ number_format($selectedMin) }} – ৳{{ number_format($selectedMax) }}</p>
             <div class="shop-price-slider">
                 <div class="shop-price-track">
@@ -79,19 +75,11 @@
                            aria-label="Maximum price">
                 </label>
             </div>
-<<<<<<< HEAD
-            <button type="submit" class="btn shop-price-apply w-100">Apply</button>
-        </form>
-    @endif
-
-    <h5 class="widget-title mb-3">Categories</h5>
-=======
             <button type="submit" class="btn shop-price-apply w-100">{{ __('storefront.apply') }}</button>
         </form>
     @endif
 
     <h5 class="widget-title mb-3">{{ __('storefront.categories') }}</h5>
->>>>>>> main
     <ul class="shop-cat-list list-unstyled mb-0">
         <li>
             <a href="{{ route('products.index', array_filter(['search' => $search, 'sort' => $sort !== 'latest' ? $sort : null, 'min_price' => $minPrice, 'max_price' => $maxPrice], fn ($value) => $value !== null && $value !== '')) }}"

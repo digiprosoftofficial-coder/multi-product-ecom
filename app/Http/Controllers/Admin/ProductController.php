@@ -73,13 +73,9 @@ class ProductController extends Controller
             'stock' => $request->boolean('has_variants') ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'has_variants' => 'nullable|boolean',
             'option1_name' => 'nullable|string|max:40',
-<<<<<<< HEAD
-            'option2_name' => 'nullable|string|max:40',
-=======
             'option1_name_bn' => 'nullable|string|max:40',
             'option2_name' => 'nullable|string|max:40',
             'option2_name_bn' => 'nullable|string|max:40',
->>>>>>> main
             'option1_values' => $request->boolean('has_variants') ? 'required|string|max:500' : 'nullable|string|max:500',
             'option2_values' => 'nullable|string|max:500',
             'variants' => 'nullable|array|max:48',
@@ -134,15 +130,6 @@ class ProductController extends Controller
             $validated['option2_values'],
             $validated['variants']
         );
-<<<<<<< HEAD
-
-        if ($request->boolean('has_variants')) {
-            $validated['stock'] = (int) ($validated['stock'] ?? 0);
-        }
-
-        $validated = $this->roundMoneyFields($validated);
-=======
->>>>>>> main
 
         if ($request->boolean('has_variants')) {
             $validated['stock'] = (int) ($validated['stock'] ?? 0);
@@ -238,13 +225,9 @@ class ProductController extends Controller
             'stock' => $request->boolean('has_variants') ? 'nullable|integer|min:0' : 'required|integer|min:0',
             'has_variants' => 'nullable|boolean',
             'option1_name' => 'nullable|string|max:40',
-<<<<<<< HEAD
-            'option2_name' => 'nullable|string|max:40',
-=======
             'option1_name_bn' => 'nullable|string|max:40',
             'option2_name' => 'nullable|string|max:40',
             'option2_name_bn' => 'nullable|string|max:40',
->>>>>>> main
             'option1_values' => $request->boolean('has_variants') ? 'required|string|max:500' : 'nullable|string|max:500',
             'option2_values' => 'nullable|string|max:500',
             'variants' => 'nullable|array|max:48',
@@ -298,15 +281,6 @@ class ProductController extends Controller
             $validated['option2_values'],
             $validated['variants']
         );
-<<<<<<< HEAD
-
-        if ($request->boolean('has_variants')) {
-            $validated['stock'] = (int) ($validated['stock'] ?? 0);
-        }
-
-        $validated = $this->roundMoneyFields($validated);
-=======
->>>>>>> main
 
         if ($request->boolean('has_variants')) {
             $validated['stock'] = (int) ($validated['stock'] ?? 0);
@@ -428,13 +402,9 @@ class ProductController extends Controller
     {
         ProductVariants::sync($product, $request->boolean('has_variants'), [
             'option1_name' => $request->input('option1_name'),
-<<<<<<< HEAD
-            'option2_name' => $request->input('option2_name'),
-=======
             'option1_name_bn' => $request->input('option1_name_bn'),
             'option2_name' => $request->input('option2_name'),
             'option2_name_bn' => $request->input('option2_name_bn'),
->>>>>>> main
             'option1_values' => $request->input('option1_values'),
             'option2_values' => $request->input('option2_values'),
             'variants' => $request->input('variants', []),

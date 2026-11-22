@@ -85,11 +85,7 @@
               </div>
               @endforeach
               <hr class="border-secondary">
-<<<<<<< HEAD
-              <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ money($subtotal ?? 0) }}</span></div>
-=======
               <div class="d-flex justify-content-between"><span>{{ __('storefront.subtotal') }}</span><span>{{ money($subtotal ?? 0) }}</span></div>
->>>>>>> main
               @if(($tax ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>Tax</span><span>{{ money($tax) }}</span></div>@endif
               @if(($vat ?? 0) > 0)<div class="d-flex justify-content-between small text-muted"><span>VAT</span><span>{{ money($vat) }}</span></div>@endif
               <div class="d-flex justify-content-between small text-muted">

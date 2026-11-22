@@ -118,11 +118,7 @@
                         @if($maxPrice !== null)
                             <input type="hidden" name="max_price" value="{{ $maxPrice }}">
                         @endif
-<<<<<<< HEAD
-                        <label for="shop-sort" class="small text-muted mb-0">Sort</label>
-=======
                         <label for="shop-sort" class="small text-muted mb-0">{{ __('storefront.sort') }}</label>
->>>>>>> main
                         <select id="shop-sort" name="sort" class="form-select form-select-sm shop-sort" onchange="this.form.submit()">
                             <option value="latest" @selected($sort === 'latest')>{{ __('storefront.latest') }}</option>
                             <option value="price_asc" @selected($sort === 'price_asc')>{{ __('storefront.price_low') }}</option>
