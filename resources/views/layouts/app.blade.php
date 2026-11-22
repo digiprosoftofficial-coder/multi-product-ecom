@@ -66,10 +66,6 @@
         .header-menu-toggle:focus {
             box-shadow: none;
         }
-<<<<<<< HEAD
-        .preloader-wrapper { z-index: 2000; }
-=======
->>>>>>> main
         #footer-bottom { margin-top: auto; text-align: center; padding: 14px 0; }
         #footer-bottom p { margin: 0; }
         .product-item { width: 100%; max-width: 100%; overflow: hidden; }

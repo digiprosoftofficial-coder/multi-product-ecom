@@ -243,11 +243,7 @@ class Order extends Model
                 $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
                 if (! $variant || $variant->stock < $item->quantity) {
                     throw ValidationException::withMessages([
-<<<<<<< HEAD
-                        'order_status' => "Cannot reopen this order. Insufficient stock for {$item->product_name}.",
-=======
                         'order_status' => "Not enough stock to confirm this order for {$item->product_name}.",
->>>>>>> main
                     ]);
                 }
                 $variant->decrement('stock', $item->quantity);

@@ -31,18 +31,12 @@ class Product extends Model
         'is_popular',
         'is_new_arrival',
         'is_best_selling',
-<<<<<<< HEAD
-        'has_variants',
-        'option1_name',
-        'option2_name',
-=======
         'free_delivery',
         'has_variants',
         'option1_name',
         'option1_name_bn',
         'option2_name',
         'option2_name_bn',
->>>>>>> main
         'thumbnail',
         'meta_title',
         'meta_title_bn',
@@ -111,10 +105,7 @@ class Product extends Model
         'is_popular' => 'boolean',
         'is_new_arrival' => 'boolean',
         'is_best_selling' => 'boolean',
-<<<<<<< HEAD
-=======
         'free_delivery' => 'boolean',
->>>>>>> main
         'has_variants' => 'boolean',
     ];
 

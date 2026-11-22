@@ -61,14 +61,9 @@ class CheckoutController extends Controller
         $vat = taka(($subtotal * $vatRate) / 100);
         $baseTotal = $subtotal + $tax + $vat;
 
-<<<<<<< HEAD
-        $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
-        $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
-=======
         $rates = DeliveryZone::ratesFor(array_column($cartItems, 'product'));
         $shippingInside  = $rates['inside'];
         $shippingOutside = $rates['outside'];
->>>>>>> main
 
         $selectedZone   = old('delivery_zone', DeliveryZone::suggest($request->ip()));
         $shippingCost   = $selectedZone === 'outside_dhaka' ? $shippingOutside : $shippingInside;
@@ -148,10 +143,6 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
         try {
-<<<<<<< HEAD
-            $resolved = \App\Support\Storefront::cartData();
-=======
->>>>>>> main
             $cartItems = [];
             $subtotal = 0;
 
@@ -189,14 +180,8 @@ class CheckoutController extends Controller
             $tax = taka(($subtotal * $taxRate) / 100);
             $vat = taka(($subtotal * $vatRate) / 100);
 
-<<<<<<< HEAD
-            $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
-            $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
-            $shippingCost    = $validated['delivery_zone'] === 'outside_dhaka' ? $shippingOutside : $shippingInside;
-=======
             $rates = DeliveryZone::ratesFor(array_column($cartItems, 'product'));
             $shippingCost = $validated['delivery_zone'] === 'outside_dhaka' ? $rates['outside'] : $rates['inside'];
->>>>>>> main
 
             $total = $subtotal + $tax + $vat + $shippingCost;
 
@@ -204,11 +189,7 @@ class CheckoutController extends Controller
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'] ?? null,
-<<<<<<< HEAD
-                'customer_phone' => BangladeshPhone::normalize($validated['customer_phone']) ?? $validated['customer_phone'],
-=======
                 'customer_phone' => $phone,
->>>>>>> main
                 'shipping_address' => $validated['shipping_address'],
                 'delivery_zone'   => $validated['delivery_zone'],
                 'shipping_cost'   => $shippingCost,
@@ -242,16 +223,6 @@ class CheckoutController extends Controller
                     'cost_price' => $item['product']->cost_price,
                     'total' => $item['total'],
                 ]);
-<<<<<<< HEAD
-
-                if ($item['variant']) {
-                    $item['variant']->decrement('stock', $item['quantity']);
-                    $item['product']->decrement('stock', $item['quantity']);
-                } else {
-                    $item['product']->decrement('stock', $item['quantity']);
-                }
-=======
->>>>>>> main
             }
 
             DB::commit();
