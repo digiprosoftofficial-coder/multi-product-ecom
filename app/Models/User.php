@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Support\OwnerAccess;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -46,5 +47,93 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->hasAnyRole(['super_admin', 'admin']);
+    }
+
+    public function canAccessAdmin(): bool
+    {
+        return $this->hasAnyRole(['super_admin', 'store_owner', 'admin']);
+    }
+
+    public function canAccessIdentity(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::IDENTITY));
+    }
+
+    public function canAccessContact(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::CONTACT));
+    }
+
+    public function canAccessSiteSetting(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::SITE_SETTING));
+    }
+
+    public function canAccessSeo(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::SEO));
+    }
+
+    public function canAccessPayment(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::PAYMENT));
+    }
+
+    public function canAccessStoreCatalog(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::STORE_CATALOG));
+    }
+
+    public function canAccessDelivery(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::DELIVERY));
+    }
+
+    public function canAccessColors(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::COLORS));
+    }
+
+    public function canAccessSocial(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::SOCIAL));
+    }
+
+    public function canAccessMessages(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::MESSAGES));
+    }
+
+    public function canDeleteRecords(): bool
+    {
+        return $this->isSuperAdmin()
+            || ($this->hasRole('store_owner') && OwnerAccess::enabled(OwnerAccess::DELETE_RECORDS));
+    }
+
+    public function canAccessSettingsPage(): bool
+    {
+        return $this->canAccessIdentity()
+            || $this->canAccessContact()
+            || $this->canAccessSeo()
+            || $this->canAccessPayment()
+            || $this->canAccessStoreCatalog()
+            || $this->canAccessDelivery()
+            || $this->canAccessColors()
+            || $this->canAccessSocial();
     }
 }

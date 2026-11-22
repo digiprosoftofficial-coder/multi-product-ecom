@@ -21,6 +21,7 @@
                 <a class="nav-link {{ request()->routeIs('admin.customers.*') ? 'is-active' : '' }}" href="{{ route('admin.customers.index') }}">
                     <i class="fas fa-users"></i> Customers
                 </a>
+                @if(Auth::user()->canAccessMessages())
                 <a class="nav-link d-flex justify-content-between align-items-center {{ request()->routeIs('admin.contact-messages.*') ? 'is-active' : '' }}" href="{{ route('admin.contact-messages.index') }}">
                     <span><i class="fas fa-inbox"></i> Messages</span>
                     @php $unreadContactMessages = \App\Models\ContactMessage::where('is_read', false)->count(); @endphp
@@ -28,9 +29,11 @@
                         <span class="badge rounded-pill bg-success">{{ $unreadContactMessages }}</span>
                     @endif
                 </a>
+                @endif
                 <a class="nav-link {{ request()->routeIs('admin.reports.*') ? 'is-active' : '' }}" href="{{ route('admin.reports.index') }}">
                     <i class="fas fa-chart-bar"></i> Reports
                 </a>
+                @if(Auth::user()->canAccessSiteSetting())
                 @php
                     $siteSettingOpen = request()->routeIs('admin.homepage.*')
                         || request()->routeIs('admin.about.*')
@@ -78,10 +81,20 @@
                         </a>
                     </nav>
                 </div>
+                @endif
+                @if(Auth::user()->canAccessSettingsPage())
                 <a class="nav-link {{ request()->routeIs('admin.settings.*') ? 'is-active' : '' }}" href="{{ route('admin.settings.index') }}">
                     <i class="fas fa-cog"></i> Settings
                 </a>
-                {{-- Themes hidden for this version --}}
+                @endif
+                @if(Auth::user()->isSuperAdmin())
+                <a class="nav-link {{ request()->routeIs('admin.themes.*') ? 'is-active' : '' }}" href="{{ route('admin.themes.index') }}">
+                    <i class="fas fa-palette"></i> Themes
+                </a>
+                <a class="nav-link {{ request()->routeIs('admin.owner-access.*') ? 'is-active' : '' }}" href="{{ route('admin.owner-access.index') }}">
+                    <i class="fas fa-user-shield"></i> Owner access
+                </a>
+                @endif
             </nav>
         </div>
 
@@ -91,6 +104,7 @@
                 <div class="user-meta">
                     <div class="user-name">{{ Auth::user()->name }}</div>
                     <div class="user-email">{{ Auth::user()->email }}</div>
+                    <div class="user-email">{{ Auth::user()->isSuperAdmin() ? 'Super admin' : 'Store owner' }}</div>
                 </div>
             </div>
             <form method="POST" action="{{ route('logout') }}">
@@ -149,7 +163,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: #16a34a;
+    background: var(--admin-green);
     color: #fff;
     font-size: .95rem;
     flex-shrink: 0;
@@ -180,19 +194,19 @@
     color: #64748b;
 }
 .sidebar-nav > .nav-link:hover {
-    background-color: #e8f2ec;
+    background-color: var(--admin-green-soft);
     color: #0f172a;
 }
 .sidebar-nav > .nav-link:hover i {
-    color: #16a34a;
+    color: var(--admin-green);
 }
 .sidebar-nav > .nav-link.is-active {
-    background: #dcfce7;
-    color: #14532d;
-    box-shadow: inset 3px 0 0 #16a34a;
+    background: var(--admin-green-light);
+    color: var(--admin-green-darker);
+    box-shadow: inset 3px 0 0 var(--admin-green);
 }
 .sidebar-nav > .nav-link.is-active i {
-    color: #16a34a;
+    color: var(--admin-green);
 }
 .sidebar-nav > .nav-link.nav-parent.is-open {
     background: #eef5f1;
@@ -226,16 +240,16 @@
     color: #94a3b8;
 }
 .sidebar-subnav .nav-link:hover {
-    background-color: #e8f2ec;
+    background-color: var(--admin-green-soft);
     color: #0f172a;
 }
 .sidebar-subnav .nav-link.is-active {
-    background: #dcfce7;
-    color: #14532d;
-    box-shadow: inset 3px 0 0 #22c55e;
+    background: var(--admin-green-light);
+    color: var(--admin-green-darker);
+    box-shadow: inset 3px 0 0 var(--admin-green);
 }
 .sidebar-subnav .nav-link.is-active i {
-    color: #16a34a;
+    color: var(--admin-green);
 }
 .sidebar-footer {
     padding-top: 1rem;
@@ -251,8 +265,8 @@
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    background: #dcfce7;
-    color: #166534;
+    background: var(--admin-green-light);
+    color: var(--admin-green-darker);
     display: flex;
     align-items: center;
     justify-content: center;

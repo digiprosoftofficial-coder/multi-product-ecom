@@ -26,11 +26,11 @@
             <div class="product-card-actions product-card-actions--lg product-order-buttons">
                 <button type="submit" class="btn btn-cart-action">
                     <i class="fa-solid fa-cart-shopping"></i>
-                    <span>Add to Cart</span>
+                    <span>{{ __('storefront.add_to_cart') }}</span>
                 </button>
                 <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
                     <i class="fa-solid fa-bolt"></i>
-                    <span>Order Now</span>
+                    <span>{{ __('storefront.order_now') }}</span>
                 </button>
             </div>
         </div>
@@ -39,11 +39,11 @@
         <div class="product-card-actions">
             <button type="submit" class="btn btn-cart-action">
                 <i class="fa-solid fa-cart-shopping"></i>
-                <span>Add to Cart</span>
+                <span>{{ __('storefront.add_to_cart') }}</span>
             </button>
             <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
                 <i class="fa-solid fa-bolt"></i>
-                <span>Order Now</span>
+                <span>{{ __('storefront.order_now') }}</span>
             </button>
         </div>
     @endif

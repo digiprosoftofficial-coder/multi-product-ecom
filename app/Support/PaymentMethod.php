@@ -67,10 +67,18 @@ class PaymentMethod
                 continue;
             }
 
+            $i18n = [
+                'cash_on_delivery' => ['cod', 'cod_hint'],
+                'bkash' => ['bkash', 'bkash_hint'],
+                'nagad' => ['nagad', 'nagad_hint'],
+                'rocket' => ['rocket', 'rocket_hint'],
+            ];
+            $keys = $i18n[$key] ?? null;
+
             $options[$key] = [
-                'label' => $method['label'],
+                'label' => $keys ? __('storefront.'.$keys[0]) : $method['label'],
                 'icon' => $method['icon'],
-                'hint' => $method['hint'],
+                'hint' => $keys ? __('storefront.'.$keys[1]) : $method['hint'],
                 'color' => $method['color'],
             ];
         }

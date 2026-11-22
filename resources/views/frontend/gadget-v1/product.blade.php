@@ -17,6 +17,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="{{ asset('gadget-v1/style.css') }}">
+  @include('frontend.partials.theme-colors')
   <style>
     .product-description h2 { font-size: 1.25rem; margin: 1rem 0 .5rem; }
     .product-description h3 { font-size: 1.1rem; margin: .85rem 0 .4rem; }
@@ -33,6 +34,15 @@
     }
     .product-discount-badge--lg { top: 14px; right: 14px; min-width: 3.25rem; padding: .5rem .75rem; font-size: .95rem; }
     .product-discount-badge--inline { position: static; pointer-events: auto; box-shadow: none; font-size: .85rem; padding: .4rem .7rem; }
+    .product-free-delivery-badge {
+      position: absolute; top: 10px; left: 10px; z-index: 2;
+      display: inline-flex; align-items: center; max-width: calc(100% - 20px);
+      padding: .35rem .55rem; border-radius: 999px; background: #16a34a; color: #fff;
+      font-size: .72rem; font-weight: 700; line-height: 1.15; pointer-events: none;
+      box-shadow: 0 4px 12px rgba(22, 163, 74, .35);
+    }
+    .product-free-delivery-badge--lg { top: 14px; left: 14px; font-size: .85rem; padding: .45rem .7rem; }
+    .product-free-delivery-badge--inline { position: static; max-width: none; gap: .4rem; margin-bottom: 1rem; font-size: .95rem; padding: .45rem .85rem; pointer-events: auto; }
     .product-detail-pricing { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .75rem 1rem; }
     .product-detail-prices { display: flex; flex-direction: column; gap: .2rem; line-height: 1.25; }
     .product-detail-price-old { color: #94a3b8; font-size: 1.05rem; }
@@ -49,8 +59,8 @@
   <main class="container py-4">
     <nav aria-label="breadcrumb" class="mb-3">
       <ol class="breadcrumb text-muted">
-        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="link-accent">Home</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('products.index') }}" class="link-accent">Shop</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('home') }}" class="link-accent">{{ __('storefront.home') }}</a></li>
+        <li class="breadcrumb-item"><a href="{{ route('products.index') }}" class="link-accent">{{ __('storefront.shop') }}</a></li>
         <li class="breadcrumb-item active">{{ $product->name }}</li>
       </ol>
     </nav>
@@ -79,6 +89,7 @@
           @if($discountPercent)
             <span class="product-discount-badge product-discount-badge--lg">−{{ $discountPercent }}%</span>
           @endif
+          @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
           @if($product->images->count() > 1)
           <button class="carousel-control-prev" type="button" data-bs-target="#productCarousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon"></span>
@@ -94,6 +105,7 @@
           @if($discountPercent)
             <span class="product-discount-badge product-discount-badge--lg">−{{ $discountPercent }}%</span>
           @endif
+          @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
         </div>
         @endif
       </div>
@@ -112,6 +124,7 @@
             <span class="product-discount-badge product-discount-badge--inline">−{{ $discountPercent }}% OFF</span>
           @endif
         </div>
+        @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--inline', 'showIcon' => true])
         @if($product->hasDescription())
         <div class="product-description text-muted">{!! $product->description_html !!}</div>
         @endif
@@ -130,11 +143,19 @@
             <div class="product-card-actions product-card-actions--lg flex-grow-1">
               <button type="submit" class="btn btn-cart-action">
                 <i class="fa-solid fa-cart-shopping"></i>
+<<<<<<< HEAD
                 <span>Add to Cart</span>
               </button>
               <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
                 <i class="fa-solid fa-bolt"></i>
                 <span>Order Now</span>
+=======
+                <span>{{ __('storefront.add_to_cart') }}</span>
+              </button>
+              <button type="submit" name="buy_now" value="1" class="btn btn-order-action">
+                <i class="fa-solid fa-bolt"></i>
+                <span>{{ __('storefront.order_now') }}</span>
+>>>>>>> main
               </button>
             </div>
           </div>

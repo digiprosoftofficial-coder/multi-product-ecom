@@ -118,6 +118,9 @@
                                     <span class="badge bg-{{ $product->status ? 'success' : 'danger' }}">
                                         {{ $product->status ? 'Active' : 'Inactive' }}
                                     </span>
+                                    @if($product->free_delivery)
+                                        <span class="badge bg-success ms-1">Free delivery</span>
+                                    @endif
                                 </p>
                             </div>
                             <div class="col-md-4">

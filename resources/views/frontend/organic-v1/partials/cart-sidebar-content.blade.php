@@ -1,5 +1,5 @@
 <h4 class="d-flex justify-content-between align-items-center mb-3">
-  <span class="text-primary">Your cart</span>
+  <span class="text-primary">{{ __('storefront.your_cart') }}</span>
   <span class="badge bg-primary rounded-pill" id="sidebar-cart-count">{{ count($cartItems) }}</span>
 </h4>
 
@@ -64,7 +64,7 @@
   @else
     <div class="text-center py-5">
       <i class="fa-solid fa-cart-shopping fa-3x text-muted mb-3"></i>
-      <p class="text-muted">Your cart is empty</p>
+      <p class="text-muted">{{ __('storefront.empty_cart') }}</p>
     </div>
   @endif
 </div>

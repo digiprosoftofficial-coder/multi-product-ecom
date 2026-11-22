@@ -19,6 +19,7 @@
                 −{{ $discountPercent }}%
             </span>
         @endif
+        @include('frontend.partials.free-delivery-badge', ['product' => $product])
     </figure>
     <div class="d-flex flex-column text-center">
         <h3 class="fs-6 fw-normal product-title">

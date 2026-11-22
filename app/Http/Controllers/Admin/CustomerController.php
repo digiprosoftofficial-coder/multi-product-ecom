@@ -62,6 +62,36 @@ class CustomerController extends Controller
         return view('admin.customers.index', compact('customers', 'stats', 'search', 'type'));
     }
 
+    public function destroy(Request $request)
+    {
+        $email = Str::lower(trim((string) $request->validate([
+            'email' => 'required|email|max:255',
+        ])['email']));
+
+        $user = User::query()->whereRaw('LOWER(email) = ?', [$email])->first();
+
+        if ($user && $user->hasAnyRole(['super_admin', 'store_owner', 'admin'])) {
+            return redirect()->route('admin.customers.index')
+                ->with('error', 'Staff accounts cannot be deleted from customers.');
+        }
+
+        DB::transaction(function () use ($email, $user) {
+            Order::query()
+                ->where(function ($query) use ($email, $user) {
+                    $query->whereRaw('LOWER(customer_email) = ?', [$email]);
+                    if ($user) {
+                        $query->orWhere('user_id', $user->id);
+                    }
+                })
+                ->delete();
+
+            $user?->delete();
+        });
+
+        return redirect()->route('admin.customers.index')
+            ->with('success', 'Customer deleted.');
+    }
+
     protected function buildCustomerList(): Collection
     {
         static $cache = null;
@@ -102,6 +132,7 @@ class CustomerController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone ?: ($order->phone ?? null),
                 'is_registered' => true,
+                'is_staff' => $user->hasAnyRole(['super_admin', 'store_owner', 'admin']),
                 'user_id' => $user->id,
                 'orders_count' => (int) ($order->orders_count ?? 0),
                 'last_order_at' => $order->last_order_at ?? null,
@@ -119,6 +150,7 @@ class CustomerController extends Controller
                 'email' => $order->email,
                 'phone' => $order->phone,
                 'is_registered' => false,
+                'is_staff' => false,
                 'user_id' => null,
                 'orders_count' => (int) $order->orders_count,
                 'last_order_at' => $order->last_order_at,

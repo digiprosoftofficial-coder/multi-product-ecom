@@ -128,7 +128,15 @@ class Homepage
             fn (array $slide) => ($slide['enabled'] ?? true) && ! empty($slide['image'])
         ));
 
-        return count($slides) > 0 ? $slides : [self::legacySlide()];
+        if ($slides === []) {
+            $slides = [self::legacySlide()];
+        }
+
+        if (LocaleText::shouldLocalize()) {
+            $slides = array_map(fn (array $slide) => self::localizeSlide($slide), $slides);
+        }
+
+        return $slides;
     }
 
     public static function heroAutoplay(): bool
@@ -192,6 +200,19 @@ class Homepage
     }
 
     /** @param  array<string, mixed>  $slide */
+    protected static function localizeSlide(array $slide): array
+    {
+        foreach (['title', 'highlight', 'subtitle', 'btn1_text', 'btn2_text'] as $field) {
+            $bangla = trim((string) ($slide[$field.'_bn'] ?? ''));
+            if ($bangla !== '') {
+                $slide[$field] = $bangla;
+            }
+        }
+
+        return $slide;
+    }
+
+    /** @param  array<string, mixed>  $slide */
     public static function normalizeSlide(array $slide): array
     {
         return [
@@ -200,14 +221,19 @@ class Homepage
             'image_mobile' => (string) ($slide['image_mobile'] ?? ''),
             'show_content' => filter_var($slide['show_content'] ?? false, FILTER_VALIDATE_BOOLEAN),
             'title' => (string) ($slide['title'] ?? ''),
+            'title_bn' => (string) ($slide['title_bn'] ?? ''),
             'highlight' => (string) ($slide['highlight'] ?? ''),
+            'highlight_bn' => (string) ($slide['highlight_bn'] ?? ''),
             'subtitle' => (string) ($slide['subtitle'] ?? ''),
+            'subtitle_bn' => (string) ($slide['subtitle_bn'] ?? ''),
             'title_color' => self::normalizeColor($slide['title_color'] ?? '#ffffff', '#ffffff'),
             'subtitle_color' => self::normalizeColor($slide['subtitle_color'] ?? '#ffffff', '#ffffff'),
             'highlight_color' => self::normalizeColor($slide['highlight_color'] ?? '#22c55e', '#22c55e'),
             'btn1_text' => (string) ($slide['btn1_text'] ?? ''),
+            'btn1_text_bn' => (string) ($slide['btn1_text_bn'] ?? ''),
             'btn1_url' => (string) ($slide['btn1_url'] ?? ''),
             'btn2_text' => (string) ($slide['btn2_text'] ?? ''),
+            'btn2_text_bn' => (string) ($slide['btn2_text_bn'] ?? ''),
             'btn2_url' => (string) ($slide['btn2_url'] ?? ''),
         ];
     }

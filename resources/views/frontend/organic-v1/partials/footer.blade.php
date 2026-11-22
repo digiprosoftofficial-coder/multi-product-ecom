@@ -22,14 +22,14 @@
 
       <div class="col-lg-2 col-md-6">
         <div class="footer-menu">
-          <h5 class="widget-title">Quick Links</h5>
+          <h5 class="widget-title">{{ __('storefront.quick_links') }}</h5>
           <ul class="menu-list list-unstyled">
-            <li class="menu-item"><a href="{{ route('about') }}" class="nav-link">About</a></li>
-            <li class="menu-item"><a href="{{ route('products.index') }}" class="nav-link">Shop</a></li>
-            <li class="menu-item"><a href="{{ route('cart.index') }}" class="nav-link">Cart</a></li>
-            <li class="menu-item"><a href="{{ route('checkout.index') }}" class="nav-link">Checkout</a></li>
+            <li class="menu-item"><a href="{{ route('about') }}" class="nav-link">{{ __('storefront.about') }}</a></li>
+            <li class="menu-item"><a href="{{ route('products.index') }}" class="nav-link">{{ __('storefront.shop') }}</a></li>
+            <li class="menu-item"><a href="{{ route('cart.index') }}" class="nav-link">{{ __('storefront.cart') }}</a></li>
+            <li class="menu-item"><a href="{{ route('checkout.index') }}" class="nav-link">{{ __('storefront.checkout') }}</a></li>
             @auth
-              <li class="menu-item"><a href="{{ route('orders.index') }}" class="nav-link">My Orders</a></li>
+              <li class="menu-item"><a href="{{ route('orders.index') }}" class="nav-link">{{ __('storefront.my_orders') }}</a></li>
             @endauth
           </ul>
         </div>
@@ -37,13 +37,13 @@
 
       <div class="col-lg-3 col-md-6">
         <div class="footer-menu">
-          <h5 class="widget-title">Customer Service</h5>
+          <h5 class="widget-title">{{ __('storefront.customer_service') }}</h5>
           <ul class="menu-list list-unstyled">
-            <li class="menu-item"><a href="{{ route('contact') }}" class="nav-link">Contact</a></li>
-            <li class="menu-item"><a href="{{ route('delivery') }}" class="nav-link">Delivery Information</a></li>
-            <li class="menu-item"><a href="{{ route('returns') }}" class="nav-link">Product Returns</a></li>
-            <li class="menu-item"><a href="{{ route('privacy') }}" class="nav-link">Privacy Policy</a></li>
-            <li class="menu-item"><a href="{{ route('terms') }}" class="nav-link">Terms &amp; Conditions</a></li>
+            <li class="menu-item"><a href="{{ route('contact') }}" class="nav-link">{{ __('storefront.contact') }}</a></li>
+            <li class="menu-item"><a href="{{ route('delivery') }}" class="nav-link">{{ __('storefront.delivery_information') }}</a></li>
+            <li class="menu-item"><a href="{{ route('returns') }}" class="nav-link">{{ __('storefront.product_returns') }}</a></li>
+            <li class="menu-item"><a href="{{ route('privacy') }}" class="nav-link">{{ __('storefront.privacy_policy') }}</a></li>
+            <li class="menu-item"><a href="{{ route('terms') }}" class="nav-link">{{ __('storefront.terms') }}</a></li>
           </ul>
         </div>
       </div>
@@ -51,7 +51,7 @@
       <div class="col-lg-3 col-md-6">
         <div class="footer-menu">
           @if(setting('contact_phone') || setting('contact_email') || setting('contact_address'))
-            <h5 class="widget-title">Get in touch</h5>
+            <h5 class="widget-title">{{ __('storefront.get_in_touch') }}</h5>
             <ul class="footer-contact-list list-unstyled mb-0">
               @if(setting('contact_phone'))
                 <li class="footer-contact-item">
@@ -82,9 +82,9 @@
 <div id="footer-bottom">
   <div class="container-lg">
     <p class="mb-0">
-      &copy; {{ date('Y') }} {{ site_name() }}. All rights reserved.
+      &copy; {{ date('Y') }} {{ site_name() }}. {{ __('storefront.rights') }}
       <span class="footer-bottom-sep" aria-hidden="true">|</span>
-      Developed by
+      {{ __('storefront.developed_by') }}
       <a href="https://digiprosoft.com/" target="_blank" rel="noopener noreferrer" class="footer-credit-link">Digiprosoft</a>
     </p>
   </div>
@@ -119,7 +119,7 @@
         font-size: 1rem;
         box-shadow: 0 4px 12px rgba(15, 23, 42, 0.1);
     }
-    .footer-contact-icon--phone { background: #6BB252; }
+    .footer-contact-icon--phone { background: var(--store-accent); }
     .footer-contact-icon--email { background: #2563eb; }
     .footer-contact-icon--address { background: #ea580c; }
     .footer-contact-value {

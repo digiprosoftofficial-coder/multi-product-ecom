@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LocalizesAttributes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,13 +13,15 @@ use Illuminate\Support\Str;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, LocalizesAttributes;
 
     protected $fillable = [
         'parent_id',
         'name',
+        'name_bn',
         'slug',
         'description',
+        'description_bn',
         'status',
         'image',
     ];
@@ -26,6 +30,16 @@ class Category extends Model
         'status' => 'integer',
         'parent_id' => 'integer',
     ];
+
+    protected function name(): Attribute
+    {
+        return $this->localizedAttribute('name');
+    }
+
+    protected function description(): Attribute
+    {
+        return $this->localizedAttribute('description');
+    }
 
     protected static function boot()
     {

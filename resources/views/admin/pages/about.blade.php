@@ -16,10 +16,13 @@
             <div class="mb-3">
                 <label class="form-label">Page title</label>
                 <input type="text" name="about_title" class="form-control" value="{{ old('about_title', $pages['about_title']) }}">
+                <input type="text" name="about_title_bn" class="form-control mt-1" lang="bn" value="{{ old('about_title_bn', $pages['about_title_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
                 <div class="form-text">Used as fallback when banner title is empty.</div>
             </div>
             <label class="form-label">Content</label>
             <textarea class="form-control js-page-editor" name="about_content" id="about_content" rows="10">{{ old('about_content', $pages['about_content']) }}</textarea>
+            <label class="form-label mt-3" for="about_content_bn">বাংলা কনটেন্ট</label>
+            <textarea class="form-control js-page-editor" name="about_content_bn" id="about_content_bn" rows="8" lang="bn">{{ old('about_content_bn', $pages['about_content_bn'] ?? '') }}</textarea>
         </div>
     </div>
 

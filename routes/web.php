@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Route;
 require __DIR__.'/auth.php';
 require __DIR__.'/admin.php';
 
+Route::get('/locale/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, ['en', 'bn'], true), 404);
+    session(['locale' => $locale]);
+
+    return redirect()->back(fallback: route('home'));
+})->name('locale.switch');
+
 // Frontend Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/sitemap.xml', [\App\Http\Controllers\Frontend\SitemapController::class, 'index'])->name('sitemap');
@@ -43,7 +50,7 @@ Route::prefix('cart')->name('cart.')->group(function () {
 // Checkout Routes (guest checkout allowed)
 Route::prefix('checkout')->name('checkout.')->group(function () {
     Route::get('/', [CheckoutController::class, 'index'])->name('index');
-    Route::post('/', [CheckoutController::class, 'store'])->name('store');
+    Route::post('/', [CheckoutController::class, 'store'])->middleware('throttle:8,60')->name('store');
     Route::get('/thank-you/{order}', [CheckoutController::class, 'thankYou'])->name('thank-you');
 });
 

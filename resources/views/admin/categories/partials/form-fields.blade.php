@@ -3,8 +3,10 @@
     $submitted = $isEdit
         ? old('form_type') === 'edit_category' && (string) old('edit_category_id') === (string) $category->id
         : old('form_type') === 'create_category';
-    $name = $submitted ? old('name', $isEdit ? $category->name : '') : ($isEdit ? $category->name : '');
-    $description = $submitted ? old('description', $isEdit ? $category->description : '') : ($isEdit ? $category->description : '');
+    $name = $submitted ? old('name', $isEdit ? $category->getRawOriginal('name') : '') : ($isEdit ? $category->getRawOriginal('name') : '');
+    $nameBn = $submitted ? old('name_bn', $isEdit ? $category->name_bn : '') : ($isEdit ? $category->name_bn : '');
+    $description = $submitted ? old('description', $isEdit ? $category->getRawOriginal('description') : '') : ($isEdit ? $category->getRawOriginal('description') : '');
+    $descriptionBn = $submitted ? old('description_bn', $isEdit ? $category->description_bn : '') : ($isEdit ? $category->description_bn : '');
     $status = (string) ($submitted ? old('status', $isEdit ? $category->status : '1') : ($isEdit ? $category->status : '1'));
     $parentId = (string) ($submitted
         ? old('parent_id', $isEdit ? $category->parent_id : ($defaultParentId ?? ''))
@@ -38,6 +40,7 @@
     <label for="name-{{ $fieldId }}" class="form-label">Name <span class="text-danger">*</span></label>
     <input type="text" class="form-control @error('name') {{ $submitted ? 'is-invalid' : '' }} @enderror"
            id="name-{{ $fieldId }}" name="name" value="{{ $name }}" required>
+    <input type="text" class="form-control mt-1" id="name-bn-{{ $fieldId }}" name="name_bn" lang="bn" value="{{ $nameBn }}" placeholder="বাংলা নাম">
     @if($submitted)
         @error('name')
             <div class="invalid-feedback">{{ $message }}</div>
@@ -49,6 +52,7 @@
     <label for="description-{{ $fieldId }}" class="form-label">Description</label>
     <textarea class="form-control @error('description') {{ $submitted ? 'is-invalid' : '' }} @enderror"
               id="description-{{ $fieldId }}" name="description" rows="3">{{ $description }}</textarea>
+    <textarea class="form-control mt-1" id="description-bn-{{ $fieldId }}" name="description_bn" rows="2" lang="bn" placeholder="বাংলা বিবরণ">{{ $descriptionBn }}</textarea>
     @if($submitted)
         @error('description')
             <div class="invalid-feedback">{{ $message }}</div>

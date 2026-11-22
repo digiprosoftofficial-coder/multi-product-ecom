@@ -18,9 +18,13 @@ class PageController extends Controller
     {
         $pages = [
             'privacy_content' => Setting::get('privacy_content', ''),
+            'privacy_content_bn' => Setting::get('privacy_content_bn', ''),
             'terms_content' => Setting::get('terms_content', ''),
+            'terms_content_bn' => Setting::get('terms_content_bn', ''),
             'delivery_content' => Setting::get('delivery_content', ''),
+            'delivery_content_bn' => Setting::get('delivery_content_bn', ''),
             'returns_content' => Setting::get('returns_content', ''),
+            'returns_content_bn' => Setting::get('returns_content_bn', ''),
         ];
 
         foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
@@ -34,7 +38,9 @@ class PageController extends Controller
     {
         $pages = array_merge([
             'about_title' => Homepage::get('about_title') ?: 'About '.site_name(),
+            'about_title_bn' => Setting::get('about_title_bn', ''),
             'about_content' => Setting::get('about_content', ''),
+            'about_content_bn' => Setting::get('about_content_bn', ''),
         ], $this->bannerSettings('about'));
 
         return view('admin.pages.about', compact('pages'));
@@ -52,6 +58,7 @@ class PageController extends Controller
         $pages = [
             'product_banner_enabled' => PageBanner::get('product_banner_enabled'),
             'product_banner_subtitle' => PageBanner::get('product_banner_subtitle'),
+            'product_banner_subtitle_bn' => Setting::get('product_banner_subtitle_bn', ''),
             'product_banner_image' => PageBanner::get('product_banner_image'),
         ];
 
@@ -84,9 +91,13 @@ class PageController extends Controller
         $rules = [
             'active_tab' => 'nullable|string|in:privacy,terms,delivery,returns',
             'privacy_content' => 'nullable|string',
+            'privacy_content_bn' => 'nullable|string',
             'terms_content' => 'nullable|string',
+            'terms_content_bn' => 'nullable|string',
             'delivery_content' => 'nullable|string',
+            'delivery_content_bn' => 'nullable|string',
             'returns_content' => 'nullable|string',
+            'returns_content_bn' => 'nullable|string',
         ];
 
         foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
@@ -97,6 +108,7 @@ class PageController extends Controller
 
         foreach (['privacy', 'terms', 'delivery', 'returns'] as $page) {
             Setting::set("{$page}_content", sanitize_rich_text($validated["{$page}_content"] ?? null) ?? '');
+            Setting::set("{$page}_content_bn", sanitize_rich_text($validated["{$page}_content_bn"] ?? null) ?? '');
             $this->saveBannerFields($request, $page, $validated);
         }
 
@@ -108,11 +120,15 @@ class PageController extends Controller
     {
         $validated = $request->validate(array_merge([
             'about_title' => 'nullable|string|max:255',
+            'about_title_bn' => 'nullable|string|max:255',
             'about_content' => 'nullable|string',
+            'about_content_bn' => 'nullable|string',
         ], $this->bannerValidationRules('about')));
 
         Setting::set('about_title', $validated['about_title'] ?? '');
+        Setting::set('about_title_bn', $validated['about_title_bn'] ?? '');
         Setting::set('about_content', sanitize_rich_text($validated['about_content'] ?? null) ?? '');
+        Setting::set('about_content_bn', sanitize_rich_text($validated['about_content_bn'] ?? null) ?? '');
         $this->saveBannerFields($request, 'about', $validated);
 
         return redirect()->route('admin.about.index')
@@ -133,12 +149,14 @@ class PageController extends Controller
         $validated = $request->validate([
             'product_banner_enabled' => 'nullable|boolean',
             'product_banner_subtitle' => 'nullable|string|max:255',
+            'product_banner_subtitle_bn' => 'nullable|string|max:255',
             'product_banner_image' => image_upload_rules(),
             'remove_product_banner_image' => 'nullable|boolean',
         ]);
 
         Setting::set('product_banner_enabled', $request->boolean('product_banner_enabled') ? '1' : '0');
         Setting::set('product_banner_subtitle', $validated['product_banner_subtitle'] ?? '');
+        Setting::set('product_banner_subtitle_bn', $validated['product_banner_subtitle_bn'] ?? '');
         $this->storeBannerImage($request, 'product_banner_image', 'product-banner');
 
         return redirect()->route('admin.product-page.index')
@@ -180,7 +198,9 @@ class PageController extends Controller
         return [
             "{$page}_banner_enabled" => PageBanner::get("{$page}_banner_enabled"),
             "{$page}_banner_title" => PageBanner::get("{$page}_banner_title"),
+            "{$page}_banner_title_bn" => Setting::get("{$page}_banner_title_bn", ''),
             "{$page}_banner_subtitle" => PageBanner::get("{$page}_banner_subtitle"),
+            "{$page}_banner_subtitle_bn" => Setting::get("{$page}_banner_subtitle_bn", ''),
             "{$page}_banner_image" => PageBanner::get("{$page}_banner_image"),
         ];
     }
@@ -193,7 +213,9 @@ class PageController extends Controller
         return [
             "{$page}_banner_enabled" => 'nullable|boolean',
             "{$page}_banner_title" => 'nullable|string|max:120',
+            "{$page}_banner_title_bn" => 'nullable|string|max:120',
             "{$page}_banner_subtitle" => 'nullable|string|max:255',
+            "{$page}_banner_subtitle_bn" => 'nullable|string|max:255',
             "{$page}_banner_image" => image_upload_rules(),
             "remove_{$page}_banner_image" => 'nullable|boolean',
         ];
@@ -203,7 +225,9 @@ class PageController extends Controller
     {
         Setting::set("{$page}_banner_enabled", $request->boolean("{$page}_banner_enabled") ? '1' : '0');
         Setting::set("{$page}_banner_title", $validated["{$page}_banner_title"] ?? '');
+        Setting::set("{$page}_banner_title_bn", $validated["{$page}_banner_title_bn"] ?? '');
         Setting::set("{$page}_banner_subtitle", $validated["{$page}_banner_subtitle"] ?? '');
+        Setting::set("{$page}_banner_subtitle_bn", $validated["{$page}_banner_subtitle_bn"] ?? '');
         $this->storeBannerImage($request, "{$page}_banner_image", "{$page}-banner");
     }
 

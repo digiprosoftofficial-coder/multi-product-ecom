@@ -30,7 +30,7 @@
         height: 220px;
         display: flex;
         align-items: center;
-        background-color: #1f3b2c;
+        background-color: var(--header-bg);
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
@@ -40,7 +40,7 @@
         height: var(--page-banner-height);
     }
     .page-top-banner:not(.has-image) {
-        background-image: linear-gradient(135deg, #1f3b2c 0%, #2f6b45 55%, #6BB252 100%);
+        background-image: linear-gradient(135deg, var(--header-bg) 0%, color-mix(in srgb, var(--header-bg) 45%, var(--store-accent)) 55%, var(--store-accent) 100%);
     }
     .page-top-banner-overlay {
         position: absolute;

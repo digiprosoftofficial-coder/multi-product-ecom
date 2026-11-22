@@ -11,14 +11,14 @@
     <span class="mobile-bottom-nav__icon">
       <i class="fa-solid fa-house"></i>
     </span>
-    <span class="mobile-bottom-nav__label">Home</span>
+    <span class="mobile-bottom-nav__label">{{ __('storefront.home') }}</span>
   </a>
 
   <a href="{{ route('products.index') }}" class="mobile-bottom-nav__item {{ $isShop ? 'is-active' : '' }}">
     <span class="mobile-bottom-nav__icon">
       <i class="fa-solid fa-store"></i>
     </span>
-    <span class="mobile-bottom-nav__label">Shop</span>
+    <span class="mobile-bottom-nav__label">{{ __('storefront.shop') }}</span>
   </a>
 
   <a href="#offcanvasCart"
@@ -31,7 +31,7 @@
       <i class="fa-solid fa-bag-shopping"></i>
       <span class="mobile-bottom-nav__badge js-cart-count" @if($cartCount < 1) style="display:none" @endif>{{ $cartCount }}</span>
     </span>
-    <span class="mobile-bottom-nav__label">Cart</span>
+    <span class="mobile-bottom-nav__label">{{ __('storefront.cart') }}</span>
   </a>
 
   <a href="{{ auth()->check() ? route('orders.index') : '#' }}"
@@ -44,7 +44,7 @@
     <span class="mobile-bottom-nav__icon">
       <i class="fa-solid fa-clipboard-list"></i>
     </span>
-    <span class="mobile-bottom-nav__label">Orders</span>
+    <span class="mobile-bottom-nav__label">{{ __('storefront.orders') }}</span>
   </a>
 </nav>
 
@@ -57,11 +57,11 @@
         <div class="login-required-modal__icon" aria-hidden="true">
           <i class="fa-solid fa-clipboard-list"></i>
         </div>
-        <h2 class="login-required-modal__title" id="loginRequiredModalLabel">Login required</h2>
-        <p class="login-required-modal__text">Orders দেখতে আগে login করুন।</p>
+        <h2 class="login-required-modal__title" id="loginRequiredModalLabel">{{ __('storefront.login_required') }}</h2>
+        <p class="login-required-modal__text">{{ __('storefront.login_required_text') }}</p>
         <div class="login-required-modal__actions">
-          <button type="button" class="btn btn-outline-secondary login-required-modal__cancel" data-bs-dismiss="modal">Cancel</button>
-          <a href="{{ route('login') }}" class="btn btn-primary login-required-modal__login">Login</a>
+          <button type="button" class="btn btn-outline-secondary login-required-modal__cancel" data-bs-dismiss="modal">{{ __('storefront.cancel') }}</button>
+          <a href="{{ route('login') }}" class="btn btn-primary login-required-modal__login">{{ __('storefront.login') }}</a>
         </div>
       </div>
     </div>

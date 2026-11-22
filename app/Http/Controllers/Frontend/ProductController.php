@@ -107,7 +107,18 @@ class ProductController extends Controller
         $products = $query->paginate(12)->withQueryString();
         $children = $category->children()->where('status', 1)->orderBy('name')->get();
         $categories = Storefront::shopCategories();
+<<<<<<< HEAD
         $view = \Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category") ? "frontend.{$theme}.products.category" : 'frontend.products.category';
+=======
+
+        if (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.products.category")) {
+            $view = "frontend.{$theme}.products.category";
+        } elseif (\Illuminate\Support\Facades\View::exists("frontend.{$theme}.shop")) {
+            $view = "frontend.{$theme}.shop";
+        } else {
+            $view = 'frontend.products.category';
+        }
+>>>>>>> main
 
         return view($view, compact('category', 'products', 'children', 'categories', 'priceBounds'));
     }
@@ -121,7 +132,9 @@ class ProductController extends Controller
         $search = $request->search;
         $query->where(function ($q) use ($search) {
             $q->where('name', 'like', '%'.$search.'%')
-                ->orWhere('description', 'like', '%'.$search.'%');
+                ->orWhere('name_bn', 'like', '%'.$search.'%')
+                ->orWhere('description', 'like', '%'.$search.'%')
+                ->orWhere('description_bn', 'like', '%'.$search.'%');
         });
     }
 

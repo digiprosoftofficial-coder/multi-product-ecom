@@ -8,12 +8,25 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
   <link rel="stylesheet" href="{{ asset('gadget-v1/style.css') }}">
+  @include('frontend.partials.theme-colors')
 </head>
 <body class="gadget-v1">
   @include('frontend.gadget-v1.partials.header')
 
   <main class="container py-4">
-    <h1 class="h4 mb-4">Shop</h1>
+    <h1 class="h4 mb-4">{{ isset($category) ? $category->name : 'Shop' }}</h1>
+    @if(isset($category) && $category->description)
+      <p class="text-muted mb-4">{{ $category->description }}</p>
+    @endif
+    @isset($children)
+      @if($children->isNotEmpty())
+        <div class="d-flex flex-wrap gap-2 mb-4">
+          @foreach($children as $child)
+            <a href="{{ route('products.category', $child->slug) }}" class="btn btn-sm btn-outline-primary">{{ $child->name }}</a>
+          @endforeach
+        </div>
+      @endif
+    @endisset
 
     <div class="row mb-4">
       <div class="col-md-4 mb-2">

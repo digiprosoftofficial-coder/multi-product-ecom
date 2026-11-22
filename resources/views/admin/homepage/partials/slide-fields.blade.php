@@ -51,15 +51,18 @@
                 <div class="col-md-8">
                     <label class="form-label">Title</label>
                     <input type="text" name="slides[{{ $index }}][title]" class="form-control" value="{{ old("slides.{$index}.title", $slide['title']) }}">
+                    <input type="text" name="slides[{{ $index }}][title_bn]" class="form-control mt-1" lang="bn" value="{{ old("slides.{$index}.title_bn", $slide['title_bn'] ?? '') }}" placeholder="বাংলা শিরোনাম">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Highlight word</label>
                     <input type="text" name="slides[{{ $index }}][highlight]" class="form-control" value="{{ old("slides.{$index}.highlight", $slide['highlight']) }}">
+                    <input type="text" name="slides[{{ $index }}][highlight_bn]" class="form-control mt-1" lang="bn" value="{{ old("slides.{$index}.highlight_bn", $slide['highlight_bn'] ?? '') }}" placeholder="বাংলা হাইলাইট">
                     <div class="form-text">Colored word inside the title.</div>
                 </div>
                 <div class="col-12">
                     <label class="form-label">Subtitle</label>
                     <input type="text" name="slides[{{ $index }}][subtitle]" class="form-control" value="{{ old("slides.{$index}.subtitle", $slide['subtitle']) }}">
+                    <input type="text" name="slides[{{ $index }}][subtitle_bn]" class="form-control mt-1" lang="bn" value="{{ old("slides.{$index}.subtitle_bn", $slide['subtitle_bn'] ?? '') }}" placeholder="বাংলা সাবটাইটেল">
                 </div>
                 <div class="col-md-4">
                     <label class="form-label">Title color</label>
@@ -76,6 +79,7 @@
                 <div class="col-md-6">
                     <label class="form-label">Primary button text</label>
                     <input type="text" name="slides[{{ $index }}][btn1_text]" class="form-control" value="{{ old("slides.{$index}.btn1_text", $slide['btn1_text']) }}">
+                    <input type="text" name="slides[{{ $index }}][btn1_text_bn]" class="form-control mt-1" lang="bn" value="{{ old("slides.{$index}.btn1_text_bn", $slide['btn1_text_bn'] ?? '') }}" placeholder="বাংলা বাটন">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Primary button URL</label>
@@ -84,6 +88,7 @@
                 <div class="col-md-6">
                     <label class="form-label">Secondary button text</label>
                     <input type="text" name="slides[{{ $index }}][btn2_text]" class="form-control" value="{{ old("slides.{$index}.btn2_text", $slide['btn2_text']) }}">
+                    <input type="text" name="slides[{{ $index }}][btn2_text_bn]" class="form-control mt-1" lang="bn" value="{{ old("slides.{$index}.btn2_text_bn", $slide['btn2_text_bn'] ?? '') }}" placeholder="বাংলা বাটন">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Secondary button URL</label>

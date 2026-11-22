@@ -25,6 +25,7 @@ class Order extends Model
         'payment_sender_phone',
         'payment_status',
         'order_status',
+        'stock_held',
         'subtotal',
         'tax',
         'vat',
@@ -38,14 +39,15 @@ class Order extends Model
         'vat' => 'decimal:2',
         'shipping_cost' => 'decimal:2',
         'total' => 'decimal:2',
+        'stock_held' => 'boolean',
     ];
 
     /** Human-readable delivery zone label */
     public function deliveryZoneLabel(): string
     {
         return match ($this->delivery_zone) {
-            'inside_dhaka'  => 'Inside Dhaka',
-            'outside_dhaka' => 'Outside Dhaka',
+            'inside_dhaka'  => __('storefront.inside_dhaka'),
+            'outside_dhaka' => __('storefront.outside_dhaka'),
             default         => '—',
         };
     }
@@ -120,17 +122,25 @@ class Order extends Model
         return request()->hasValidSignature();
     }
 
+    public static function statusHoldsStock(string $status): bool
+    {
+        return in_array($status, ['processing', 'shipped', 'delivered'], true);
+    }
+
     public function applyStatus(string $newStatus, ?string $paymentStatus = null): void
     {
         $oldStatus = $this->order_status;
+        $shouldHold = self::statusHoldsStock($newStatus);
 
         if ($oldStatus !== $newStatus) {
-            if ($oldStatus !== 'cancelled' && $newStatus === 'cancelled') {
+            if ($this->stock_held && ! $shouldHold) {
                 $this->restoreStock();
+                $this->stock_held = false;
             }
 
-            if ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
+            if (! $this->stock_held && $shouldHold) {
                 $this->reserveStock();
+                $this->stock_held = true;
             }
 
             $this->order_status = $newStatus;
@@ -155,7 +165,7 @@ class Order extends Model
             return;
         }
 
-        if ($status === 'delivered') {
+        if ($status === 'delivered' && ! \App\Support\PaymentMethod::isMobileWallet((string) $this->payment_method)) {
             $this->payment_status = 'paid';
 
             return;
@@ -163,6 +173,45 @@ class Order extends Model
 
         if (in_array($this->payment_status, ['cancelled', 'refunded'], true)) {
             $this->payment_status = 'pending';
+        }
+    }
+
+    /**
+     * Move reserved stock when an open order's line quantity changes.
+     * A positive delta takes more stock. A negative delta returns stock.
+     */
+    public function adjustReservedStock(OrderItem $item, int $delta): void
+    {
+        if ($delta === 0 || ! $this->stock_held) {
+            return;
+        }
+
+        $name = $item->product_name ?: 'this product';
+
+        if ($item->product_variant_id) {
+            $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
+            if ($delta > 0 && (! $variant || $variant->stock < $delta)) {
+                throw ValidationException::withMessages([
+                    'items' => "Not enough stock for {$name}.",
+                ]);
+            }
+            if ($variant) {
+                $delta > 0
+                    ? $variant->decrement('stock', $delta)
+                    : $variant->increment('stock', abs($delta));
+            }
+        }
+
+        $product = Product::whereKey($item->product_id)->lockForUpdate()->first();
+        if ($delta > 0 && (! $product || $product->stock < $delta)) {
+            throw ValidationException::withMessages([
+                'items' => "Not enough stock for {$name}.",
+            ]);
+        }
+        if ($product) {
+            $delta > 0
+                ? $product->decrement('stock', $delta)
+                : $product->increment('stock', abs($delta));
         }
     }
 
@@ -194,7 +243,11 @@ class Order extends Model
                 $variant = ProductVariant::whereKey($item->product_variant_id)->lockForUpdate()->first();
                 if (! $variant || $variant->stock < $item->quantity) {
                     throw ValidationException::withMessages([
+<<<<<<< HEAD
                         'order_status' => "Cannot reopen this order. Insufficient stock for {$item->product_name}.",
+=======
+                        'order_status' => "Not enough stock to confirm this order for {$item->product_name}.",
+>>>>>>> main
                     ]);
                 }
                 $variant->decrement('stock', $item->quantity);
@@ -204,7 +257,7 @@ class Order extends Model
 
             if (! $product || $product->stock < $item->quantity) {
                 throw ValidationException::withMessages([
-                    'order_status' => "Cannot reopen this order. Insufficient stock for {$item->product_name}.",
+                    'order_status' => "Not enough stock to confirm this order for {$item->product_name}.",
                 ]);
             }
 

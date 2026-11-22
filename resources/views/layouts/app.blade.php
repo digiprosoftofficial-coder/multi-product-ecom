@@ -16,14 +16,32 @@
         @include('frontend.partials.seo-meta')
     @endif
 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
-    <link rel="stylesheet" type="text/css" href="{{ asset('organic-v1/css/vendor.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('organic-v1/style.css') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&family=Open+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700&display=swap" rel="stylesheet">
+    @if(request()->routeIs('home', 'products.show'))
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+    @endif
+    @if(request()->routeIs('home'))
+        @php
+            $preloadSlide = \App\Support\Homepage::slides()[0] ?? null;
+            $preloadDesktop = $preloadSlide ? \App\Support\Homepage::slideImageUrl($preloadSlide['image'] ?? null) : null;
+            $preloadMobile = $preloadSlide && ! empty($preloadSlide['image_mobile'])
+                ? \App\Support\Homepage::slideImageUrl($preloadSlide['image_mobile'])
+                : $preloadDesktop;
+        @endphp
+        @if($preloadDesktop)
+            @if($preloadMobile && $preloadMobile !== $preloadDesktop)
+                <link rel="preload" as="image" href="{{ $preloadMobile }}" media="(max-width: 767.98px)" fetchpriority="high">
+                <link rel="preload" as="image" href="{{ $preloadDesktop }}" media="(min-width: 768px)" fetchpriority="high">
+            @else
+                <link rel="preload" as="image" href="{{ $preloadDesktop }}" fetchpriority="high">
+            @endif
+        @endif
+    @endif
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{ asset('organic-v1/css/icons.css') }}?v={{ filemtime(public_path('organic-v1/css/icons.css')) }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('organic-v1/style.css') }}">
     @stack('head')
     @include('frontend.partials.theme-colors')
     @include('frontend.partials.form-styles')
@@ -48,7 +66,10 @@
         .header-menu-toggle:focus {
             box-shadow: none;
         }
+<<<<<<< HEAD
         .preloader-wrapper { z-index: 2000; }
+=======
+>>>>>>> main
         #footer-bottom { margin-top: auto; text-align: center; padding: 14px 0; }
         #footer-bottom p { margin: 0; }
         .product-item { width: 100%; max-width: 100%; overflow: hidden; }
@@ -60,21 +81,21 @@
         }
         .product-discount-badge {
             position: absolute;
-            top: -10px;
-            right: -10px;
+            top: 8px;
+            right: 8px;
             z-index: 2;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             min-width: 2.6rem;
-            padding: 0.20rem 0.2rem;
+            padding: 0.28rem 0.5rem;
             border-radius: 999px;
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: #fff;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.02em;
-            line-height: 1;
+            line-height: 1.15;
             box-shadow: 0 6px 16px rgba(220, 38, 38, 0.35);
             pointer-events: none;
         }
@@ -91,6 +112,56 @@
             box-shadow: none;
             font-size: 0.85rem;
             padding: 0.4rem 0.7rem;
+        }
+        .product-free-delivery-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 2;
+            display: inline-flex;
+            align-items: center;
+            max-width: calc(100% - 16px);
+            padding: 0.28rem 0.5rem;
+            border-radius: 999px;
+            background: #16a34a;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            line-height: 1.15;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+        }
+        .product-free-delivery-badge--lg {
+            top: 14px;
+            left: 14px;
+            font-size: 0.85rem;
+            padding: 0.45rem 0.7rem;
+        }
+        .product-free-delivery-badge--inline {
+            position: static;
+            max-width: none;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            padding: 0.45rem 0.85rem;
+            pointer-events: auto;
+        }
+        .product-card-media > .product-discount-badge,
+        .product-card-media > .product-free-delivery-badge {
+            top: 8px;
+            height: 20px;
+            box-sizing: border-box;
+            font-size: 0.58rem;
+            line-height: 1;
+            padding: 0 0.35rem;
+            white-space: nowrap;
+        }
+        .product-card-media > .product-discount-badge {
+            right: 6px;
+        }
+        .product-card-media > .product-free-delivery-badge {
+            left: 6px;
+            max-width: none;
         }
         .product-card-prices {
             display: flex;
@@ -134,7 +205,7 @@
         }
         .cart-qty-btn:hover {
             background: #eef2ea;
-            color: #6BB252;
+            color: var(--store-accent);
         }
         .cart-qty-input {
             width: 48px;
@@ -257,9 +328,6 @@
     'has-mobile-bottom-nav' => true,
 ])>
     @include('frontend.partials.tracking-noscript')
-    <div class="preloader-wrapper">
-        <div class="preloader"></div>
-    </div>
 
     @include('frontend.organic-v1.partials.offcanvas')
     @include('frontend.organic-v1.partials.header')

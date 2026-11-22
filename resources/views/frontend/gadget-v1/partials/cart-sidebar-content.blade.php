@@ -1,5 +1,5 @@
 <h6 class="d-flex justify-content-between align-items-center mb-3">
-  <span class="text-accent">Your cart</span>
+  <span class="text-accent">{{ __('storefront.your_cart') }}</span>
   <span class="badge bg-primary rounded-pill" id="sidebar-cart-count">{{ count($cartItems ?? []) }}</span>
 </h6>
 <div id="cart-items-container">
@@ -31,7 +31,7 @@
   @else
     <div class="text-center py-4">
       <i class="fas fa-shopping-cart fa-2x text-muted mb-2"></i>
-      <p class="text-muted small mb-0">Your cart is empty</p>
+      <p class="text-muted small mb-0">{{ __('storefront.empty_cart') }}</p>
     </div>
   @endif
 </div>

@@ -4,15 +4,15 @@
 
 <div class="checkout-steps mb-4">
     <span class="checkout-step {{ $active === 'cart' ? 'is-active' : '' }}{{ in_array($active, ['checkout', 'done'], true) ? ' is-complete' : '' }}">
-        <i class="fa-solid fa-cart-shopping"></i> Cart
+        <i class="fa-solid fa-cart-shopping"></i> {{ __('storefront.cart') }}
     </span>
     <span class="checkout-step-divider"></span>
     <span class="checkout-step {{ $active === 'checkout' ? 'is-active' : '' }}{{ $active === 'done' ? ' is-complete' : '' }}">
-        <i class="fa-solid fa-credit-card"></i> Checkout
+        <i class="fa-solid fa-credit-card"></i> {{ __('storefront.checkout') }}
     </span>
     <span class="checkout-step-divider"></span>
     <span class="checkout-step {{ $active === 'done' ? 'is-active' : '' }}">
-        <i class="fa-solid fa-circle-check"></i> Done
+        <i class="fa-solid fa-circle-check"></i> {{ __('storefront.done') }}
     </span>
 </div>
 
@@ -35,10 +35,10 @@
         color: #94a3b8;
     }
     .checkout-step.is-active {
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .checkout-step.is-complete:not(.is-active) {
-        color: #86b574;
+        color: color-mix(in srgb, var(--store-accent) 62%, #94a3b8);
     }
     .checkout-step-divider {
         width: 36px;

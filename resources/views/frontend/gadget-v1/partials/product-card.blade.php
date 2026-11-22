@@ -23,6 +23,7 @@
       @if($discountPercent)
         <span class="product-discount-badge">−{{ $discountPercent }}%</span>
       @endif
+      @include('frontend.partials.free-delivery-badge', ['product' => $product])
     </div>
     <div class="card-body">
       <h6 class="card-title text-truncate">{{ $name }}</h6>
@@ -37,11 +38,11 @@
         <div class="product-card-actions">
           <button type="submit" class="btn btn-sm btn-cart-action">
             <i class="fa-solid fa-cart-shopping"></i>
-            <span>Add to Cart</span>
+            <span>{{ __('storefront.add_to_cart') }}</span>
           </button>
           <button type="submit" name="buy_now" value="1" class="btn btn-sm btn-order-action">
             <i class="fa-solid fa-bolt"></i>
-            <span>Order Now</span>
+            <span>{{ __('storefront.order_now') }}</span>
           </button>
         </div>
       </form>

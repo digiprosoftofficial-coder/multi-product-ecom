@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Product returns – '.site_name())
+@section('title', __('storefront.product_returns').' – '.site_name())
 
 @section('seo')
 @include('frontend.partials.seo-meta', [
@@ -8,7 +8,7 @@
     'description' => \App\Support\Seo::excerpt($content ?? '', 'Return and refund policy for '.site_name().'.'),
     'url' => route('returns'),
     'jsonLd' => \App\Support\Seo::breadcrumbJsonLd([
-        ['name' => 'Home', 'url' => route('home')],
+        ['name' => __('storefront.home'), 'url' => route('home')],
         ['name' => 'Product Returns', 'url' => route('returns')],
     ]),
 ])

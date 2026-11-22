@@ -9,6 +9,8 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\Setting;
 use App\Rules\BangladeshPhone;
+use App\Support\CheckoutGuard;
+use App\Support\DeliveryZone;
 use App\Support\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +22,7 @@ use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $cart = session('cart', []);
 
@@ -59,11 +61,16 @@ class CheckoutController extends Controller
         $vat = taka(($subtotal * $vatRate) / 100);
         $baseTotal = $subtotal + $tax + $vat;
 
+<<<<<<< HEAD
         $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
         $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
+=======
+        $rates = DeliveryZone::ratesFor(array_column($cartItems, 'product'));
+        $shippingInside  = $rates['inside'];
+        $shippingOutside = $rates['outside'];
+>>>>>>> main
 
-        // Default zone: inside_dhaka
-        $selectedZone   = old('delivery_zone', 'inside_dhaka');
+        $selectedZone   = old('delivery_zone', DeliveryZone::suggest($request->ip()));
         $shippingCost   = $selectedZone === 'outside_dhaka' ? $shippingOutside : $shippingInside;
         $total          = $baseTotal + $shippingCost;
 
@@ -102,15 +109,49 @@ class CheckoutController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        if (! CheckoutGuard::passesCaptcha($request)) {
+            return back()->withInput($request->except('captcha_answer'))
+                ->with('error', __('storefront.captcha_failed'));
+        }
+
         $cart = session('cart', []);
 
         if (empty($cart)) {
             return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
         }
 
+        $phone = BangladeshPhone::normalize($validated['customer_phone']) ?? $validated['customer_phone'];
+
+        if (CheckoutGuard::tooManyFromPhone($phone)) {
+            return back()->withInput($request->except('captcha_answer'))
+                ->with('error', __('storefront.order_limit'));
+        }
+
+        $resolved = \App\Support\Storefront::cartData();
+        if (empty($resolved['cartItems'])) {
+            return redirect()->route('cart.index')->with('error', 'Your cart is empty.');
+        }
+
+        $productIds = collect($resolved['cartItems'])->pluck('product.id')->filter()->map(fn ($id) => (int) $id)->all();
+        $duplicate = CheckoutGuard::pendingDuplicate($phone, $productIds);
+        if ($duplicate) {
+            $duplicate->notes = trim(($duplicate->notes ? $duplicate->notes."\n" : '').'Repeat checkout blocked at '.now()->format('Y-m-d H:i').'.');
+            $duplicate->save();
+            Log::warning('Blocked repeat pending checkout', [
+                'order_id' => $duplicate->id,
+                'phone' => $phone,
+            ]);
+
+            return back()->withInput($request->except('captcha_answer'))
+                ->with('error', __('storefront.duplicate_order'));
+        }
+
         DB::beginTransaction();
         try {
+<<<<<<< HEAD
             $resolved = \App\Support\Storefront::cartData();
+=======
+>>>>>>> main
             $cartItems = [];
             $subtotal = 0;
 
@@ -148,9 +189,14 @@ class CheckoutController extends Controller
             $tax = taka(($subtotal * $taxRate) / 100);
             $vat = taka(($subtotal * $vatRate) / 100);
 
+<<<<<<< HEAD
             $shippingInside  = taka(Setting::get('shipping_inside_dhaka', 60));
             $shippingOutside = taka(Setting::get('shipping_outside_dhaka', 120));
             $shippingCost    = $validated['delivery_zone'] === 'outside_dhaka' ? $shippingOutside : $shippingInside;
+=======
+            $rates = DeliveryZone::ratesFor(array_column($cartItems, 'product'));
+            $shippingCost = $validated['delivery_zone'] === 'outside_dhaka' ? $rates['outside'] : $rates['inside'];
+>>>>>>> main
 
             $total = $subtotal + $tax + $vat + $shippingCost;
 
@@ -158,7 +204,11 @@ class CheckoutController extends Controller
                 'user_id' => Auth::id(),
                 'customer_name' => $validated['customer_name'],
                 'customer_email' => $validated['customer_email'] ?? null,
+<<<<<<< HEAD
                 'customer_phone' => BangladeshPhone::normalize($validated['customer_phone']) ?? $validated['customer_phone'],
+=======
+                'customer_phone' => $phone,
+>>>>>>> main
                 'shipping_address' => $validated['shipping_address'],
                 'delivery_zone'   => $validated['delivery_zone'],
                 'shipping_cost'   => $shippingCost,
@@ -171,6 +221,7 @@ class CheckoutController extends Controller
                     : null,
                 'payment_status' => 'pending',
                 'order_status' => 'pending',
+                'stock_held' => false,
                 'subtotal' => $subtotal,
                 'tax' => $tax,
                 'vat' => $vat,
@@ -191,6 +242,7 @@ class CheckoutController extends Controller
                     'cost_price' => $item['product']->cost_price,
                     'total' => $item['total'],
                 ]);
+<<<<<<< HEAD
 
                 if ($item['variant']) {
                     $item['variant']->decrement('stock', $item['quantity']);
@@ -198,6 +250,8 @@ class CheckoutController extends Controller
                 } else {
                     $item['product']->decrement('stock', $item['quantity']);
                 }
+=======
+>>>>>>> main
             }
 
             DB::commit();

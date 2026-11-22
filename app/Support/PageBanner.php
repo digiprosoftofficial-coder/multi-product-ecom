@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use App\Models\Setting;
+
 class PageBanner
 {
     public static function defaults(): array
@@ -80,17 +82,19 @@ class PageBanner
         $subtitleKey = "{$page}_banner_subtitle";
         $imageKey = "{$page}_banner_image";
 
+        $rawTitle = (string) Setting::get($titleKey, $defaults[$titleKey] ?? '');
+        $rawSubtitle = (string) Setting::get($subtitleKey, $defaults[$subtitleKey] ?? '');
         $title = self::get($titleKey, $defaults[$titleKey] ?? '');
         $subtitle = self::get($subtitleKey, $defaults[$subtitleKey] ?? '');
 
-        if ($page === 'contact' && $subtitle === ($defaults['contact_banner_subtitle'] ?? '')) {
+        if ($page === 'contact' && $rawSubtitle === (string) ($defaults['contact_banner_subtitle'] ?? '')) {
             $intro = trim((string) setting('contact_intro', ''));
             if ($intro !== '') {
                 $subtitle = $intro;
             }
         }
 
-        if ($page === 'about' && $title === ($defaults['about_banner_title'] ?? '')) {
+        if ($page === 'about' && $rawTitle === (string) ($defaults['about_banner_title'] ?? '')) {
             $aboutTitle = trim((string) setting('about_title', ''));
             if ($aboutTitle !== '') {
                 $title = $aboutTitle;

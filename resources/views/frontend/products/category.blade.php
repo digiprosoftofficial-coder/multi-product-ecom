@@ -4,8 +4,8 @@
 
 @php
     $crumbs = [
-        ['name' => 'Home', 'url' => route('home')],
-        ['name' => 'Shop', 'url' => route('products.index')],
+        ['name' => __('storefront.home'), 'url' => route('home')],
+        ['name' => __('storefront.shop'), 'url' => route('products.index')],
     ];
     $nodes = [];
     $node = $category;

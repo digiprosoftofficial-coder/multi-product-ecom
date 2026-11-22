@@ -31,6 +31,7 @@
                     −{{ $discountPercent }}%
                 </span>
             @endif
+            @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
 
             @if($hasMultiple)
                 <button type="button" class="product-detail-gallery-prev" aria-label="Previous image">
@@ -70,6 +71,7 @@
                     −{{ $discountPercent }}%
                 </span>
             @endif
+            @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
         </div>
     @else
         <div class="bg-light border rounded-3 d-flex align-items-center justify-content-center product-detail-gallery-empty position-relative">
@@ -79,6 +81,7 @@
                     −{{ $discountPercent }}%
                 </span>
             @endif
+            @include('frontend.partials.free-delivery-badge', ['product' => $product, 'badgeClass' => 'product-free-delivery-badge--lg'])
         </div>
     @endif
 </div>

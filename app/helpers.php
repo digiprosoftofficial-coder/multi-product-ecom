@@ -6,7 +6,9 @@ use Illuminate\Support\Facades\Storage;
 if (!function_exists('setting')) {
     function setting(string $key, $default = null)
     {
-        return Setting::get($key, $default);
+        $value = Setting::get($key, $default);
+
+        return \App\Support\LocaleText::setting($key, $value, $default);
     }
 }
 
@@ -14,6 +16,16 @@ if (!function_exists('site_name')) {
     function site_name(): string
     {
         return (string) setting('site_name', config('app.name', 'Store'));
+    }
+}
+
+if (! function_exists('theme_view')) {
+    function theme_view(string $name, string $fallback): string
+    {
+        $theme = setting('active_frontend_theme', 'organic-v1');
+        $candidate = "frontend.{$theme}.{$name}";
+
+        return view()->exists($candidate) ? $candidate : $fallback;
     }
 }
 

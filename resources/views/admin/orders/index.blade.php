@@ -4,6 +4,12 @@
 @section('page-title', 'Orders')
 
 @section('content')
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Orders</h5>
+    <a href="{{ route('admin.orders.create') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i> New sale
+    </a>
+</div>
 <div class="card mb-3">
     <div class="card-body">
         <form id="orderFilterForm" method="GET" action="{{ route('admin.orders.index') }}" class="row g-3">
@@ -46,6 +52,14 @@
     }
     .order-product-line + .order-product-line {
         margin-top: .25rem;
+    }
+    .order-icon-btn {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
 @endpush

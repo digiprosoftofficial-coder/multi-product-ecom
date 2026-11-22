@@ -8,8 +8,10 @@
     @csrf
     @method('PUT')
 
+    @if($canEditIdentity || $canEditContact || $canEditStoreCatalog)
     <div class="row g-3 g-xl-4 align-items-stretch mb-4">
-        <div class="col-12 col-lg-6 col-xxl-4">
+        @if($canEditIdentity)
+        <div class="{{ $profileColClass }}">
     <div class="card h-100">
         <div class="card-header">
             <h5 class="mb-0">Store identity</h5>
@@ -19,9 +21,21 @@
                 <label for="site_name" class="form-label">Site name <span class="text-danger">*</span></label>
                 <input type="text" class="form-control @error('site_name') is-invalid @enderror"
                        id="site_name" name="site_name" value="{{ old('site_name', $settings['site_name']) }}" required>
+                <input type="text" class="form-control mt-1 @error('site_name_bn') is-invalid @enderror"
+                       id="site_name_bn" name="site_name_bn" lang="bn"
+                       value="{{ old('site_name_bn', $settings['site_name_bn'] ?? '') }}" placeholder="বাংলা নাম">
                 @error('site_name')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
+            </div>
+            <div class="mb-3">
+                <label for="default_locale" class="form-label">Default language</label>
+                <select class="form-select @error('default_locale') is-invalid @enderror" id="default_locale" name="default_locale">
+                    <option value="en" {{ old('default_locale', $settings['default_locale'] ?? 'en') === 'en' ? 'selected' : '' }}>English (EN)</option>
+                    <option value="bn" {{ old('default_locale', $settings['default_locale'] ?? 'en') === 'bn' ? 'selected' : '' }}>বাংলা (BN)</option>
+                </select>
+                <div class="form-text">Used until a visitor picks EN or BN in the top bar.</div>
+                @error('default_locale')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
 
             @php
@@ -30,21 +44,15 @@
                 $faviconPreview = setting_image_url($settings['favicon'] ?? null);
             @endphp
 
-            <div class="mb-3">
-                <label class="form-label">Header logo</label>
-                @include('admin.settings.partials.image-preview', [
-                    'url' => $logoUrl,
-                    'alt' => 'Header logo',
-                    'removeName' => 'remove_site_logo',
-                    'imgStyle' => 'max-height: 48px; max-width: 180px;',
-                ])
-                <input type="file" class="form-control @error('site_logo') is-invalid @enderror"
-                       id="site_logo" name="site_logo" accept="image/*">
-                <div class="form-text">PNG or JPG. Shown in the top menu, invoices, and emails.</div>
-                @error('site_logo')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            @include('admin.settings.partials.image-field', [
+                'label' => 'Header logo',
+                'url' => $logoUrl,
+                'alt' => 'Header logo',
+                'inputName' => 'site_logo',
+                'removeName' => 'remove_site_logo',
+                'hint' => 'PNG or JPG. Shown in the top menu, invoices, and emails.',
+                'variant' => 'logo',
+            ])
 
             <div class="row g-3 mb-3">
                 <div class="col-sm-6">
@@ -77,42 +85,34 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Footer logo</label>
-                @include('admin.settings.partials.image-preview', [
-                    'url' => $footerLogoUrl,
-                    'alt' => 'Footer logo',
-                    'removeName' => 'remove_footer_logo',
-                    'imgStyle' => 'max-height: 48px; max-width: 180px;',
-                ])
-                <input type="file" class="form-control @error('footer_logo') is-invalid @enderror"
-                       id="footer_logo" name="footer_logo" accept="image/*">
-                <div class="form-text">Optional. If empty, the header logo is used in the footer.</div>
-                @error('footer_logo')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            @include('admin.settings.partials.image-field', [
+                'label' => 'Footer logo',
+                'url' => $footerLogoUrl,
+                'alt' => 'Footer logo',
+                'inputName' => 'footer_logo',
+                'removeName' => 'remove_footer_logo',
+                'hint' => 'Optional. If empty, the header logo is used in the footer.',
+                'variant' => 'logo',
+            ])
 
-            <div class="mb-3">
-                <label class="form-label">Favicon</label>
-                @include('admin.settings.partials.image-preview', [
-                    'url' => $faviconPreview,
-                    'alt' => 'Favicon',
-                    'removeName' => 'remove_favicon',
-                    'imgStyle' => 'height: 32px; width: 32px; object-fit: contain;',
-                ])
-                <input type="file" class="form-control @error('favicon') is-invalid @enderror"
-                       id="favicon" name="favicon" accept="image/png,image/jpeg,image/webp,image/gif,image/x-icon,.ico">
-                <div class="form-text">PNG or ICO, square. Browser tab icon. If empty, the header logo is used.</div>
-                @error('favicon')
-                    <div class="invalid-feedback">{{ $message }}</div>
-                @enderror
-            </div>
+            @include('admin.settings.partials.image-field', [
+                'label' => 'Favicon',
+                'url' => $faviconPreview,
+                'alt' => 'Favicon',
+                'inputName' => 'favicon',
+                'removeName' => 'remove_favicon',
+                'accept' => 'image/png,image/jpeg,image/webp,image/gif,image/x-icon,.ico',
+                'hint' => 'PNG or ICO, square. Browser tab icon. If empty, the header logo is used.',
+                'variant' => 'icon',
+            ])
 
             <div class="mb-0">
                 <label for="footer_text" class="form-label">Footer tagline</label>
                 <textarea class="form-control @error('footer_text') is-invalid @enderror"
                           id="footer_text" name="footer_text" rows="2">{{ old('footer_text', $settings['footer_text']) }}</textarea>
+                <textarea class="form-control mt-1 @error('footer_text_bn') is-invalid @enderror"
+                          id="footer_text_bn" name="footer_text_bn" rows="2" lang="bn"
+                          placeholder="বাংলা ট্যাগলাইন">{{ old('footer_text_bn', $settings['footer_text_bn'] ?? '') }}</textarea>
                 @error('footer_text')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -120,8 +120,10 @@
         </div>
     </div>
         </div>
+        @endif
 
-        <div class="col-12 col-lg-6 col-xxl-4">
+        @if($canEditContact)
+        <div class="{{ $profileColClass }}">
     <div class="card h-100">
         <div class="card-header">
             <h5 class="mb-0">Contact information</h5>
@@ -149,6 +151,9 @@
                 <label for="contact_address" class="form-label">Address</label>
                 <textarea class="form-control @error('contact_address') is-invalid @enderror"
                           id="contact_address" name="contact_address" rows="3">{{ old('contact_address', $settings['contact_address']) }}</textarea>
+                <textarea class="form-control mt-1 @error('contact_address_bn') is-invalid @enderror"
+                          id="contact_address_bn" name="contact_address_bn" rows="2" lang="bn"
+                          placeholder="বাংলা ঠিকানা">{{ old('contact_address_bn', $settings['contact_address_bn'] ?? '') }}</textarea>
                 @error('contact_address')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -158,6 +163,8 @@
                 <input type="text" class="form-control @error('contact_hours') is-invalid @enderror"
                        id="contact_hours" name="contact_hours" value="{{ old('contact_hours', $settings['contact_hours']) }}"
                        placeholder="Sat–Thu, 10:00–20:00">
+                <input type="text" class="form-control mt-1" id="contact_hours_bn" name="contact_hours_bn" lang="bn"
+                       value="{{ old('contact_hours_bn', $settings['contact_hours_bn'] ?? '') }}" placeholder="বাংলা সময়">
                 @error('contact_hours')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -166,6 +173,8 @@
                 <label for="contact_intro" class="form-label">Contact page intro</label>
                 <textarea class="form-control @error('contact_intro') is-invalid @enderror"
                           id="contact_intro" name="contact_intro" rows="2">{{ old('contact_intro', $settings['contact_intro']) }}</textarea>
+                <textarea class="form-control mt-1" id="contact_intro_bn" name="contact_intro_bn" rows="2" lang="bn"
+                          placeholder="বাংলা ভূমিকা">{{ old('contact_intro_bn', $settings['contact_intro_bn'] ?? '') }}</textarea>
                 @error('contact_intro')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
@@ -183,8 +192,10 @@
         </div>
     </div>
         </div>
+        @endif
 
-        <div class="col-12 col-lg-6 col-xxl-4">
+        @if($canEditStoreCatalog)
+        <div class="{{ $profileColClass }}">
     <div class="card h-100">
         <div class="card-header">
             <h5 class="mb-0">Store &amp; catalog</h5>
@@ -265,12 +276,17 @@
         </div>
     </div>
         </div>
+        @endif
     </div>
+    @endif
 
+    @if($canEditAllSettings)
     <div class="alert alert-info">
         About, Privacy, and Terms are now edited under <a href="{{ route('admin.pages.index') }}">Pages</a>.
     </div>
+    @endif
 
+    @if($canEditSeo)
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">SEO</h5>
@@ -285,20 +301,16 @@
                 <div class="form-text">Recommended 150–160 characters. Used on the homepage, shop, and other pages without a custom description.</div>
                 @error('seo_meta_description')<div class="invalid-feedback">{{ $message }}</div>@enderror
             </div>
-            <div class="mb-0">
-                <label class="form-label">Default social share image (Open Graph)</label>
-                @php $seoOgUrl = setting_image_url($settings['seo_og_image'] ?? null); @endphp
-                @include('admin.settings.partials.image-preview', [
-                    'url' => $seoOgUrl,
-                    'alt' => 'SEO share image',
-                    'removeName' => 'remove_seo_og_image',
-                    'imgStyle' => 'max-height: 80px; max-width: 200px; object-fit: cover;',
-                ])
-                <input type="file" class="form-control @error('seo_og_image') is-invalid @enderror"
-                       id="seo_og_image" name="seo_og_image" accept="image/*">
-                <div class="form-text">1200×630 recommended. If empty, the header logo is used.</div>
-                @error('seo_og_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
-            </div>
+            @php $seoOgUrl = setting_image_url($settings['seo_og_image'] ?? null); @endphp
+            @include('admin.settings.partials.image-field', [
+                'label' => 'Default social share image (Open Graph)',
+                'url' => $seoOgUrl,
+                'alt' => 'SEO share image',
+                'inputName' => 'seo_og_image',
+                'removeName' => 'remove_seo_og_image',
+                'hint' => '1200×630 recommended. If empty, the header logo is used.',
+                'variant' => 'cover',
+            ])
         </div>
     </div>
 
@@ -349,7 +361,9 @@
             </div>
         </div>
     </div>
+    @endif
 
+    @if($canEditDelivery)
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Delivery charges</h5>
@@ -380,7 +394,9 @@
             </div>
         </div>
     </div>
+    @endif
 
+    @if($canEditPayment)
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Payment methods</h5>
@@ -452,7 +468,9 @@
             </div>
         </div>
     </div>
+    @endif
 
+    @if($canEditColors)
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Header &amp; footer colors</h5>
@@ -473,6 +491,20 @@
                            id="header_text_color" name="header_text_color"
                            value="{{ old('header_text_color', $settings['header_text_color']) }}">
                     @error('header_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="menu_active_color" class="form-label">Menu active</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('menu_active_color') is-invalid @enderror"
+                           id="menu_active_color" name="menu_active_color"
+                           value="{{ old('menu_active_color', $settings['menu_active_color'] ?? '#ffffff') }}">
+                    @error('menu_active_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="menu_hover_color" class="form-label">Menu hover &amp; focus</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('menu_hover_color') is-invalid @enderror"
+                           id="menu_hover_color" name="menu_hover_color"
+                           value="{{ old('menu_hover_color', $settings['menu_hover_color'] ?? '#ffffff') }}">
+                    @error('menu_hover_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label for="footer_bg_color" class="form-label">Footer background</label>
@@ -505,7 +537,43 @@
             </div>
         </div>
     </div>
+    @endif
 
+    @if($canEditAllSettings)
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0">Button colors</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-muted small">Storefront primary buttons on both themes. Admin panel buttons stay the same.</p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="button_bg_color" class="form-label">Button background</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('button_bg_color') is-invalid @enderror"
+                           id="button_bg_color" name="button_bg_color"
+                           value="{{ old('button_bg_color', $settings['button_bg_color']) }}">
+                    @error('button_bg_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="button_text_color" class="form-label">Button text</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('button_text_color') is-invalid @enderror"
+                           id="button_text_color" name="button_text_color"
+                           value="{{ old('button_text_color', $settings['button_text_color']) }}">
+                    @error('button_text_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+                <div class="col-md-4">
+                    <label for="button_hover_color" class="form-label">Button hover</label>
+                    <input type="color" class="form-control form-control-color w-100 @error('button_hover_color') is-invalid @enderror"
+                           id="button_hover_color" name="button_hover_color"
+                           value="{{ old('button_hover_color', $settings['button_hover_color']) }}">
+                    @error('button_hover_color')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+
+    @if($canEditSocial)
     <div class="card mb-4">
         <div class="card-header">
             <h5 class="mb-0">Social media</h5>
@@ -557,6 +625,7 @@
             </div>
         </div>
     </div>
+    @endif
 
     <div class="d-flex gap-2 sticky-bottom bg-body py-3 border-top" style="z-index: 10;">
         <button type="submit" class="btn btn-primary">Save settings</button>
@@ -566,38 +635,150 @@
 
 @push('styles')
 <style>
-    .brand-preview {
+    .brand-image-card {
+        border: 1px solid #e2ebe5;
+        border-radius: .85rem;
+        background: #fff;
+        overflow: hidden;
+    }
+    .brand-image-card.is-invalid {
+        border-color: #fecaca;
+    }
+    .brand-image-stage {
         position: relative;
-        display: inline-block;
-        padding: .5rem;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: .5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 96px;
+        padding: 1rem 2.5rem 1rem 1rem;
+        background:
+            linear-gradient(45deg, #f1f5f4 25%, transparent 25%),
+            linear-gradient(-45deg, #f1f5f4 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, #f1f5f4 75%),
+            linear-gradient(-45deg, transparent 75%, #f1f5f4 75%);
+        background-size: 16px 16px;
+        background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+        background-color: #f8faf9;
+        border-bottom: 1px solid #e8eee9;
     }
-    .brand-preview img {
+    .brand-image-field[data-variant="icon"] .brand-image-stage {
+        min-height: 88px;
+    }
+    .brand-image-field[data-variant="cover"] .brand-image-stage {
+        min-height: 120px;
+    }
+    .brand-image-preview {
         display: block;
+        max-width: 100%;
+        max-height: 64px;
+        object-fit: contain;
+        background: #fff;
+        border-radius: .45rem;
+        padding: .35rem .7rem;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .06);
     }
-    .brand-preview-remove {
+    .brand-image-field[data-variant="icon"] .brand-image-preview {
+        max-height: 48px;
+        width: 48px;
+        height: 48px;
+        padding: .35rem;
+        object-fit: contain;
+    }
+    .brand-image-field[data-variant="cover"] .brand-image-preview {
+        max-height: 88px;
+        padding: 0;
+        border-radius: .5rem;
+        object-fit: cover;
+    }
+    .brand-image-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: .35rem;
+        color: #94a3b8;
+        font-size: .82rem;
+    }
+    .brand-image-empty i {
+        font-size: 1.15rem;
+        color: #cbd5d1;
+    }
+    .brand-image-remove {
         position: absolute;
-        top: -8px;
-        right: -8px;
-        width: 22px;
-        height: 22px;
+        top: .55rem;
+        right: .55rem;
+        width: 26px;
+        height: 26px;
         padding: 0;
         border: 0;
         border-radius: 50%;
-        background: #dc3545;
-        color: #fff;
+        background: #fff;
+        color: #64748b;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .72rem;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, .16);
+    }
+    .brand-image-remove:hover {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+    .brand-image-actions {
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        padding: .7rem .85rem;
+        background: #fff;
+    }
+    .brand-image-filename {
+        font-size: .8rem;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .brand-preview {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 72px;
+        min-width: 120px;
+        padding: .75rem 1rem;
+        background: #f8faf9;
+        border: 1px solid #e2ebe5;
+        border-radius: .75rem;
+    }
+    .brand-preview img {
+        display: block;
+        max-height: 56px;
+        max-width: 180px;
+        object-fit: contain;
+    }
+    .brand-preview-remove {
+        position: absolute;
+        top: .4rem;
+        right: .4rem;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: #fff;
+        color: #64748b;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-size: 11px;
         line-height: 1;
         cursor: pointer;
-        box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        box-shadow: 0 1px 3px rgba(15, 23, 42, .16);
     }
     .brand-preview-remove:hover {
-        background: #bb2d3b;
+        background: #fef2f2;
+        color: #b91c1c;
     }
 </style>
 @endpush
@@ -613,6 +794,56 @@ document.addEventListener('DOMContentLoaded', function () {
             if (input) input.value = '1';
             wrap.classList.add('d-none');
         });
+    });
+
+    document.querySelectorAll('.brand-image-field').forEach(function (field) {
+        var file = field.querySelector('.js-brand-file');
+        var preview = field.querySelector('.js-brand-preview');
+        var empty = field.querySelector('.js-brand-empty');
+        var clear = field.querySelector('.js-brand-clear');
+        var remove = field.querySelector('.js-brand-remove');
+        var filename = field.querySelector('.js-brand-filename');
+        var action = field.querySelector('.js-brand-action-label');
+        var originalSrc = preview ? preview.getAttribute('src') : '';
+
+        function showImage(src, name) {
+            if (preview) {
+                preview.src = src;
+                preview.classList.remove('d-none');
+            }
+            if (empty) empty.classList.add('d-none');
+            if (clear) clear.classList.remove('d-none');
+            if (filename) filename.textContent = name || 'Current image';
+            if (action) action.textContent = 'Change';
+        }
+
+        function showEmpty() {
+            if (preview) {
+                preview.classList.add('d-none');
+                preview.removeAttribute('src');
+            }
+            if (empty) empty.classList.remove('d-none');
+            if (clear) clear.classList.add('d-none');
+            if (filename) filename.textContent = 'No file chosen';
+            if (action) action.textContent = 'Upload';
+        }
+
+        if (file) {
+            file.addEventListener('change', function () {
+                var chosen = file.files && file.files[0];
+                if (!chosen) return;
+                if (remove) remove.value = '0';
+                showImage(URL.createObjectURL(chosen), chosen.name);
+            });
+        }
+
+        if (clear) {
+            clear.addEventListener('click', function () {
+                if (file) file.value = '';
+                if (remove) remove.value = originalSrc ? '1' : '0';
+                showEmpty();
+            });
+        }
     });
 });
 </script>

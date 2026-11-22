@@ -1,6 +1,7 @@
 @php
     $isEdit = isset($product) && $product;
-    $name = old('name', $isEdit ? $product->name : '');
+    $name = old('name', $isEdit ? $product->getRawOriginal('name') : '');
+    $nameBn = old('name_bn', $isEdit ? $product->name_bn : '');
     $sku = old('sku', $isEdit ? $product->sku : '');
     $price = old('price', $isEdit ? $product->price : '');
     $costPrice = old('cost_price', $isEdit ? $product->cost_price : '');
@@ -12,9 +13,12 @@
     $discountPrice = $discountPrice === '' || $discountPrice === null ? '' : format_amount($discountPrice);
     $stock = old('stock', $isEdit ? $product->stock : 0);
     $status = (string) old('status', $isEdit ? $product->status : '1');
-    $metaTitle = old('meta_title', $isEdit ? $product->meta_title : '');
-    $metaDescription = old('meta_description', $isEdit ? $product->meta_description : '');
-    $description = old('description', $isEdit ? $product->description : '');
+    $metaTitle = old('meta_title', $isEdit ? $product->getRawOriginal('meta_title') : '');
+    $metaTitleBn = old('meta_title_bn', $isEdit ? $product->meta_title_bn : '');
+    $metaDescription = old('meta_description', $isEdit ? $product->getRawOriginal('meta_description') : '');
+    $metaDescriptionBn = old('meta_description_bn', $isEdit ? $product->meta_description_bn : '');
+    $description = old('description', $isEdit ? $product->getRawOriginal('description') : '');
+    $descriptionBn = old('description_bn', $isEdit ? $product->description_bn : '');
     $seoOpen = $errors->has('meta_title') || $errors->has('meta_description');
 @endphp
 
@@ -28,6 +32,8 @@
                         <label for="name" class="form-label">Product name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control @error('name') is-invalid @enderror"
                                id="name" name="name" value="{{ $name }}" required>
+                        <input type="text" class="form-control mt-1 @error('name_bn') is-invalid @enderror"
+                               id="name_bn" name="name_bn" lang="bn" value="{{ $nameBn }}" placeholder="বাংলা নাম">
                         @error('name')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -119,6 +125,9 @@
                 <h6 class="fw-semibold mb-3">Description</h6>
                 <textarea class="form-control @error('description') is-invalid @enderror"
                           id="description" name="description" rows="8">{{ $description }}</textarea>
+                <label for="description_bn" class="form-label mt-3">বাংলা বিবরণ</label>
+                <textarea class="form-control @error('description_bn') is-invalid @enderror"
+                          id="description_bn" name="description_bn" rows="8" lang="bn">{{ $descriptionBn }}</textarea>
                 @error('description')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                 @enderror
@@ -141,6 +150,7 @@
                         <label for="meta_title" class="form-label">Meta title</label>
                         <input type="text" class="form-control @error('meta_title') is-invalid @enderror"
                                id="meta_title" name="meta_title" value="{{ $metaTitle }}">
+                        <input type="text" class="form-control mt-1" id="meta_title_bn" name="meta_title_bn" lang="bn" value="{{ $metaTitleBn }}" placeholder="বাংলা মেটা টাইটেল">
                         @error('meta_title')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -149,6 +159,7 @@
                         <label for="meta_description" class="form-label">Meta description</label>
                         <textarea class="form-control @error('meta_description') is-invalid @enderror"
                                   id="meta_description" name="meta_description" rows="2">{{ $metaDescription }}</textarea>
+                        <textarea class="form-control mt-1" id="meta_description_bn" name="meta_description_bn" rows="2" lang="bn" placeholder="বাংলা মেটা বিবরণ">{{ $metaDescriptionBn }}</textarea>
                         @error('meta_description')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -240,6 +251,14 @@
                         <input class="form-check-input" type="checkbox" role="switch" id="status"
                                name="status" value="1" {{ $status === '1' ? 'checked' : '' }}>
                         <label class="form-check-label" for="status">Active</label>
+                    </div>
+                    <div class="form-check form-switch mt-3">
+                        <input type="hidden" name="free_delivery" value="0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="free_delivery"
+                               name="free_delivery" value="1"
+                               {{ (string) old('free_delivery', $isEdit && $product->free_delivery ? '1' : '0') === '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="free_delivery">Free delivery</label>
+                        <div class="form-text">No delivery charge for this product. A Free delivery badge shows on the storefront.</div>
                     </div>
                     <hr>
                     <h6 class="fw-semibold mb-3">Homepage</h6>

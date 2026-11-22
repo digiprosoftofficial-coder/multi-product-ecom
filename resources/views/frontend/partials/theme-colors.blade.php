@@ -1,5 +1,32 @@
+@php
+    $buttonBg = \App\Support\Homepage::normalizeColor(
+        \App\Models\Setting::query()->where('key', 'button_bg_color')->value('value'),
+        ''
+    );
+    $buttonText = \App\Support\Homepage::normalizeColor(
+        \App\Models\Setting::query()->where('key', 'button_text_color')->value('value'),
+        '#ffffff'
+    );
+    $buttonHover = \App\Support\Homepage::normalizeColor(
+        \App\Models\Setting::query()->where('key', 'button_hover_color')->value('value'),
+        $buttonBg !== '' ? $buttonBg : '#f7a422'
+    );
+    $menuActive = \App\Support\Homepage::normalizeColor(
+        \App\Models\Setting::query()->where('key', 'menu_active_color')->value('value'),
+        ''
+    );
+    $menuHover = \App\Support\Homepage::normalizeColor(
+        \App\Models\Setting::query()->where('key', 'menu_hover_color')->value('value'),
+        ''
+    );
+    $storeAccent = $buttonBg !== '' ? $buttonBg : '#6bb252';
+    $storeAccentHex = ltrim($storeAccent, '#');
+    $storeAccentRgb = hexdec(substr($storeAccentHex, 0, 2)).', '.hexdec(substr($storeAccentHex, 2, 2)).', '.hexdec(substr($storeAccentHex, 4, 2));
+@endphp
 <style>
     :root {
+        --store-accent: {{ $storeAccent }};
+        --store-accent-rgb: {{ $storeAccentRgb }};
         --header-bg: {{ theme_color('header_bg_color', '#1f3b2c') }};
         --header-text: {{ theme_color('header_text_color', '#ffffff') }};
         --footer-bg: {{ theme_color('footer_bg_color', '#1f3b2c') }};
@@ -30,6 +57,24 @@
         color: var(--header-text);
         opacity: 0.82;
     }
+    @if($menuActive !== '')
+    .site-header .header-nav-col .nav-link.active,
+    #offcanvasNavbar .nav-link.active {
+        color: {{ $menuActive }} !important;
+        opacity: 1;
+    }
+    @endif
+    @if($menuHover !== '')
+    .site-header .header-nav-col .nav-link:hover,
+    .site-header .header-nav-col .nav-link:focus,
+    .site-header .header-nav-col .nav-link:focus-visible,
+    #offcanvasNavbar .nav-link:hover,
+    #offcanvasNavbar .nav-link:focus,
+    #offcanvasNavbar .nav-link:focus-visible {
+        color: {{ $menuHover }} !important;
+        opacity: 1;
+    }
+    @endif
     .site-header .search-bar {
         background: rgba(255, 255, 255, 0.96) !important;
     }
@@ -150,5 +195,72 @@
     #footer-bottom .footer-credit-link:hover {
         opacity: .85;
         text-decoration: underline;
+    }
+    @if($buttonBg !== '')
+    .btn-primary {
+        --bs-btn-color: {{ $buttonText }};
+        --bs-btn-bg: {{ $buttonBg }};
+        --bs-btn-border-color: {{ $buttonBg }};
+        --bs-btn-hover-color: {{ $buttonText }};
+        --bs-btn-hover-bg: {{ $buttonHover }};
+        --bs-btn-hover-border-color: {{ $buttonHover }};
+        --bs-btn-active-color: {{ $buttonText }};
+        --bs-btn-active-bg: {{ $buttonHover }};
+        --bs-btn-active-border-color: {{ $buttonHover }};
+        --bs-btn-disabled-color: {{ $buttonText }};
+        background-color: {{ $buttonBg }};
+        border-color: {{ $buttonBg }};
+        color: {{ $buttonText }};
+    }
+    .btn-primary:hover,
+    .btn-primary:focus,
+    .btn-primary:active {
+        background-color: {{ $buttonHover }};
+        border-color: {{ $buttonHover }};
+        color: {{ $buttonText }};
+    }
+    .gadget-v1 .btn-primary,
+    .gadget-v1 .btn-accent {
+        background: {{ $buttonBg }};
+        border-color: {{ $buttonBg }};
+        color: {{ $buttonText }};
+    }
+    .gadget-v1 .btn-primary:hover,
+    .gadget-v1 .btn-primary:focus,
+    .gadget-v1 .btn-primary:active,
+    .gadget-v1 .btn-accent:hover,
+    .gadget-v1 .btn-accent:focus,
+    .gadget-v1 .btn-accent:active {
+        background: {{ $buttonHover }};
+        border-color: {{ $buttonHover }};
+        color: {{ $buttonText }};
+        box-shadow: none;
+    }
+    @endif
+    .btn-outline-primary {
+        --bs-btn-color: var(--store-accent);
+        --bs-btn-border-color: var(--store-accent);
+        --bs-btn-hover-color: #fff;
+        --bs-btn-hover-bg: var(--store-accent);
+        --bs-btn-hover-border-color: var(--store-accent);
+        --bs-btn-active-color: #fff;
+        --bs-btn-active-bg: var(--store-accent);
+        --bs-btn-active-border-color: var(--store-accent);
+        color: var(--store-accent);
+        border-color: var(--store-accent);
+    }
+    .cart-qty-btn:hover,
+    .checkout-qty-btn:hover {
+        color: var(--store-accent);
+    }
+    .cart-sidebar-item .product-title a:hover {
+        color: var(--store-accent) !important;
+    }
+    .store-accent {
+        color: var(--store-accent) !important;
+    }
+    #offcanvasCart {
+        --bs-primary: var(--store-accent);
+        --bs-primary-rgb: var(--store-accent-rgb);
     }
 </style>

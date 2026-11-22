@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Shopping Cart')
+@section('title', __('storefront.shopping_cart'))
 
 @section('seo')
 @include('frontend.partials.seo-meta', ['robots' => 'noindex, nofollow'])
@@ -9,7 +9,7 @@
 @section('content')
 @include('frontend.components.page-banner', [
     'page' => 'cart',
-    'fallbackTitle' => 'Shopping Cart',
+    'fallbackTitle' => __('storefront.shopping_cart'),
 ])
 
 <div class="container-lg py-4 py-lg-5 cart-page">
@@ -84,10 +84,10 @@
             <table class="table cart-table align-middle mb-0">
                 <thead>
                     <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Subtotal</th>
+                        <th>{{ __('storefront.product') }}</th>
+                        <th>{{ __('storefront.price') }}</th>
+                        <th>{{ __('storefront.quantity') }}</th>
+                        <th>{{ __('storefront.subtotal') }}</th>
                         <th class="text-end">Action</th>
                     </tr>
                 </thead>
@@ -150,7 +150,7 @@
                 <tfoot>
                     <tr>
                         <td colspan="3" class="text-end border-0 pt-3"><strong>Total</strong></td>
-                        <td class="border-0 pt-3"><strong class="text-success fs-5">{{ money($total) }}</strong></td>
+                        <td class="border-0 pt-3"><strong class="store-accent fs-5">{{ money($total) }}</strong></td>
                         <td class="border-0"></td>
                     </tr>
                 </tfoot>
@@ -158,27 +158,27 @@
         </div>
 
         <div class="cart-actions mt-4">
-            <a href="{{ route('products.index') }}" class="btn btn-outline-dark cart-actions__btn">Continue Shopping</a>
+            <a href="{{ route('products.index') }}" class="btn btn-outline-primary cart-actions__btn">{{ __('storefront.continue_shopping') }}</a>
             <form action="{{ route('cart.clear') }}" method="POST" class="cart-actions__form">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline-secondary cart-actions__btn w-100" onclick="return confirm('Clear the entire cart?')">
-                    Clear Cart
+                <button type="submit" class="btn btn-outline-primary cart-actions__btn" onclick="return confirm(@json(__('storefront.clear_confirm')))">
+                    {{ __('storefront.clear_cart') }}
                 </button>
             </form>
             @auth
-                <a href="{{ route('checkout.index') }}" class="btn btn-primary cart-actions__btn cart-actions__checkout">Proceed to Checkout</a>
+                <a href="{{ route('checkout.index') }}" class="btn btn-primary cart-actions__btn cart-actions__checkout">{{ __('storefront.proceed_checkout') }}</a>
             @else
-                <a href="{{ route('checkout.index') }}" class="btn btn-outline-primary cart-actions__btn">Guest Checkout</a>
-                <a href="{{ route('login') }}" class="btn btn-primary cart-actions__btn cart-actions__checkout">Login &amp; Checkout</a>
+                <a href="{{ route('checkout.index') }}" class="btn btn-outline-primary cart-actions__btn">{{ __('storefront.guest_checkout') }}</a>
+                <a href="{{ route('login') }}" class="btn btn-primary cart-actions__btn cart-actions__checkout">{{ __('storefront.login_checkout') }}</a>
             @endauth
         </div>
     @else
         <div class="text-center py-5 cart-empty">
             <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
-            <h4>Your cart is empty</h4>
-            <p class="text-muted">Start shopping to add items to your cart.</p>
-            <a href="{{ route('products.index') }}" class="btn btn-primary">Browse Products</a>
+            <h4>{{ __('storefront.empty_cart') }}</h4>
+            <p class="text-muted">{{ __('storefront.empty_cart_hint') }}</p>
+            <a href="{{ route('products.index') }}" class="btn btn-primary">{{ __('storefront.browse_products') }}</a>
         </div>
     @endif
 </div>
@@ -225,7 +225,7 @@
         font-size: 0.95rem;
     }
     .cart-mobile-card__name:hover {
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .cart-mobile-card__sku {
         font-size: 0.75rem;
@@ -254,7 +254,7 @@
         font-size: 1.05rem;
     }
     .cart-mobile-total strong {
-        color: #6BB252;
+        color: var(--store-accent);
         font-size: 1.2rem;
     }
     .cart-qty-control {
@@ -281,7 +281,7 @@
     }
     .cart-qty-btn:hover {
         background: #eef2ea;
-        color: #6BB252;
+        color: var(--store-accent);
     }
     .cart-qty-input {
         width: 44px;
@@ -315,6 +315,8 @@
         width: 100%;
         min-height: 46px;
         border-radius: 10px;
+        font-weight: 600;
+        padding: 0.5rem 1.15rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
